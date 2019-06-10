@@ -32,9 +32,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="itextsharp">
-      <HintPath>..\packages\iTextSharp.5.5.13\lib\itextsharp.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -52,6 +49,7 @@
     <Compile Include="BLL\FileSafeOperations.cs" />
     <Compile Include="DALL\conn.cs" />
     <Compile Include="DALL\FileSafeData.cs" />
+    <Compile Include="DALL\Procedures.cs" />
     <Compile Include="DTO\FileSafe.cs" />
     <Compile Include="DTO\SessionUser.cs" />
     <Compile Include="DTO\Users.cs" />
@@ -67,6 +65,12 @@
     <Compile Include="FrmAddUsuariosAD.Designer.cs">
       <DependentUpon>FrmAddUsuariosAD.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmpdf.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmpdf.Designer.cs">
+      <DependentUpon>frmpdf.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="FrmAddUsuariosAD.resx">
@@ -75,21 +79,24 @@
     <EmbeddedResource Include="frmListContrato.resx">
       <DependentUpon>frmListContrato.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="frmpdf.resx">
+      <DependentUpon>frmpdf.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
@@ -110,6 +117,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\ic_cloud_download_128_28299.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\clear_filters-48_45590 %281%29.ico" />
+    <Content Include="Resources\xmag_search_find_export_locate_5984.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

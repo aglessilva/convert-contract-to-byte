@@ -13,6 +13,7 @@ namespace MalhaToByte.DAL
         public string ContractName { get; set; }
         public string CpfName { get; set; }
         public byte[] FileEncryption { get; set; }
+        public byte[] FileEncryptionPdf { get; set; }
         public DateTime DateInput { get; set; }
     }
 

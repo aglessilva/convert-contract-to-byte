@@ -18,10 +18,10 @@ namespace ConversorToByte.DALL
         }
 
 
-        protected internal SqlCommand Parametriza(string _proc)
+        protected internal SqlCommand Parametriza(Procedures _proc)
         {
             command.CommandType = System.Data.CommandType.StoredProcedure;
-            command.CommandText = _proc;
+            command.CommandText = _proc.ToString();
             command.CommandTimeout = 0;
             command.Parameters.Clear();
             command.Connection = new SqlConnection(strConn);

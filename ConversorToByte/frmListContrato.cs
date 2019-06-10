@@ -1,7 +1,5 @@
 ﻿using ConversorToByte.BLL;
 using ConversorToByte.DTO;
-using iTextSharp.text.pdf;
-using iTextSharp.text.pdf.parser;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -31,43 +29,31 @@ namespace ConversorToByte
         private void Form1_Load(object sender, EventArgs e)
         {
 
-            //byte[] arq = File.ReadAllBytes(@"C:\Users\x194262\Desktop\Agles\70455230001430\70455230001430_16.PDF");
+            IEnumerable<string> lstItem = Directory.EnumerateFiles(Path.GetTempPath(), "*.pdf", SearchOption.TopDirectoryOnly)
+              .Where(x => new FileInfo(x).CreationTime.Date.ToShortDateString().Equals(DateTime.Today.Date.ToShortDateString()));
 
-            //using (MemoryStream mStream = new MemoryStream(arq))
-            //{
-            //    var document = new iTextSharp.text.Document();
-            //    var pdfWriter = iTextSharp.text.pdf.PdfWriter.GetInstance(document, mStream);
-            //    pdfWriter.Open();
-            //    //document.Open();
-
-                
-            //}
+            lstItem.ToList().ForEach(f => { File.Delete(f); });
 
             
             fsf = new FileSafeOperations();
             Users obj = fsf.CheckUser(Environment.UserName);
 
             ValidaPermissao(obj);
-            List<FileSafe> lst =  fsf.GetFilesSafe();
+            List<FileSafe> lst =  fsf.GetFilesSafe(null,null);
             dataGridViewContract.AutoGenerateColumns = false;
 
-            if(!SessionUser.IsDownload)
-            {
-                dataGridViewContract.Columns.RemoveAt(3);
-            }
 
             dataGridViewContract.DataSource = lst.ToList();
         }
 
         private void ValidaPermissao(Users obj)
         {
-            SessionUser.IsDownload = obj.IsDownload;
             SessionUser.IsGestorApp = obj.IsGestorApp;
             SessionUser.UserLogin = Environment.UserName;
 
             if (SessionUser.IsGestorApp)
             {
-                menuStrip1.Enabled = true;
+                menuStrip1.Visible = true;
             }
 
         }
@@ -76,27 +62,26 @@ namespace ConversorToByte
 
         private void dataGridViewContract_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            var senderGrid = (DataGridView)sender;
 
-            if (senderGrid.Columns[e.ColumnIndex] is DataGridViewButtonColumn && e.RowIndex >= 0)
+            if (e.ColumnIndex != 3 && e.ColumnIndex != 4)
+                return;
+
+            var senderGrid = (DataGridView)sender;
+            if (senderGrid.Columns[e.ColumnIndex] is DataGridViewImageColumn && e.RowIndex >= 0 && e.ColumnIndex == 3)
             {
                 FileSafe obj = (FileSafe)dataGridViewContract.Rows[e.RowIndex].DataBoundItem;
                 SaveFileDialog saveFile = new SaveFileDialog();
                 saveFile.Filter = "Compactado|*.zip|*.rar|*.7z";
                    
                 fsf = new FileSafeOperations();
-                List<FileSafe> lst = fsf.GetFilesSafe(_id:obj.Id.ToString(),typeFilte:"1");
-                obj = lst.First();
-                byte[] arq = obj.FileEncryption;
-
+                obj = fsf.GetFilesSafe(null,obj.Id.ToString()).First();
+               
                 saveFile.FileName = obj.NameContract;
 
                 if (saveFile.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     using (BinaryWriter writer = new BinaryWriter(File.Open(saveFile.FileName, FileMode.Create)))
-                    { writer.Write(arq); }
-
-                   
+                    { writer.Write(obj.FileEncryption); }
 
                     string _path =  new FileInfo(saveFile.FileName).DirectoryName;
                     if (MessageBox.Show(string.Format("Deseja abrir o diretório onde o contrato ({0}) foi salvo?", obj.NameContract), "Contratos Liquidados", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
@@ -107,6 +92,15 @@ namespace ConversorToByte
                     }
                 }
             }
+
+            if (senderGrid.Columns[e.ColumnIndex] is DataGridViewImageColumn && e.RowIndex >= 0 && e.ColumnIndex == 4)
+             {
+                 string _idContract = senderGrid[0, e.RowIndex].Value.ToString();
+                 fsf = new FileSafeOperations();
+                 FileSafe _file = fsf.GetFilesSafe(_idContract);
+                 frmpdf _frmPdf = new frmpdf(_file);
+                 _frmPdf.ShowDialog();
+             }
         }
 
 
@@ -124,16 +118,24 @@ namespace ConversorToByte
             if (textBoxContratocpf.Text.Length > 2)
             {
                 dataGridViewContract.DataSource = null;
-                List<FileSafe> lst = fsf.GetFilesSafe(textBoxContratocpf.Text);
+                List<FileSafe> lst = fsf.GetFilesSafe(_contractCpf: textBoxContratocpf.Text);
                 dataGridViewContract.DataSource = lst.ToList();
             }
             else
                 if(dataGridViewContract.Rows.Count < 50 && textBoxContratocpf.Text.Length < 2)
                 {
                     dataGridViewContract.DataSource = null;
-                    List<FileSafe> lst = fsf.GetFilesSafe();
+                    List<FileSafe> lst = fsf.GetFilesSafe(null, null);
                     dataGridViewContract.DataSource = lst.ToList();
                 }
+        }
+
+
+
+        private void addUsuarioToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FrmAddUsuariosAD f = new FrmAddUsuariosAD();
+            f.ShowDialog();
         }
     }
 }

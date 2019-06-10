@@ -36,7 +36,8 @@ namespace ConversorToByte
 
         private void btnPesquisar_Click(object sender, EventArgs e)
         {
-          
+
+            groupBox1.Enabled = !groupBox1.Enabled;
             lblNome.Text = string.Empty;
             lblEmail.Text = string.Empty;
 
@@ -73,7 +74,7 @@ namespace ConversorToByte
                 btnAdd.Enabled = false;
             }
 
-           
+            groupBox1.Enabled = !groupBox1.Enabled;
         }
 
         private void textBoxLogin_TextChanged(object sender, EventArgs e)
@@ -135,6 +136,11 @@ namespace ConversorToByte
         {
             FileSafeOperations fso = new FileSafeOperations();
             dataGridViewUsuario.DataSource = fso.GetUsers();   
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            textBoxPesquisa.Text = string.Empty;
         }
     }
 }

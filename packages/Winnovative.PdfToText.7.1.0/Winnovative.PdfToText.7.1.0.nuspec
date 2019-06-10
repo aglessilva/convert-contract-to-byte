@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Winnovative.PdfToText</id>
+    <version>7.1.0</version>
+    <title>Winnovative PDF to Text Converter for .NET</title>
+    <authors>Winnovative Software</authors>
+    <owners>Winnovative Software</owners>
+    <licenseUrl>http://www.winnovative-software.com/License-Agreement.aspx</licenseUrl>
+    <projectUrl>http://www.winnovative-software.com/PdfToText.aspx</projectUrl>
+    <iconUrl>http://www.winnovative-software.com/img/wnv.ico</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Winnovative PDF to Text Converter can be used in any type of .NET application to extract the text from a PDF document and to search text in PDF documents. The integration with existing .NET applications is extremely easy and no installation is necessary in order to run the converter. The result of conversion is a .NET String object that you can further manipulated.
+
+The PDF to Text Converter does not require Adobe Reader or other third party tools.</description>
+    <summary>Extract the text from a PDF document and to search text in PDF documents in your .NET applications using Winnovative PDF to Text Converter for .NET.</summary>
+    <copyright />
+    <tags>winnovative pdf text convert extract search .net c# vb.net asp.net mvc</tags>
+  </metadata>
+</package>

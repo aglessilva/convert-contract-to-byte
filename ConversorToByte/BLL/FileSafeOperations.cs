@@ -16,11 +16,23 @@ namespace ConversorToByte.BLL
         /// <param name="_contractCpf">Filtro por contrato ou por numero de cpf do cliente</param>
         /// <param name="typeFilte"> 0 = Lista na Tela, 1 busca um unico arquivo para download [default = 0]</param>
         /// <returns>Retorna uma lista de arquivos binarizados</returns>
-        public List<FileSafe> GetFilesSafe(string _contractCpf = null, string _id = null, string typeFilte = "0")
+        public List<FileSafe> GetFilesSafe(string _contractCpf = null, string _id = null)
         {
             FileSafeData fs = new FileSafeData();
-            List<FileSafe> lst = fs.GetFileSafe(_contractCpf,_id, typeFilte);
+            List<FileSafe> lst = fs.GetFileSafe(_contractCpf,_id);
             return lst;
+        }
+
+        /// <summary>
+        /// Retorna um objeto Preenchido, é obrigatorio a passagem de para de paramentro ID do registro
+        /// </summary>
+        /// <param name="_id">codigo do registro</param>
+        /// <returns>retorna um objeto preenchido</returns>
+        public FileSafe GetFilesSafe(string _id = null)
+        {
+             FileSafeData fs = new FileSafeData();
+             FileSafe obj = fs.GetFileSafe(null, _id).First();
+            return obj;
         }
 
         public List<Users> GetUsers(string _userLogin = null)

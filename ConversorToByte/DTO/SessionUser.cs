@@ -10,6 +10,5 @@ namespace ConversorToByte.DTO
     {
         public static string UserLogin { get; set; }
         public static bool IsGestorApp { get; set; }
-        public static bool IsDownload { get; set; } 
     }
 }

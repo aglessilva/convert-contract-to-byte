@@ -44,10 +44,9 @@ namespace MalhaToByte.DAL
                 try
                 {
 
-                    Parametriza("sp_Post_File_safe");
+                    Parametriza("SP_GET_FILES");
                     command.Connection = connection;
-                    command.Parameters.Add(new SqlParameter("@Proporsal", p));
-                    command.Parameters.Add(new SqlParameter("@tipo", 1));
+                    command.Parameters.Add(new SqlParameter("@ID", p));
 
                     connection.Open();
                     SqlDataReader dr = command.ExecuteReader();
@@ -81,7 +80,7 @@ namespace MalhaToByte.DAL
                 int ret = 0;
                 try
                 {
-                    Parametriza("sp_Post_File_safe");
+                    Parametriza("SP_POST_FILE_SAFE");
                     command.Connection = connection;
                     connection.Open();
 
@@ -91,6 +90,7 @@ namespace MalhaToByte.DAL
                         command.Parameters.Add(new SqlParameter("@ContractName", x.ContractName));
                         command.Parameters.Add(new SqlParameter("@CpfName", x.CpfName));
                         command.Parameters.Add(new SqlParameter("@FileEncryption", x.FileEncryption));
+                        command.Parameters.Add(new SqlParameter("@FileEncryptionPdf", x.FileEncryptionPdf));
                         command.Parameters.Add(new SqlParameter("@DateInput", x.DateInput));
                         ret += command.ExecuteNonQuery();
                         command.Parameters.Clear();
@@ -119,7 +119,7 @@ namespace MalhaToByte.DAL
             List<PathFiles> lst = new List<PathFiles>();
             using (SqlConnection connection = new SqlConnection(strConn))
             {
-                Parametriza("SP_Get_Path_Company");
+                Parametriza("SP_GET_PATH_COMPANY");
                 command.Connection = connection;
                 connection.Open();
                 SqlDataReader dr = command.ExecuteReader();
