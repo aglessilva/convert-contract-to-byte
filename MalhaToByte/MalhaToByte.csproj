@@ -62,9 +62,6 @@
     <Reference Include="itextsharp">
       <HintPath>..\packages\iTextSharp.5.5.13\lib\itextsharp.dll</HintPath>
     </Reference>
-    <Reference Include="SautinSoft.PdfFocus">
-      <HintPath>..\packages\sautinsoft.pdffocus.6.9.4.10\lib\net45\SautinSoft.PdfFocus.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />

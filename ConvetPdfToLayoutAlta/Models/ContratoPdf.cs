@@ -10,13 +10,16 @@ namespace ConvetPdfToLayoutAlta.Models
     {
         public ContratoPdf()
         {
-            this.Cabecalhos = new List<Cabecalho>();
-            this.Parcelas = new List<Parcela>();
-            this.Ocorrencias = new List<Ocorrencia>();
+            Cabecalhos = new List<Cabecalho>();
+            Parcelas = new List<Parcela>();
+            Ocorrencias = new List<Ocorrencia>();
+            Dumps = new List<Dump>();
         }
+        public string Carteira { get; set; }
         public string Contrato { get; set; }
         public List<Cabecalho> Cabecalhos { get; set; }
         public List<Parcela> Parcelas { get; set; }
         public List<Ocorrencia> Ocorrencias { get; set; }
+        public List<Dump> Dumps { get; set; }
     }
 }

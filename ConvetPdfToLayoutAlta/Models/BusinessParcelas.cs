@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace ConvetPdfToLayoutAlta.Models
 {
@@ -17,12 +14,10 @@ namespace ConvetPdfToLayoutAlta.Models
 
                 switch (sequencia)
                 {
-
                     case 1: // PEGA A LINHA DE CORREÇÃO
                         {
                             _case = "Case 1 - Metodo: TrataLinhaParcelas -  PEGA A LINHA DE CORREÇÃO";
 
-                            _obj.IsCorrecao = true;
                             _obj.VencimentoCorrecao = _linha[0].Trim();
                             _obj.IndiceCorrecao = Regex.Replace(_linha[2], @"[^0-9$]", "");
                             _obj.AmortizacaoCorrecao = Regex.Replace(_linha[3], @"[^0-9$]", "");
@@ -52,20 +47,23 @@ namespace ConvetPdfToLayoutAlta.Models
                         {
                             _case = "Case 3 - Metodo: TrataLinhaParcelas - PEGA A LINHA DE BANCO E AGENCIA";
 
-                            if (Regex.Replace(_linha[0], @"[^0-9\/$]", "") != "033")
+                            if (Regex.Replace(_linha[0], @"[^0-9\/$]", "") != "033" && _linha.Length == 7)
                             {
                                 var x = _linha.ToList();
                                 x.RemoveAt(3);
                                 _linha = x.ToArray();
                             }
-                            _obj.Banco = _linha[0].Trim();
-                            _obj.Agencia = _linha[1].Trim();
-                            _obj.TPG_EVE_HIS = _linha[2].Trim();
-                            _obj.Proc_Emi_Pag = Regex.Replace(_linha[3], @"[^0-9\/$]", "") + Regex.Replace(_linha[4], @"[^0-9\/$]", "");
-                            _obj.Pago = Regex.Replace(_linha[5], @"[^0-9$]", "");
 
-                            if (_linha.Length > 6)
-                                _obj.Mora = Regex.Replace(_linha[6], @"[^0-9$]", "");
+                           
+                            _obj.Banco = _linha.Length > 0 ? _linha[0].Trim() : "0";
+                            _obj.Agencia = _linha.Length > 1 ? _linha[1].Trim() : "0";
+                            _obj.TPG_EVE_HIS = _linha.Length > 2 ? _linha[2].Trim() : "0";
+                            _obj.Proc_Emi_Pag =  _linha.Length > 4 ? Regex.Replace(_linha[3], @"[^0-9\/$]", "") + Regex.Replace(_linha[4], @"[^0-9\/$]", "") : "01/01/1900";
+                            _obj.Pago = _linha.Length >=5 ? Regex.Replace(_linha[5], @"[^0-9$]", "") : "0";
+                            _obj.Mora = _linha.Length > 6 ? Regex.Replace(_linha[6], @"[^0-9$]", "") : "0";
+
+                            //if (_linha.Length > 6)
+                            //    _obj.Mora = Regex.Replace(_linha[6], @"[^0-9$]", "");
 
                             break;
                         }
@@ -99,7 +97,6 @@ namespace ConvetPdfToLayoutAlta.Models
             return _linha.Split(' ').Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
         }
 
-      
 
         public Ocorrencia TrataOcorrencia(string[] _linhaOcorrencia, string _codigoOcorrencia )
         {
@@ -107,9 +104,25 @@ namespace ConvetPdfToLayoutAlta.Models
             string _case = string.Empty;
             try
             {
-                string _tiraLetra = String.Join(" ", _linhaOcorrencia).Replace("Tot.", "").Replace("rec. Fgts", "");
-                _tiraLetra = Regex.Replace(_tiraLetra, @"[^0-9\/,.\-$]", " ");
-                _linhaOcorrencia = _tiraLetra.Split(' ').Where(x => !string.IsNullOrWhiteSpace(x) && !x.Equals(".")).ToArray();
+                int index = 0;
+                bool hasMora = _linhaOcorrencia.Any(h => h.StartsWith("Tot."));
+                bool hasFGTS = _linhaOcorrencia.Any(h => h.StartsWith("rec."));
+
+                if (hasFGTS)
+                {
+                }
+
+                if (hasMora)
+                {
+                   index = _linhaOcorrencia.ToList().FindIndex(f => f.StartsWith("Tot."));
+                    var x = _linhaOcorrencia.ToList();
+                    x.RemoveAt(index);
+                    _linhaOcorrencia = x.ToArray();
+                }
+
+               // string _tiraLetra = String.Join(" ", _linhaOcorrencia).Replace("Tot.", "").Replace("rec. Fgts", "");
+               // _tiraLetra = Regex.Replace(_tiraLetra, @"[^0-9\/,.\-$]", " ");
+               // _linhaOcorrencia = _tiraLetra.Split(' ').Where(x => !string.IsNullOrWhiteSpace(x) && !x.Equals(".")).ToArray();
 
                 switch (_codigoOcorrencia)
                 {
@@ -135,8 +148,8 @@ namespace ConvetPdfToLayoutAlta.Models
                             _obj.Vencimento = _linhaOcorrencia[0].Trim();
                             _obj.Pagamento = _linhaOcorrencia[1].Trim();
                             _obj.CodigoOcorrencia = _linhaOcorrencia[2].Trim();
-                            _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[3].Trim(), @"[^0-9$]", "");
-                            _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[4].Trim(), @"[^0-9$]", "");
+                            _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[5].Trim(), @"[^0-9$]", "");
+                            _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[6].Trim(), @"[^0-9$]", "");
                             _obj.Descricao = "***010Alteração Contratual";
                             break;
                         }
@@ -148,11 +161,16 @@ namespace ConvetPdfToLayoutAlta.Models
                             _obj.Vencimento = _linhaOcorrencia[count++].Trim();
                             _obj.Pagamento = _linhaOcorrencia[count++].Trim();
                             _obj.CodigoOcorrencia = _linhaOcorrencia[count++].Trim();
-                            if (_linhaOcorrencia.Length > 5)
-                                _obj.Mora = _linhaOcorrencia[(_linhaOcorrencia.Length == 7 ? (count+=2): count++)].Trim();
+                            if (hasMora)
+                            {
+                                _obj.Juros = Regex.Replace(_linhaOcorrencia[(count += 2)].Trim(), @"[^0-9$]", "");
+                                count++;
+                                // _obj.Mora = _linhaOcorrencia[(_linhaOcorrencia.Length == 7 ? (count+=2): count++)].Trim();
+                            }
+                            else _obj.Juros = "0";
 
-                            _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
-                            _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[count++].Trim(),@"[^0-9$]", "");
+                            _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[(_linhaOcorrencia.Length - 2)].Trim(), @"[^0-9$]", "");
+                            _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[_linhaOcorrencia.Length - 1].Trim(),@"[^0-9$]", "");
                             _obj.Descricao = "***020Amortização extra";
                             break;
                         }
@@ -170,12 +188,12 @@ namespace ConvetPdfToLayoutAlta.Models
                                 {
                                     int m = (count + 1);
                                     if (Convert.ToInt32(_linhaOcorrencia[count]) < Convert.ToInt32(_linhaOcorrencia[m]))
-                                    _obj.Mora = _linhaOcorrencia[count++].Trim();
+                                    _obj.Juros = _linhaOcorrencia[count++].Trim();
                                 }
                             }
                             else
                             {
-                                _obj.Mora = _linhaOcorrencia[(count++)].Trim();
+                                _obj.Juros = _linhaOcorrencia[(count++)].Trim();
                                 ;
                             }
 
@@ -227,17 +245,17 @@ namespace ConvetPdfToLayoutAlta.Models
                         {
                             throw new ArgumentOutOfRangeException("Nova Ocorrencia não tratada -  tipo de Ocorrencia: DAMP"); 
                         }
-                    case "DAMP0": // DAMP0
-                        {
-                            _case = "030 - Metodo: TrataOcorrencia -  Situação: DAMP0";
+                    //case "DAMP0": // DAMP0
+                    //    {
+                    //        _case = "DAMP0 - Metodo: TrataOcorrencia -  Situação: DAMP0";
 
-                            _obj.Vencimento = _linhaOcorrencia[0].Trim() + " : " + _linhaOcorrencia[1].Trim();
-                            _obj.Pagamento = _linhaOcorrencia[3].Trim() + ": QuotaUnica:" + _linhaOcorrencia[4].Trim();
-                            _obj.Dump = _linhaOcorrencia[2].Trim();
-                            _obj.CodigoOcorrencia = "DAMP ou DAMP0";
-                            _obj.Descricao = "***DAMP0";
-                            break;
-                        }
+                    //        _obj.Vencimento = _linhaOcorrencia[0].Trim() + " : " + _linhaOcorrencia[1].Trim();
+                    //        _obj.Pagamento = _linhaOcorrencia[3].Trim() + ": QuotaUnica:" + _linhaOcorrencia[4].Trim();
+                    //        _obj.Dump = _linhaOcorrencia[2].Trim();
+                    //        _obj.CodigoOcorrencia = "DAMP ou DAMP0";
+                    //        _obj.Descricao = "***DAMP0";
+                    //        break;
+                    //    }
                     default:
                         break;
                 }
@@ -247,8 +265,20 @@ namespace ConvetPdfToLayoutAlta.Models
                 throw new ArgumentOutOfRangeException("Ocorrencia do PDF - Arquivo: BusinessParcelas - case: " + _case, exOut.Message); ;
             }
 
-
             return _obj;
+        }
+
+        public Dump GetDump(string[] _arrayDump)
+        {
+            var itemDump = new Dump()
+            {
+                Validade = Regex.Replace(_arrayDump[0] + _arrayDump[1], @"[^[0-9]\/$]", ""),
+                Debito = Regex.Replace(_arrayDump[2], @"[^[0-9]$]", ""),
+                Numero = Regex.Replace(_arrayDump[3], @"[^[0-9]$]", ""),
+                Quota = Regex.Replace(_arrayDump[4], @"[^[0-9]$]", ""),
+            };
+
+            return itemDump;
         }
 
     }

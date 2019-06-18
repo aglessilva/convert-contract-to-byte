@@ -1,44 +1,45 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 
 namespace ConvetPdfToLayoutAlta
 {
-    public partial class frmSelectFolder : Form
+    public partial class FrmSelectFolder : Form
     {
-        public frmSelectFolder()
+        public FrmSelectFolder()
         {
             InitializeComponent();
         }
 
-        private void btnSelectDiretorioOrigem_Click(object sender, EventArgs e)
+        private void BtnSelectDiretorioOrigem_Click(object sender, EventArgs e)
         {
             if (folderBrowserDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 SelectFolders();
-                if (!File.Exists(textOrigemContratosPdf.Text + @"\SITU115A.TXT"))
+
+                if (!Directory.Exists(textOrigemContratosPdf.Text + @"\config"))
+                    Directory.CreateDirectory(textOrigemContratosPdf.Text + @"\config");
+
+                if (!File.Exists(textOrigemContratosPdf.Text + @"\config\SITU115A.TXT"))
                 {
-                    MessageBox.Show("Não foi encontrato o arquivo de Situações(SITU115A.TXT) de contratos neste diretório.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Não foi encontrato dentro da pasta 'config', o arquivo de SITUAÇÕES (SITU115A.TXT)", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                     return;
                 }
 
+                if (!File.Exists(textOrigemContratosPdf.Text + @"\config\ARQ_GARANTIA.TXT"))
+                {
+                    MessageBox.Show("Não foi encontrato dentro da pasta 'config', o arquivo de PONTEIRO (ARQ_GARANTIA.TXT).", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    return;
+                }
                 btnIniciarConvercao.Enabled = (textDestinoLayout.TextLength > 0 && textOrigemContratosPdf.TextLength > 0);
             }
         }
 
 
-        private void btnSelectDiretorioDestino_Click(object sender, EventArgs e)
+        private void BtnSelectDiretorioDestino_Click(object sender, EventArgs e)
         {
-            btnSelectDiretorioOrigem_Click(null, null);
+            BtnSelectDiretorioOrigem_Click(null, null);
         }
 
         /// <summary>
@@ -53,7 +54,7 @@ namespace ConvetPdfToLayoutAlta
 
         }
 
-        private void btnIniciarConvercao_Click(object sender, EventArgs e)
+        private void BtnIniciarConvercao_Click(object sender, EventArgs e)
         {
             this.Hide();
             frmGerarLayoutAlta f = new frmGerarLayoutAlta(this.textOrigemContratosPdf.Text, this.textDestinoLayout.Text);
@@ -61,13 +62,13 @@ namespace ConvetPdfToLayoutAlta
             this.Show();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void Button1_Click(object sender, EventArgs e)
         {
 
           //  var sbDados2 = "1,00200.00";
           //  var match = Regex.IsMatch(sbDados2.ToString(), @"^[0-2,]$");
 
-            frmGerarLayoutAlta f = new frmGerarLayoutAlta(@"C:\Blocado\", "");
+            frmGerarLayoutAlta f = new frmGerarLayoutAlta(@"D:\PDFSTombamento", "");
             f.ShowDialog();
             this.Show();
         }

@@ -16,7 +16,10 @@ namespace MalhaToByte
         static void Main(string[] args)
         {
 
-            try
+
+
+
+                    try
             {
               
                 if (!Directory.Exists("ZipFiles"))

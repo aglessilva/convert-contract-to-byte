@@ -33,17 +33,18 @@
             this.lblContrato = new System.Windows.Forms.Label();
             this.progressBarReaderPdf = new System.Windows.Forms.ProgressBar();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.lblTempo = new System.Windows.Forms.Label();
-            this.lblQtd = new System.Windows.Forms.Label();
             this.lblPendente = new System.Windows.Forms.Label();
-            this.lblRotuloTelas = new System.Windows.Forms.Label();
+            this.lblQtd = new System.Windows.Forms.Label();
+            this.lblTempo = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // backgroundWorker1
             // 
             this.backgroundWorker1.WorkerReportsProgress = true;
-            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
+            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorker1_DoWork);
+            this.backgroundWorker1.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BackgroundWorker1_ProgressChanged);
+            this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BackgroundWorker1_RunWorkerCompleted);
             // 
             // lblPorcentagem
             // 
@@ -58,7 +59,7 @@
             // lblContrato
             // 
             this.lblContrato.AutoSize = true;
-            this.lblContrato.Location = new System.Drawing.Point(11, 50);
+            this.lblContrato.Location = new System.Drawing.Point(11, 53);
             this.lblContrato.Name = "lblContrato";
             this.lblContrato.Size = new System.Drawing.Size(47, 13);
             this.lblContrato.TabIndex = 4;
@@ -70,31 +71,33 @@
             this.progressBarReaderPdf.Location = new System.Drawing.Point(12, 25);
             this.progressBarReaderPdf.Name = "progressBarReaderPdf";
             this.progressBarReaderPdf.Size = new System.Drawing.Size(420, 23);
+            this.progressBarReaderPdf.Step = 1;
             this.progressBarReaderPdf.TabIndex = 3;
             this.progressBarReaderPdf.UseWaitCursor = true;
             // 
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel1.Controls.Add(this.lblRotuloTelas);
             this.panel1.Controls.Add(this.lblPendente);
             this.panel1.Controls.Add(this.lblQtd);
             this.panel1.Controls.Add(this.lblContrato);
             this.panel1.Controls.Add(this.lblTempo);
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(444, 90);
+            this.panel1.Size = new System.Drawing.Size(444, 97);
             this.panel1.TabIndex = 6;
+            this.panel1.UseWaitCursor = true;
             // 
-            // lblTempo
+            // lblPendente
             // 
-            this.lblTempo.AutoSize = true;
-            this.lblTempo.Location = new System.Drawing.Point(11, 72);
-            this.lblTempo.Name = "lblTempo";
-            this.lblTempo.Size = new System.Drawing.Size(40, 13);
-            this.lblTempo.TabIndex = 7;
-            this.lblTempo.Text = "Tempo";
-            this.lblTempo.UseWaitCursor = true;
+            this.lblPendente.AutoSize = true;
+            this.lblPendente.ForeColor = System.Drawing.Color.Red;
+            this.lblPendente.Location = new System.Drawing.Point(11, 74);
+            this.lblPendente.Name = "lblPendente";
+            this.lblPendente.Size = new System.Drawing.Size(53, 13);
+            this.lblPendente.TabIndex = 8;
+            this.lblPendente.Text = "Pendente";
+            this.lblPendente.UseWaitCursor = true;
             // 
             // lblQtd
             // 
@@ -106,31 +109,21 @@
             this.lblQtd.Text = "Total";
             this.lblQtd.UseWaitCursor = true;
             // 
-            // lblPendente
+            // lblTempo
             // 
-            this.lblPendente.AutoSize = true;
-            this.lblPendente.Location = new System.Drawing.Point(207, 8);
-            this.lblPendente.Name = "lblPendente";
-            this.lblPendente.Size = new System.Drawing.Size(53, 13);
-            this.lblPendente.TabIndex = 8;
-            this.lblPendente.Text = "Pendente";
-            this.lblPendente.UseWaitCursor = true;
-            // 
-            // lblRotuloTelas
-            // 
-            this.lblRotuloTelas.AutoSize = true;
-            this.lblRotuloTelas.Location = new System.Drawing.Point(207, 72);
-            this.lblRotuloTelas.Name = "lblRotuloTelas";
-            this.lblRotuloTelas.Size = new System.Drawing.Size(28, 13);
-            this.lblRotuloTelas.TabIndex = 7;
-            this.lblRotuloTelas.Text = "Tela";
-            this.lblRotuloTelas.UseWaitCursor = true;
+            this.lblTempo.AutoSize = true;
+            this.lblTempo.Location = new System.Drawing.Point(247, 8);
+            this.lblTempo.Name = "lblTempo";
+            this.lblTempo.Size = new System.Drawing.Size(40, 13);
+            this.lblTempo.TabIndex = 7;
+            this.lblTempo.Text = "Tempo";
+            this.lblTempo.UseWaitCursor = true;
             // 
             // frmGerarLayoutAlta
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(444, 90);
+            this.ClientSize = new System.Drawing.Size(444, 97);
             this.Controls.Add(this.lblPorcentagem);
             this.Controls.Add(this.progressBarReaderPdf);
             this.Controls.Add(this.panel1);
@@ -139,7 +132,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "frmGerarLayoutAlta";
             this.UseWaitCursor = true;
-            this.Load += new System.EventHandler(this.frmGerarLayoutAlta_Load);
+            this.Load += new System.EventHandler(this.FrmGerarLayoutAlta_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
@@ -155,7 +148,6 @@
         private System.Windows.Forms.ProgressBar progressBarReaderPdf;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label lblTempo;
-        private System.Windows.Forms.Label lblRotuloTelas;
         private System.Windows.Forms.Label lblPendente;
         private System.Windows.Forms.Label lblQtd;
     }

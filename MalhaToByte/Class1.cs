@@ -16,9 +16,33 @@ namespace ConvertToByte
         {
 
 
+            int countItem = 0;
+
+            using (StreamWriter sw = new StreamWriter(@"D:\PDFSTombamento\txt\LayContrato.txt"))
+            {
+                var arr = Directory.GetFiles(@"D:\PDFSTombamento", "*.pdf", SearchOption.TopDirectoryOnly);
+                string strlinhacont = "";
+                arr.ToList().ForEach(q =>
+                {
+                    FileInfo f = new FileInfo(arr[countItem++]);
+                    using (StreamReader _lerCont = new StreamReader(@"D:\ALTA\TL16CONT.TXT"))
+                    {
+                        while (!_lerCont.EndOfStream)
+                        {
+                            strlinhacont = _lerCont.ReadLine();
+                            if (strlinhacont.Substring(1, 14).Equals(f.Name.Split('_')[0]))
+                            {
+                                sw.WriteLine(strlinhacont);
+                            }
+
+                        }
+
+                    }
+                });
+            }
 
 
-          
+            Environment.Exit(0);
 
 
 

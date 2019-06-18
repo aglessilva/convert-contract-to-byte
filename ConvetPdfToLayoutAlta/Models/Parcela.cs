@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace ConvetPdfToLayoutAlta.Models
 {
@@ -10,9 +6,7 @@ namespace ConvetPdfToLayoutAlta.Models
     {
         public Parcela()
         {
-           
         }
-        public bool IsCorrecao { get; set; }
         public string VencimentoCorrecao { get; set; }
         public string VencimentoAnterior { get; set; }
         public string Vencimento { get; set; }
@@ -36,6 +30,6 @@ namespace ConvetPdfToLayoutAlta.Models
         public string Proc_Emi_Pag { get; set; }
         public string Pago { get; set; }
         public string Mora { get; set; }
-
+        public int Sequencia { get; set; }
     }
 }

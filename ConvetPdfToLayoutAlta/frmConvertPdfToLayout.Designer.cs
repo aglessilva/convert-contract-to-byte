@@ -1,6 +1,6 @@
 ﻿namespace ConvetPdfToLayoutAlta
 {
-    partial class frmSelectFolder
+    partial class FrmSelectFolder
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmSelectFolder));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmSelectFolder));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnSelectDiretorioDestino = new System.Windows.Forms.Button();
             this.btnSelectDiretorioOrigem = new System.Windows.Forms.Button();
@@ -65,7 +65,7 @@
             this.btnSelectDiretorioDestino.TabIndex = 5;
             this.btnSelectDiretorioDestino.Text = "...";
             this.btnSelectDiretorioDestino.UseVisualStyleBackColor = true;
-            this.btnSelectDiretorioDestino.Click += new System.EventHandler(this.btnSelectDiretorioDestino_Click);
+            this.btnSelectDiretorioDestino.Click += new System.EventHandler(this.BtnSelectDiretorioDestino_Click);
             // 
             // btnSelectDiretorioOrigem
             // 
@@ -76,7 +76,7 @@
             this.btnSelectDiretorioOrigem.TabIndex = 4;
             this.btnSelectDiretorioOrigem.Text = "...";
             this.btnSelectDiretorioOrigem.UseVisualStyleBackColor = true;
-            this.btnSelectDiretorioOrigem.Click += new System.EventHandler(this.btnSelectDiretorioOrigem_Click);
+            this.btnSelectDiretorioOrigem.Click += new System.EventHandler(this.BtnSelectDiretorioOrigem_Click);
             // 
             // label2
             // 
@@ -92,9 +92,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(13, 68);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(224, 13);
+            this.label1.Size = new System.Drawing.Size(334, 13);
             this.label1.TabIndex = 2;
-            this.label1.Text = "Selecione o diretório de destino da converção";
+            this.label1.Text = "Selecione o diretório para os arquivos sequenciais que serão gerados";
             // 
             // textDestinoLayout
             // 
@@ -125,7 +125,7 @@
             this.btnIniciarConvercao.Text = "Iniciar Converção";
             this.btnIniciarConvercao.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btnIniciarConvercao.UseVisualStyleBackColor = true;
-            this.btnIniciarConvercao.Click += new System.EventHandler(this.btnIniciarConvercao_Click);
+            this.btnIniciarConvercao.Click += new System.EventHandler(this.BtnIniciarConvercao_Click);
             // 
             // folderBrowserDialog1
             // 
@@ -142,7 +142,7 @@
             this.button1.TabIndex = 2;
             this.button1.Text = "button1";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Click += new System.EventHandler(this.Button1_Click);
             // 
             // frmSelectFolder
             // 
@@ -158,7 +158,7 @@
             this.MinimizeBox = false;
             this.Name = "frmSelectFolder";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Converter Contratos   (v1.0) ";
+            this.Text = "Converter contratos para formato sequencial   (v1.0) ";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);

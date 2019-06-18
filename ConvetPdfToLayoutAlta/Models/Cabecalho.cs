@@ -8,6 +8,7 @@ namespace ConvetPdfToLayoutAlta.Models
 {
     public class Cabecalho
     {
+        public int Sequencia { get; set; }
         public string Numero { get; set; }
         public string DataBase { get; set; }
         public string Carteira { get; set; }
@@ -17,15 +18,10 @@ namespace ConvetPdfToLayoutAlta.Models
         public string Cpf { get; set; }
         public string DataNascimento { get; set; }
         public string EnderecoImovel { get; set; }
-        public string Bairro { get; set; }
-        public string Cep { get; set; }
-        public string Cidade { get; set; }
-        public string ImovelUF { get; set; }
-        public string CorrespondenciaEndereco { get; set; }
-        public string CorrespondenciaBairro { get; set; }
-        public string CorrespondenciaCep { get; set; }
-        public string CorrespondenciaCidade { get; set; }
-        public string CorrespondenciaUF { get; set; }
+        public string BairroImovel { get; set; }
+        public string CepImovel { get; set; }
+        public string CidadeImovel { get; set; }
+        public string UfImovel { get; set; }
         public string Cliente { get; set; }
         public string TelefoneResidencia { get; set; }
         public string TelefoneComercial { get; set; }
@@ -63,6 +59,8 @@ namespace ConvetPdfToLayoutAlta.Models
         public string DataReinclusao { get; set; }
         public string TipoFinanciamento { get; set; }
         public string DataUltimaAlteracao { get; set; }
+        public string Repactuacao { get; set; }
+        public string Carencia { get; set; }
         public string Prazo { get; set; }
         public string TipoOrigem { get; set; }
         public string Situacao { get; set; }
