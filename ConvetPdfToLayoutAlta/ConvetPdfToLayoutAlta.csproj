@@ -62,7 +62,6 @@
     <Compile Include="Models\BusinessCabecalho.cs" />
     <Compile Include="Models\Cabecalho.cs" />
     <Compile Include="Models\ContratoPdf.cs" />
-    <Compile Include="Models\Dump.cs" />
     <Compile Include="Models\Ocorrencia.cs" />
     <Compile Include="Models\Parcela.cs" />
     <Compile Include="Models\BusinessParcelas.cs" />

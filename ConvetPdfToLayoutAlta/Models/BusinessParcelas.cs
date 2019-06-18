@@ -268,18 +268,5 @@ namespace ConvetPdfToLayoutAlta.Models
             return _obj;
         }
 
-        public Dump GetDump(string[] _arrayDump)
-        {
-            var itemDump = new Dump()
-            {
-                Validade = Regex.Replace(_arrayDump[0] + _arrayDump[1], @"[^[0-9]\/$]", ""),
-                Debito = Regex.Replace(_arrayDump[2], @"[^[0-9]$]", ""),
-                Numero = Regex.Replace(_arrayDump[3], @"[^[0-9]$]", ""),
-                Quota = Regex.Replace(_arrayDump[4], @"[^[0-9]$]", ""),
-            };
-
-            return itemDump;
-        }
-
     }
 }
