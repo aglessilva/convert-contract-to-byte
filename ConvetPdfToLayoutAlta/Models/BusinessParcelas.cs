@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -6,7 +7,7 @@ namespace ConvetPdfToLayoutAlta.Models
 {
     public class BusinessParcelas
     {
-        public Parcela TrataLinhaParcelas(Parcela _obj, string[] _linha, int sequencia)
+        public Parcela TrataLinhaParcelas(Parcela _obj, string[] _linha, int sequencia, bool _hasTaxa)
         {
             string  _case =  "VAZIO";
             try
@@ -31,11 +32,15 @@ namespace ConvetPdfToLayoutAlta.Models
                             int count = 0;
 
                             _obj.Vencimento = Regex.Replace(_linha[count++], @"[^0-9\/$]", "");
-                            _obj.Pagamento = Regex.IsMatch(_linha[1].ToString(), @"^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[012])/[12][0-9]{3}$") ? Regex.Replace(_linha[count++], @"[^0-9\/$]", "") : "0"; ;
+
+                            if (_linha.Length >= 9)
+                                _obj.Pagamento = Regex.IsMatch(_linha[1].ToString(), @"^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[012])/[12][0-9]{3}$") ? Regex.Replace(_linha[count++], @"[^0-9\/$]", "") : "0";
+
                             _obj.NumeroPrazo = Regex.Replace(_linha[count++], @"[^0-9$]", "");
-                            _obj.Indice = _linha[count].StartsWith("1,00") ? Regex.Replace(_linha[count++], @"[^0-9$]", "") : "0";
+                            _obj.Indice = _linha[count].StartsWith("1,00") ? Regex.Replace(_linha[count++], @"[^0-9$]", "") : "0"; 
                             _obj.Prestacao = Regex.Replace(_linha[count++], @"[^0-9$]", "");
                             _obj.Seguro = Regex.Replace(_linha[count++], @"[^0-9$]", "");
+                            _obj.Taxa = _hasTaxa ? Regex.Replace(_linha[count++], @"[^0-9$]", "") : "0";
                             _obj.Encargo = Regex.Replace(_linha[count++], @"[^0-9$]", "");
                             _obj.Juros = Regex.Replace(_linha[count++], @"[^0-9$]", "");
                             _obj.Amortizacao = Regex.Replace(_linha[count++], @"[^0-9$]", "");
@@ -55,19 +60,16 @@ namespace ConvetPdfToLayoutAlta.Models
                             }
 
                            
-                            _obj.Banco = _linha.Length > 0 ? _linha[0].Trim() : "0";
-                            _obj.Agencia = _linha.Length > 1 ? _linha[1].Trim() : "0";
+                            _obj.Banco = _linha.Length > 0 ? Regex.Replace(_linha[0], @"[^0-9\/$]", "") : "0";
+                            _obj.Agencia = _linha.Length > 1 ? Regex.Replace(_linha[1], @"[^0-9\/$]", "") : "0";
                             _obj.TPG_EVE_HIS = _linha.Length > 2 ? _linha[2].Trim() : "0";
-                            _obj.Proc_Emi_Pag =  _linha.Length > 4 ? Regex.Replace(_linha[3], @"[^0-9\/$]", "") + Regex.Replace(_linha[4], @"[^0-9\/$]", "") : "01/01/1900";
+                            _obj.Proc_Emi_Pag =  _linha.Length > 4 ? Regex.Replace(_linha[3], @"[^0-9\/$]", "") + Regex.Replace(_linha[4], @"[^0-9\/$]", "") : "99/99/9999";
                             _obj.Pago = _linha.Length >=5 ? Regex.Replace(_linha[5], @"[^0-9$]", "") : "0";
                             _obj.Mora = _linha.Length > 6 ? Regex.Replace(_linha[6], @"[^0-9$]", "") : "0";
 
-                            //if (_linha.Length > 6)
-                            //    _obj.Mora = Regex.Replace(_linha[6], @"[^0-9$]", "");
-
                             break;
                         }
-                    case 4:
+                    case 4: // PEGA A LINHA DE PROXIMO PAGAMENTO E MORA
                         {
                             _case = "Case 4 - Metodo: TrataLinhaParcelas - PEGA A LINHA DE PROXIMO PAGAMENTO E MORA";
 
@@ -76,6 +78,12 @@ namespace ConvetPdfToLayoutAlta.Models
                             {
                                 _obj.Mora = Regex.Replace(_linha[2], @"[^0-9$]", "");
                             }
+                            break;
+                        }
+                    case 5: // DAMP
+                        {
+                            _case = "DAMP0 - Metodo: TrataOcorrencia -  Situação: DAMP0";
+                            _obj.Dump = Regex.Replace(_linha[1].Trim(), @"[^0-9$]", "");
                             break;
                         }
 
@@ -97,33 +105,80 @@ namespace ConvetPdfToLayoutAlta.Models
             return _linha.Split(' ').Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
         }
 
-
-        public Ocorrencia TrataOcorrencia(string[] _linhaOcorrencia, string _codigoOcorrencia )
+        public bool ValidaLinha (string _linha)
         {
+            return _linha.Split('*').Any(f => f.Equals("( ) "));
+        }
+
+        public string[] TratArrayPadrao2(string _linhaAtual, string _pagina, int _countExption )
+        {
+            string _codigoOcorrencia = string.Empty;
+            string[] arrayPagina = _pagina.Split('\n');
+            List<string> x = null;
+            string texto = _linhaAtual.Split('*').Single((f => f.Equals("( ) ")));
+            string texto1 = Regex.Replace(_linhaAtual.Trim(), @"[^A-Za-zà-ú0-9$.,]", " ").Trim();
+            int contador = 0;
+
+            for (int i = 0; i < arrayPagina.Length; i++)
+            {
+                if(arrayPagina[i].StartsWith(texto))
+                {
+                    if (_countExption == contador)
+                    {
+                        _codigoOcorrencia = Regex.Replace(arrayPagina[i], @"[^0-9$]", "");
+                         x = arrayPagina[(i - 1)].Split(' ').Where(j => !string.IsNullOrWhiteSpace(j)).ToList();
+
+                        if (!Regex.IsMatch(x[0].ToString(), @"(\d{2}\/\d{2}\/\d{4})"))
+                            x = arrayPagina[(i + 1)].Split(' ').Where(j => !string.IsNullOrWhiteSpace(j)).ToList();
+
+                        x.Insert(2, _codigoOcorrencia);
+
+                        for (int t = 0; t < x.Count; t++)
+                        {
+                            if(x[t].Contains("(") || x[t].Contains(")"))
+                            {
+                                x.RemoveAt(t);
+                                t--;
+                            }
+                        }
+
+                        
+                        break;
+                    }
+                    contador++;
+                }
+            }
+
+            return x.ToArray();
+        }
+
+        public Ocorrencia TrataOcorrencia(string[] _linhaOcorrencia )
+        {
+
             Ocorrencia _obj = new Ocorrencia();
-            string _case = string.Empty;
+            string _case = string.Empty, _codigoOcorrencia = _linhaOcorrencia[2].Trim();
             try
             {
-                int index = 0;
                 bool hasMora = _linhaOcorrencia.Any(h => h.StartsWith("Tot."));
-                bool hasFGTS = _linhaOcorrencia.Any(h => h.StartsWith("rec."));
+              //  bool hasLiquidacaoFGTS = _linhaOcorrencia.Any(h => h.StartsWith("Liquidação"));
 
-                if (hasFGTS)
+                if (_linhaOcorrencia.Any(d => d.Equals("DAMP")))
+                    _codigoOcorrencia = "DAMP";
+
+                var x = _linhaOcorrencia.ToList();
+
+                for (int i = 0; i < x.Count; i++)
                 {
+                    if(char.IsLetter(x[i],0))
+                    {
+                        x.RemoveAt(i);
+                        i--;
+                    }
                 }
 
-                if (hasMora)
-                {
-                   index = _linhaOcorrencia.ToList().FindIndex(f => f.StartsWith("Tot."));
-                    var x = _linhaOcorrencia.ToList();
-                    x.RemoveAt(index);
-                    _linhaOcorrencia = x.ToArray();
-                }
-
-               // string _tiraLetra = String.Join(" ", _linhaOcorrencia).Replace("Tot.", "").Replace("rec. Fgts", "");
-               // _tiraLetra = Regex.Replace(_tiraLetra, @"[^0-9\/,.\-$]", " ");
-               // _linhaOcorrencia = _tiraLetra.Split(' ').Where(x => !string.IsNullOrWhiteSpace(x) && !x.Equals(".")).ToArray();
-
+                _linhaOcorrencia = x.ToArray();
+               
+               
                 switch (_codigoOcorrencia)
                 {
                     case "004": // Mudança de Vencimento
@@ -139,7 +194,17 @@ namespace ConvetPdfToLayoutAlta.Models
                         }
                     case "005": //Alteração de Garantia
                         {
-                            throw new ArgumentOutOfRangeException("Case: 005 - Metodo: TrataOcorrencia  - Descrição: Nova Ocorrencia não tratada -  tipo de Ocorrencia: Alteração de Garantia");                           
+                            _case = "005 - Metodo: TrataOcorrencia -  Situação: Alteração de Garantia";
+
+
+                            _obj.Vencimento = _linhaOcorrencia[0].Trim();
+                            _obj.Pagamento = _linhaOcorrencia[1].Trim();
+                            _obj.CodigoOcorrencia = _linhaOcorrencia[2].Trim();
+                            _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[3].Trim(), @"[^0-9$]", "");
+                            _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[4].Trim(), @"[^0-9$]", "");
+                            _obj.Descricao = "***010Alteração de Garantia";
+
+                            break;
                         }
                     case "010": // Alteração Contratual
                         {
@@ -148,8 +213,8 @@ namespace ConvetPdfToLayoutAlta.Models
                             _obj.Vencimento = _linhaOcorrencia[0].Trim();
                             _obj.Pagamento = _linhaOcorrencia[1].Trim();
                             _obj.CodigoOcorrencia = _linhaOcorrencia[2].Trim();
-                            _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[5].Trim(), @"[^0-9$]", "");
-                            _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[6].Trim(), @"[^0-9$]", "");
+                            _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[3].Trim(), @"[^0-9$]", "");
+                            _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[4].Trim(), @"[^0-9$]", "");
                             _obj.Descricao = "***010Alteração Contratual";
                             break;
                         }
@@ -182,36 +247,38 @@ namespace ConvetPdfToLayoutAlta.Models
                             _obj.Vencimento = _linhaOcorrencia[count++].Trim();
                             _obj.Pagamento = _linhaOcorrencia[count++].Trim();
                             _obj.CodigoOcorrencia = _linhaOcorrencia[count++].Trim();
-                            if (_linhaOcorrencia.Length < 6)
-                            {
-                                if (_linhaOcorrencia[count].Length <= 6)
-                                {
-                                    int m = (count + 1);
-                                    if (Convert.ToInt32(_linhaOcorrencia[count]) < Convert.ToInt32(_linhaOcorrencia[m]))
-                                    _obj.Juros = _linhaOcorrencia[count++].Trim();
-                                }
-                            }
+                            if (hasMora)
+                                _obj.Juros = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
                             else
-                            {
-                                _obj.Juros = _linhaOcorrencia[(count++)].Trim();
-                                ;
-                            }
+                                _obj.Juros = "0";
 
                             _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
                             _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
-                            _obj.Descricao = "***021Amortização Rec Fgts";
+                            _obj.Descricao = "***021Amortização rec. Fgts";
                             break;
                         }
                     case "022": // Sinistro Parcial
                         {
-                            throw new ArgumentOutOfRangeException("Case: 022 - Metodo: TrataOcorrencia  - Descrição: Nova Ocorrencia não tratada -  tipo de Ocorrencia: Sinistro Parcial");                           
+                            int count = 0;
+                            _obj.Vencimento = _linhaOcorrencia[count++].Trim();
+                            _obj.Pagamento = Regex.IsMatch(_linhaOcorrencia[count].Trim(), @"[0-9]{2}/[0-9]{2}/[0-9]{4}") ? _linhaOcorrencia[count++].Trim() : "00010101".PadLeft(10, ' ');
+                            _obj.CodigoOcorrencia = _linhaOcorrencia[count++].Trim();
+                            if (hasMora)
+                                _obj.Juros = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
+                            else
+                                _obj.Juros = "0";
+
+                            _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[(_linhaOcorrencia.Length - 2)].Trim(), @"[^0-9$]", "");
+                            _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[_linhaOcorrencia.Length - 1].Trim(), @"[^0-9$]", "");
+                            _obj.Descricao = "***022Sinistro parcial";
+                            break;
                         }
                     case "030": // Incorporação no Saldo
                         {
                             _case = "030 - Metodo: TrataOcorrencia -  Situação: Incorporação no Saldo";
 
                             _obj.Vencimento = _linhaOcorrencia[0].Trim();
-                            _obj.Pagamento = _linhaOcorrencia[1].Trim();
+                            _obj.Pagamento = Regex.IsMatch(_linhaOcorrencia[1].Trim(), @"[0-9]{2}/[0-9]{2}/[0-9]{4}") ? _linhaOcorrencia[1].Trim() : "00010101".PadLeft(10,' ');
                             _obj.CodigoOcorrencia = _linhaOcorrencia[2].Trim();
                             _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[3].Trim(), @"[^0-9$]", "");
                             _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[4].Trim(), @"[^0-9$]", "");
@@ -220,7 +287,13 @@ namespace ConvetPdfToLayoutAlta.Models
                         }
                     case "031": // Consolidação da dívida
                         {
-                            throw new InvalidOperationException("Case: 031 - Metodo: TrataOcorrencia  - Descrição: Nova Ocorrencia não tratada -  tipo de Ocorrencia: Consolidação da dívida");                           
+                            _obj.Vencimento = _linhaOcorrencia[0].Trim();
+                            _obj.Pagamento = _linhaOcorrencia[1].Trim();
+                            _obj.CodigoOcorrencia = _linhaOcorrencia[2].Trim();
+                            _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[3].Trim(), @"[^0-9$]", "");
+                            _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[4].Trim(), @"[^0-9$]", "");
+                            _obj.Descricao = "***031Consolidação da divida";
+                            break;
                         }
                     case "032": // Incorporação de Juro
                         {
@@ -229,34 +302,80 @@ namespace ConvetPdfToLayoutAlta.Models
                             _obj.CodigoOcorrencia = _linhaOcorrencia[2].Trim();
                             _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[3].Trim(), @"[^0-9$]", "");
                             _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[4].Trim(), @"[^0-9$]", "");
-                            _obj.Descricao = "***032Incorporação de Juro";
+                            _obj.Descricao = "***032Incorporação juros";
                             break;
                         }
                     case "040": // Transferencia
                         {
                             throw new ArgumentOutOfRangeException("Case: 040 - Metodo: TrataOcorrencia  - Descrição: Nova Ocorrencia não tratada -  tipo de Ocorrencia: Transferencia");
                         }
+                    case "051": // Liquidação rec Fgts
+                        {
+                            int count = 0;
+                            _obj.Vencimento = _linhaOcorrencia[count++].Trim();
+                            _obj.Pagamento = _linhaOcorrencia[count++].Trim();
+                            _obj.CodigoOcorrencia = _linhaOcorrencia[count++].Trim();
+                            if (hasMora)
+                                _obj.Juros = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
+                            else _obj.Juros = "0";
+
+                            _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
+                            _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
+                            _obj.Descricao = "***051Liquidação Fgts";
+                            break;
+                        }
                     case "044": // Transferencia Parte Ideal
                         {
-                            throw new ArgumentOutOfRangeException("Case: 044 - Metodo: TrataOcorrencia  - Descrição: Nova Ocorrencia não tratada -  tipo de Ocorrencia: Transferencia Parte Ideal");
-                            
-                        }
-                    case "DAMP": // DAMP
-                        {
-                            throw new ArgumentOutOfRangeException("Nova Ocorrencia não tratada -  tipo de Ocorrencia: DAMP"); 
-                        }
-                    //case "DAMP0": // DAMP0
-                    //    {
-                    //        _case = "DAMP0 - Metodo: TrataOcorrencia -  Situação: DAMP0";
+                            int count = 0;
+                            _obj.Vencimento = _linhaOcorrencia[count++].Trim();
+                            _obj.Pagamento = _linhaOcorrencia[count++].Trim();
+                            _obj.CodigoOcorrencia = _linhaOcorrencia[count++].Trim();
+                            if (hasMora)
+                                _obj.Juros = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
+                            else _obj.Juros = "0";
 
-                    //        _obj.Vencimento = _linhaOcorrencia[0].Trim() + " : " + _linhaOcorrencia[1].Trim();
-                    //        _obj.Pagamento = _linhaOcorrencia[3].Trim() + ": QuotaUnica:" + _linhaOcorrencia[4].Trim();
-                    //        _obj.Dump = _linhaOcorrencia[2].Trim();
-                    //        _obj.CodigoOcorrencia = "DAMP ou DAMP0";
-                    //        _obj.Descricao = "***DAMP0";
-                    //        break;
-                    //    }
-                    default:
+                            _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
+                            _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
+                            _obj.Descricao = "***044Transf.Parte ideal";
+                            break;
+                        }
+                    case "050": // 050-Liquidação Antecipada
+                        {
+                            _case = "050 - Metodo: TrataOcorrencia -  Situação: -Liquidação Antecipada";
+
+                            int count = 0;
+                            _obj.Vencimento = _linhaOcorrencia[count++].Trim();
+                            _obj.Pagamento = _linhaOcorrencia[count++].Trim();
+                            _obj.CodigoOcorrencia = _linhaOcorrencia[count++].Trim();
+                            if (hasMora)
+                                _obj.Juros = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
+                            else
+                                _obj.Juros = "0";
+
+                            _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
+                            _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
+                            _obj.Descricao = "***050Liquidação Antecipada";
+                            break;
+                        }
+                    case "058": // 058-Liquidação Interveniência
+                        {
+                            _case = "058 - Metodo: TrataOcorrencia -  Situação: Liquidação Interveniência";
+
+                            int count = 0;
+                            _obj.Vencimento = _linhaOcorrencia[count++].Trim();
+                            _obj.Pagamento = _linhaOcorrencia[count++].Trim();
+                            _obj.CodigoOcorrencia = _linhaOcorrencia[count++].Trim();
+                            if (hasMora)
+                                _obj.Juros = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
+                            else
+                                _obj.Juros = "0";
+
+                            _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
+                            _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
+                            _obj.Descricao = "***058Liquidação Interveniência";
+                            break;
+                        }
+                    default :
                         break;
                 }
             }
@@ -267,6 +386,40 @@ namespace ConvetPdfToLayoutAlta.Models
 
             return _obj;
         }
+
+
+        public Parcela PreencheParcela(Parcela obj)
+        {
+            return new Parcela() {
+                Agencia = string.IsNullOrWhiteSpace(obj.Agencia) ? "0" : obj.Agencia,
+                Amortizacao = string.IsNullOrWhiteSpace(obj.Amortizacao) ? "0" : obj.Amortizacao,
+                AmortizacaoCorrecao = string.IsNullOrWhiteSpace(obj.AmortizacaoCorrecao) ? "0" : obj.AmortizacaoCorrecao,
+                Banco = string.IsNullOrWhiteSpace(obj.Banco) ? "033" : obj.Banco,
+                Encargo = string.IsNullOrWhiteSpace(obj.Encargo) ? "0" : obj.Encargo,
+                Indice = string.IsNullOrWhiteSpace(obj.Indice) ? "0" : obj.Indice,
+                IndiceCorrecao = string.IsNullOrWhiteSpace(obj.IndiceCorrecao) ? "0" : obj.IndiceCorrecao,
+                Juros = string.IsNullOrWhiteSpace(obj.Juros) ? "0" : obj.Juros,
+                Mora = string.IsNullOrWhiteSpace(obj.Mora) ? "0" : obj.Mora,
+                NumeroPrazo = string.IsNullOrWhiteSpace(obj.NumeroPrazo) ? "0" : obj.NumeroPrazo,
+                Pagamento = string.IsNullOrWhiteSpace(obj.Pagamento) ? "00010101" : obj.Pagamento,
+                Pago = string.IsNullOrWhiteSpace(obj.Pago) ? "0" : obj.Pago,
+                Prestacao = string.IsNullOrWhiteSpace(obj.Prestacao) ? "0" : obj.Prestacao,
+                Proc_Emi_Pag = string.IsNullOrWhiteSpace(obj.Proc_Emi_Pag) ? "0" : obj.Proc_Emi_Pag,
+                SaldoDevedor = string.IsNullOrWhiteSpace(obj.SaldoDevedor) ? "0" : obj.SaldoDevedor,
+                SaldoDevedorCorrecao = string.IsNullOrWhiteSpace(obj.SaldoDevedorCorrecao) ? "0" : obj.SaldoDevedorCorrecao,
+                Seguro = string.IsNullOrWhiteSpace(obj.Seguro) ? "0" : obj.Seguro,
+                Id = obj.Id,
+                IdCabecalho = obj.IdCabecalho,
+                Taxa = string.IsNullOrWhiteSpace(obj.Taxa) ? "0" : obj.Taxa,
+                TPG_EVE_HIS = string.IsNullOrWhiteSpace(obj.TPG_EVE_HIS) ? "0" : obj.TPG_EVE_HIS,
+                Vencimento = string.IsNullOrWhiteSpace(obj.Vencimento) ? "00010101" : obj.Vencimento,
+                VencimentoCorrecao = string.IsNullOrWhiteSpace(obj.VencimentoCorrecao) ? "0" : obj.VencimentoCorrecao,
+                Dump = string.IsNullOrWhiteSpace(obj.Dump) ? "0" : obj.Dump,
+            };
+        }
+
+
+
 
     }
 }

@@ -8,7 +8,6 @@ namespace ConvetPdfToLayoutAlta.Models
         {
         }
         public string VencimentoCorrecao { get; set; }
-        public string VencimentoAnterior { get; set; }
         public string Vencimento { get; set; }
         public string Pagamento { get; set; }
         public string NumeroPrazo { get; set; }
@@ -22,7 +21,6 @@ namespace ConvetPdfToLayoutAlta.Models
         public string Amortizacao { get; set; }
         public string AmortizacaoCorrecao { get; set; }
         public string SaldoDevedor { get; set; }
-        public string SaldoDevedorAntes { get; set; }
         public string SaldoDevedorCorrecao { get; set; }
         public string Banco { get; set; }
         public string Agencia { get; set; }
@@ -30,6 +28,8 @@ namespace ConvetPdfToLayoutAlta.Models
         public string Proc_Emi_Pag { get; set; }
         public string Pago { get; set; }
         public string Mora { get; set; }
-        public int Sequencia { get; set; }
+        public string Dump { get; set; }
+        public int Id { get; set; }
+        public int IdCabecalho { get; set; }
     }
 }

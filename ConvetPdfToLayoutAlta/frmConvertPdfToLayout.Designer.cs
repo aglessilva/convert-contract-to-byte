@@ -83,18 +83,18 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(13, 23);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(228, 13);
+            this.label2.Size = new System.Drawing.Size(165, 13);
             this.label2.TabIndex = 3;
-            this.label2.Text = "Selecione o diretório dos contratos bloqueados";
+            this.label2.Text = "Selecione o diretório de contratos";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(13, 68);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(334, 13);
+            this.label1.Size = new System.Drawing.Size(282, 13);
             this.label1.TabIndex = 2;
-            this.label1.Text = "Selecione o diretório para os arquivos sequenciais que serão gerados";
+            this.label1.Text = "Selecione o diretório onde será gerado os arquivos da Alta";
             // 
             // textDestinoLayout
             // 
@@ -144,7 +144,7 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.Button1_Click);
             // 
-            // frmSelectFolder
+            // FrmSelectFolder
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -156,7 +156,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "frmSelectFolder";
+            this.Name = "FrmSelectFolder";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Converter contratos para formato sequencial   (v1.0) ";
             this.groupBox1.ResumeLayout(false);

@@ -8,7 +8,7 @@ namespace ConvetPdfToLayoutAlta.Models
 {
     public class Cabecalho
     {
-        public int Sequencia { get; set; }
+        public int Id { get; set; }
         public string Numero { get; set; }
         public string DataBase { get; set; }
         public string Carteira { get; set; }
