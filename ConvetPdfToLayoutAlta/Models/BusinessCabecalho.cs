@@ -356,24 +356,33 @@ namespace ConvetPdfToLayoutAlta.Models
                         {
                             int count = 0;
                             _case = "13 - Metodo: TrataCabecalho -  campo: PIS,CAC TxCET...";
-                            if (_arrayLinha.Length == 2)
+
+                            if (!string.IsNullOrWhiteSpace(_campos))
                             {
-                                if (!string.IsNullOrWhiteSpace(_campos))
-                                {
-                                    if (_campos.Contains("CET"))
-                                        obj.TxCETAno = Regex.Replace(_arrayLinha[count++].Trim(), @"[^0-9$]+", "");
-                                    if (_campos.Contains("CADOC"))
-                                        obj.DataCaDoc = Regex.Replace(_arrayLinha[count++].Trim(), @"[^0-9$]+", "");
-                                }
-                            }
-                            else
-                            {
-                                obj.TxCETAno = Regex.Replace(_arrayLinha[count++].Trim(), @"[^0-9$]+", "");
-                                obj.TxCEMes = Regex.Replace(_arrayLinha[count++].Trim(), @"[^0-9$]+", "");
-                                obj.Cartorio = _arrayLinha.Length > 5 ? Regex.Replace(_arrayLinha[count++].Trim(), @"[^A-Za-z$]+", "") : "";
-                                obj.CAC = Regex.Replace(_arrayLinha[count++].Trim(), @"[^0-9$]+", "");
-                                obj.Pis = Regex.Replace(_arrayLinha[count++].Trim(), @"[^0-9$]+", "");
-                                obj.DataCaDoc = Regex.Replace(_arrayLinha[count++].Trim(), @"[^0-9$]+", "");
+                                if (_campos.Contains("Ano"))
+                                    obj.TxCETAno = Regex.Replace(_arrayLinha[count++].Trim(), @"[^0-9$]+", "");
+                                else
+                                    obj.TxCETAno = "0";
+
+                                if (_campos.Contains("Mes"))
+                                    obj.TxCEMes = Regex.Replace(_arrayLinha[count++].Trim(), @"[^0-9$]+", "");
+                                else
+                                    obj.TxCEMes = "0";
+
+                                if (_campos.Contains("CAC"))
+                                    obj.CAC = Regex.Replace(_arrayLinha[count++].Trim(), @"[^0-9$]+", "");
+                                else
+                                    obj.CAC = "0";
+
+                                if (_campos.Contains("PIS"))
+                                    obj.Pis = Regex.Replace(_arrayLinha[count++].Trim(), @"[^0-9$]+", "");
+                                else
+                                    obj.Pis = "0";
+
+                                if (_campos.Contains("CADOC"))
+                                    obj.DataCaDoc = Regex.Replace(_arrayLinha[count++].Trim(), @"[^0-9$]+", "");
+                                else
+                                    obj.DataCaDoc = "0";
                             }
 
                             break;
@@ -966,25 +975,29 @@ namespace ConvetPdfToLayoutAlta.Models
                     {
                         strAlta = string.Empty;
 
-                        q.Parcelas.ForEach(p => {
-
+                        q.Parcelas.ForEach(p =>
+                        {
                             strAlta = string.Empty;
 
                             strAlta = string.Format("{0}", (q.Carteira.Substring(2, 2) + q.Contrato).PadRight(15, '0'));
-                            strAlta += string.Format("{0}{1}", p.Vencimento.Trim().PadLeft(10, '0'), p.Indice.Trim().PadRight(7,'0'));
+                            strAlta += string.Format("{0}{1}", p.Vencimento.Trim().PadLeft(10, '0'), p.Indice.Trim().PadRight(7, '0'));
                             strAlta += string.Format("{0}{1}", p.Pagamento.Trim().PadLeft(10, '0'), p.NumeroPrazo.Trim().PadLeft(3, '0'));
                             strAlta += string.Format("{0}{1}", p.Prestacao.Trim().PadLeft(18, '0'), p.Seguro.Trim().PadLeft(18, '0'));
                             strAlta += string.Format("{0}{1}", p.Taxa.Trim().PadLeft(18, '0'), "0".PadLeft(18, '0'));
-                            strAlta += string.Format("{0}{1}", p.AmortizacaoCorrecao.Trim().PadLeft(17, '0'),"+" + p.SaldoDevedorCorrecao.Trim().PadLeft(18, '0'));
+                            strAlta += string.Format("{0}{1}", p.AmortizacaoCorrecao.Trim().PadLeft(17, '0'), "+" + p.SaldoDevedorCorrecao.Trim().PadLeft(18, '0'));
                             strAlta += string.Format("{0}{1}", p.Encargo.Trim().PadLeft(18, '0'), p.Pago.Trim().PadLeft(18, '0'));
                             strAlta += string.Format("{0}{1}", p.Juros.Trim().PadLeft(18, '0'), p.Mora.Trim().PadLeft(18, '0'));
                             strAlta += string.Format("{0}{1}", p.Amortizacao.Trim().PadLeft(17, '0'), "+" + p.SaldoDevedor.Trim().PadLeft(18, '0'));
                             strAlta += string.Format("{0}{1}{2}", "0".PadLeft(4, '0'), "0".PadLeft(7, '0'), "0".PadLeft(3, '0'));
                             strAlta += string.Format("{0}{1}", p.Proc_Emi_Pag.Trim().PadLeft(20, '0'), "0".PadLeft(15, '0'));
+
+                            escreverOcorrencia.WriteLine(strAlta);
+                            strAlta = string.Empty;
                         });
+                        strAlta = string.Empty;
                     });
 
-                    }
+                }
                     strAlta = string.Empty;
             }
 

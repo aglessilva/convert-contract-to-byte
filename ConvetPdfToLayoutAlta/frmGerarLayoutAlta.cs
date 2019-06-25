@@ -33,7 +33,7 @@ namespace ConvetPdfToLayoutAlta
             try
             {
                 // LOCALIZA SOMENTE OS ARQUIVOS PDF
-                listContratoBlockPdf = Directory.EnumerateFiles(diretorioOrigemPdf, "*.pdf", SearchOption.TopDirectoryOnly);
+                listContratoBlockPdf = Directory.EnumerateFiles(diretorioOrigemPdf, "*.pdf", SearchOption.AllDirectories);
 
                 if (listContratoBlockPdf.Count() == 0)
                 {
@@ -608,7 +608,7 @@ namespace ConvetPdfToLayoutAlta
                         backgroundWorker1.ReportProgress(_countPercent++, readerContrato);
 
                         // a cada X contratos lidos, escreve o conteudo no arquivo texto de contratos, ocorrencia parcelas...etc
-                        if (contador == 1000)
+                        if (contador == 10)
                         {
                             string strStatus = string.Format("Gerando o {0}º Lote.#{1}", countLote++, w);
                             backgroundWorker1.ReportProgress(_countPercent, strStatus);
