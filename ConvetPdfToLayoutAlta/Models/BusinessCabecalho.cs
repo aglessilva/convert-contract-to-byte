@@ -9,6 +9,12 @@ namespace ConvetPdfToLayoutAlta.Models
 {
     public class BusinessCabecalho
     {
+        /// <summary>
+        /// Função que trata e extrais cada linhas de registro do PDF
+        /// </summary>
+        /// <param name="_linha">Linha do Pdf</param>
+        /// <param name="_campo"> numero da linha  do pdf</param>
+        /// <returns></returns>
         public string[] TrataLinhaPDF(string _linha, int _campo)
         {
             string[] _arrayLinha = null;
