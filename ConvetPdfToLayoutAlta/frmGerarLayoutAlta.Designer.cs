@@ -33,6 +33,7 @@
             this.lblContrato = new System.Windows.Forms.Label();
             this.progressBarReaderPdf = new System.Windows.Forms.ProgressBar();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.lblPasta = new System.Windows.Forms.Label();
             this.lblPendente = new System.Windows.Forms.Label();
             this.lblQtd = new System.Windows.Forms.Label();
             this.lblTempo = new System.Windows.Forms.Label();
@@ -49,7 +50,7 @@
             // lblPorcentagem
             // 
             this.lblPorcentagem.AutoSize = true;
-            this.lblPorcentagem.Location = new System.Drawing.Point(208, 54);
+            this.lblPorcentagem.Location = new System.Drawing.Point(243, 55);
             this.lblPorcentagem.Name = "lblPorcentagem";
             this.lblPorcentagem.Size = new System.Drawing.Size(13, 13);
             this.lblPorcentagem.TabIndex = 5;
@@ -59,7 +60,7 @@
             // lblContrato
             // 
             this.lblContrato.AutoSize = true;
-            this.lblContrato.Location = new System.Drawing.Point(11, 53);
+            this.lblContrato.Location = new System.Drawing.Point(11, 54);
             this.lblContrato.Name = "lblContrato";
             this.lblContrato.Size = new System.Drawing.Size(47, 13);
             this.lblContrato.TabIndex = 4;
@@ -68,9 +69,9 @@
             // 
             // progressBarReaderPdf
             // 
-            this.progressBarReaderPdf.Location = new System.Drawing.Point(12, 25);
+            this.progressBarReaderPdf.Location = new System.Drawing.Point(12, 26);
             this.progressBarReaderPdf.Name = "progressBarReaderPdf";
-            this.progressBarReaderPdf.Size = new System.Drawing.Size(420, 23);
+            this.progressBarReaderPdf.Size = new System.Drawing.Size(470, 23);
             this.progressBarReaderPdf.Step = 1;
             this.progressBarReaderPdf.TabIndex = 3;
             this.progressBarReaderPdf.UseWaitCursor = true;
@@ -79,15 +80,28 @@
             // 
             this.panel1.BackColor = System.Drawing.SystemColors.Control;
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.lblPasta);
             this.panel1.Controls.Add(this.lblPendente);
             this.panel1.Controls.Add(this.lblQtd);
             this.panel1.Controls.Add(this.lblContrato);
             this.panel1.Controls.Add(this.lblTempo);
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(444, 97);
+            this.panel1.Size = new System.Drawing.Size(494, 97);
             this.panel1.TabIndex = 6;
             this.panel1.UseWaitCursor = true;
+            // 
+            // lblPasta
+            // 
+            this.lblPasta.AutoSize = true;
+            this.lblPasta.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPasta.ForeColor = System.Drawing.Color.DarkBlue;
+            this.lblPasta.Location = new System.Drawing.Point(244, 74);
+            this.lblPasta.Name = "lblPasta";
+            this.lblPasta.Size = new System.Drawing.Size(37, 13);
+            this.lblPasta.TabIndex = 9;
+            this.lblPasta.Text = "Pasta:";
+            this.lblPasta.UseWaitCursor = true;
             // 
             // lblPendente
             // 
@@ -103,7 +117,7 @@
             // lblQtd
             // 
             this.lblQtd.AutoSize = true;
-            this.lblQtd.Location = new System.Drawing.Point(11, 8);
+            this.lblQtd.Location = new System.Drawing.Point(11, 6);
             this.lblQtd.Name = "lblQtd";
             this.lblQtd.Size = new System.Drawing.Size(31, 13);
             this.lblQtd.TabIndex = 7;
@@ -113,7 +127,7 @@
             // lblTempo
             // 
             this.lblTempo.AutoSize = true;
-            this.lblTempo.Location = new System.Drawing.Point(247, 8);
+            this.lblTempo.Location = new System.Drawing.Point(239, 6);
             this.lblTempo.Name = "lblTempo";
             this.lblTempo.Size = new System.Drawing.Size(40, 13);
             this.lblTempo.TabIndex = 7;
@@ -124,7 +138,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(444, 97);
+            this.ClientSize = new System.Drawing.Size(494, 97);
             this.Controls.Add(this.lblPorcentagem);
             this.Controls.Add(this.progressBarReaderPdf);
             this.Controls.Add(this.panel1);
@@ -151,5 +165,6 @@
         private System.Windows.Forms.Label lblTempo;
         private System.Windows.Forms.Label lblPendente;
         private System.Windows.Forms.Label lblQtd;
+        private System.Windows.Forms.Label lblPasta;
     }
 }

@@ -35,7 +35,7 @@ namespace ConvetPdfToLayoutAlta
                 btnIniciarConvercao.Enabled = (textDestinoLayout.TextLength > 0 && textOrigemContratosPdf.TextLength > 0);
             }
         }
-
+        
 
         private void BtnSelectDiretorioDestino_Click(object sender, EventArgs e)
         {
@@ -56,8 +56,14 @@ namespace ConvetPdfToLayoutAlta
 
         private void BtnIniciarConvercao_Click(object sender, EventArgs e)
         {
+
+            if (string.IsNullOrWhiteSpace(comboBoxTela.Text))
+            {
+                MessageBox.Show("Selecione uma tela para converção.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
             this.Hide();
-            frmGerarLayoutAlta f = new frmGerarLayoutAlta(this.textOrigemContratosPdf.Text, this.textDestinoLayout.Text);
+            frmGerarLayoutAlta f = new frmGerarLayoutAlta(this.textOrigemContratosPdf.Text, this.textDestinoLayout.Text, comboBoxTela.Text);
             f.ShowDialog();
             this.Show();
         }
@@ -68,11 +74,16 @@ namespace ConvetPdfToLayoutAlta
           //  var sbDados2 = "1,00200.00";
           //  var match = Regex.IsMatch(sbDados2.ToString(), @"^[0-2,]$");
 
-            frmGerarLayoutAlta f = new frmGerarLayoutAlta(@"D:\PDFSTombamento", "");
+            frmGerarLayoutAlta f = new frmGerarLayoutAlta(@"D:\PDFSTombamento", "","TELA 16");
             f.ShowDialog();
             this.Show();
         }
 
-        
+        private void button2_Click(object sender, EventArgs e)
+        {
+            frmGerarLayoutAlta f = new frmGerarLayoutAlta(@"D:\PDFSTombamento\Exceptions", "", "TELA 16");
+            f.ShowDialog();
+            this.Show();
+        }
     }
 }

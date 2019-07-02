@@ -31,6 +31,7 @@ namespace ConvetPdfToLayoutAlta.Models
         public string TxCETAno { get; set; }
         public string TxCEMes { get; set; }
         public string Cartorio { get; set; }
+        public string Iof { get; set; }
         public string Pis { get; set; }
         public string DataCaDoc { get; set; }
         public string CAC { get; set; }
@@ -38,6 +39,7 @@ namespace ConvetPdfToLayoutAlta.Models
         public string DataContrato { get; set; }
         public string OrigemRecurso { get; set; }
         public string FgtsUtilizado { get; set; }
+        public string Comissao { get; set; }
         public string Prestacao { get; set; }
         public string Sistema { get; set; }
         public string ValorFinanciamento { get; set; }

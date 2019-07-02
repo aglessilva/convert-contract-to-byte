@@ -16,6 +16,7 @@ namespace ConvetPdfToLayoutAlta.Models
         public string Prestacao { get; set; }
         public string Seguro { get; set; }
         public string Taxa { get; set; }
+        public string Iof { get; set; }
         public string Encargo { get; set; }
         public string Juros { get; set; }
         public string Amortizacao { get; set; }
@@ -31,5 +32,7 @@ namespace ConvetPdfToLayoutAlta.Models
         public string Dump { get; set; }
         public int Id { get; set; }
         public int IdCabecalho { get; set; }
+        public string DataVencimentoAnterior { get; set; }
+        public bool IsAnt { get; set; }
     }
 }

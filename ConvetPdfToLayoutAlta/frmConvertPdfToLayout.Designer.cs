@@ -39,6 +39,8 @@
             this.btnIniciarConvercao = new System.Windows.Forms.Button();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.button1 = new System.Windows.Forms.Button();
+            this.comboBoxTela = new System.Windows.Forms.ComboBox();
+            this.button2 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -50,7 +52,7 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.textDestinoLayout);
             this.groupBox1.Controls.Add(this.textOrigemContratosPdf);
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
+            this.groupBox1.Location = new System.Drawing.Point(12, 40);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(556, 122);
             this.groupBox1.TabIndex = 0;
@@ -118,7 +120,7 @@
             this.btnIniciarConvercao.Enabled = false;
             this.btnIniciarConvercao.Image = global::ConvetPdfToLayoutAlta.Properties.Resources._1485477153_arrow_right_78596;
             this.btnIniciarConvercao.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnIniciarConvercao.Location = new System.Drawing.Point(224, 140);
+            this.btnIniciarConvercao.Location = new System.Drawing.Point(224, 170);
             this.btnIniciarConvercao.Name = "btnIniciarConvercao";
             this.btnIniciarConvercao.Size = new System.Drawing.Size(128, 32);
             this.btnIniciarConvercao.TabIndex = 1;
@@ -136,7 +138,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(479, 145);
+            this.button1.Location = new System.Drawing.Point(479, 168);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 2;
@@ -144,11 +146,37 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.Button1_Click);
             // 
+            // comboBoxTela
+            // 
+            this.comboBoxTela.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxTela.FormattingEnabled = true;
+            this.comboBoxTela.Items.AddRange(new object[] {
+            "TELA 16",
+            "TELA 18",
+            "TELA 20",
+            "TELA 25"});
+            this.comboBoxTela.Location = new System.Drawing.Point(12, 13);
+            this.comboBoxTela.Name = "comboBoxTela";
+            this.comboBoxTela.Size = new System.Drawing.Size(178, 21);
+            this.comboBoxTela.TabIndex = 3;
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(28, 168);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 4;
+            this.button2.Text = "button2";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
             // FrmSelectFolder
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(580, 178);
+            this.ClientSize = new System.Drawing.Size(580, 210);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.comboBoxTela);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.btnIniciarConvercao);
             this.Controls.Add(this.groupBox1);
@@ -177,6 +205,8 @@
         private System.Windows.Forms.Button btnIniciarConvercao;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.ComboBox comboBoxTela;
+        private System.Windows.Forms.Button button2;
     }
 }
 
