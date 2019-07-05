@@ -37,6 +37,7 @@
             this.lblPendente = new System.Windows.Forms.Label();
             this.lblQtd = new System.Windows.Forms.Label();
             this.lblTempo = new System.Windows.Forms.Label();
+            this.lblLidos = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -80,6 +81,7 @@
             // 
             this.panel1.BackColor = System.Drawing.SystemColors.Control;
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.lblLidos);
             this.panel1.Controls.Add(this.lblPasta);
             this.panel1.Controls.Add(this.lblPendente);
             this.panel1.Controls.Add(this.lblQtd);
@@ -127,12 +129,22 @@
             // lblTempo
             // 
             this.lblTempo.AutoSize = true;
-            this.lblTempo.Location = new System.Drawing.Point(239, 6);
+            this.lblTempo.Location = new System.Drawing.Point(296, 6);
             this.lblTempo.Name = "lblTempo";
             this.lblTempo.Size = new System.Drawing.Size(40, 13);
             this.lblTempo.TabIndex = 7;
             this.lblTempo.Text = "Tempo";
             this.lblTempo.UseWaitCursor = true;
+            // 
+            // lblLidos
+            // 
+            this.lblLidos.AutoSize = true;
+            this.lblLidos.ForeColor = System.Drawing.Color.ForestGreen;
+            this.lblLidos.Location = new System.Drawing.Point(374, 54);
+            this.lblLidos.Name = "lblLidos";
+            this.lblLidos.Size = new System.Drawing.Size(13, 13);
+            this.lblLidos.TabIndex = 10;
+            this.lblLidos.Text = "0";
             // 
             // frmGerarLayoutAlta
             // 
@@ -166,5 +178,6 @@
         private System.Windows.Forms.Label lblPendente;
         private System.Windows.Forms.Label lblQtd;
         private System.Windows.Forms.Label lblPasta;
+        private System.Windows.Forms.Label lblLidos;
     }
 }

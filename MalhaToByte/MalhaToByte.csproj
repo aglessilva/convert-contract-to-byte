@@ -55,6 +55,9 @@
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Homolog|AnyCPU'">
+    <OutputPath>bin\Homolog\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="DotNetZip">
       <HintPath>..\packages\DotNetZip.1.13.3\lib\net40\DotNetZip.dll</HintPath>

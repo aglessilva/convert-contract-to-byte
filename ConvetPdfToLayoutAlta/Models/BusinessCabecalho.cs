@@ -21,7 +21,6 @@ namespace ConvetPdfToLayoutAlta.Models
 
             switch (_campo)
             {
-
                 case 6:
                     {
                         _linha = _linha = Regex.Replace(_linha.Replace("Nº", ":").Replace("Data Base", ""), @"[^\wÀ-úa-zA-Z0-9:$]+", " ");
@@ -30,7 +29,7 @@ namespace ConvetPdfToLayoutAlta.Models
                     }
                 case 7:
                     {
-                        _arrayLinha = _linha.Split(':').Where(x => !string.IsNullOrWhiteSpace(x)).ToArray(); ;
+                        _arrayLinha = _linha.Split(':').Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
                         break;
                     }
                 case 8:
@@ -83,7 +82,6 @@ namespace ConvetPdfToLayoutAlta.Models
                                                   .Replace("UF", "")
                                                   .Trim().Split(':')
                                                   .Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
-
                         break;
                     }
                 case 11:
@@ -115,166 +113,116 @@ namespace ConvetPdfToLayoutAlta.Models
                     }
                 case 14:
                     {
-                        _arrayLinha = _linha.Replace("Plano", "")
-                                            .Replace("Data Contrato", ":")
-                                            .Replace("COMISSÃO", ":")
-                                            .Replace("FGTS.UTILIZADO", ":")
-                                            .Replace("Origem de Recursos", ":")
-                                            .Replace("Prestação", ":")
+                        _linha = Regex.Replace(_linha, @"[^0-9a-zà-úÀ-ÙA-Z\/.,\-]+", " ");
+                        _arrayLinha = _linha
+                                            .Replace("Plano", ":Plano")
+                                            .Replace("Data Contrato", ":DtContrato")
+                                            .Replace("COMISSÃO", ":Comisao")
+                                            .Replace("FGTS.UTILIZADO", ":FgtsUtil")
+                                            .Replace("Origem de Recursos", ":OriRec")
+                                            .Replace("Prestação", ":Prestacao")
                                             .Trim().Split(':')
                                             .Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
-
-                        if (_linha.Contains("FGTS.UTILIZADO"))
-                        {
-                            var newItem = _arrayLinha.ToList();
-                            newItem.Add("FGTS");
-                            _arrayLinha = newItem.ToArray();
-                        }
-                        if (_linha.Contains("COMISSÃO"))
-                        {
-                            var newItem = _arrayLinha.ToList();
-                            newItem.Add("COMISSÃO");
-                            _arrayLinha = newItem.ToArray();
-                        }
-
                         break;
                     }
                 case 15:
                     {
-
+                        _linha = Regex.Replace(_linha, @"[^0-9a-zà-úA-Z\/.,\-]+", " ");
                         _arrayLinha = _linha
-                                            .Replace("Sistema", "")
-                                            .Replace("Valor Financiamento", ":")
-                                            .Replace("Origem de Recursos", ":")
-                                            .Replace("Código Contábil", ":")
-                                            .Replace("Seguro MIP", ":")
-                                            .Replace("Razão", ":")
+                                            .Replace("Sistema", ":Sistema")
+                                            .Replace("Valor Financiamento", ":VlrFinan")
+                                            .Replace("Origem de Recursos", ":OrigRec")
+                                            .Replace("Código Contábil", ":Contabil")
+                                            .Replace("Seguro MIP", ":SeguroMIP")
+                                            .Replace("TAXA", ":TAXA")
+                                            .Replace("Razão", ":Razao")
+                                            .Replace("FGTS.UTILIZADO", ":FgtsUtil")
                                             .Trim().Split(':')
                                             .Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
-
-                        if (_linha.Contains("Razão"))
-                        {
-                            var x = _arrayLinha.ToList();
-                            x.Add("Razao");
-                            _arrayLinha = x.ToArray();
-                        }
+                        
                         break;
                     }
                 case 16:
                     {
+                        _linha = Regex.Replace(_linha, @"[^0-9a-zà-úA-Z\/.,\-]+", " ");
                         _arrayLinha = _linha
-                                           .Replace("Data Garanta", "")
-                                           .Replace("Agência", ":")
-                                           .Replace("Código Contábil", ":")
-                                           .Replace("Seguro DFI", ":")
-                                           .Trim().Split(':')
-                                           .Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
+                                            .Replace("Data Garanta", ":DtGarantia")
+                                            .Replace("Agência", ":Agencia")
+                                            .Replace("Código Contábil", ":Contabil")
+                                            .Replace("Seguro DFI", ":SeguroDFi")
+                                            .Replace("Origem de Recursos", ":OrigRec")
+                                            .Trim().Split(':')
+                                            .Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
                         break;
                     }
                 case 17:
                     {
+                        _linha = Regex.Replace(_linha, @"[^0-9a-zà-úA-Z\/.,\-]+", " ");
                         _arrayLinha = _linha
-                                           .Replace("Prazo", "")
-                                           .Replace("Valor Garanta", ":")
-                                           .Replace("Empreendimento", ":")
-                                           .Replace("Data 1º Vencimento", ":")
-                                           .Replace("Agência", ":")
-                                           .Replace("TAXA", ":")
-                                           .Replace("Razão", ":")
+                                            .Replace("Prazo", ":Prazo")
+                                            .Replace("Valor Garanta", ":vlrGrantia")
+                                            .Replace("Empreendimento", ":Emp")
+                                            .Replace("Data 1 Vencimento", ":Dt1Venc")
+                                            .Replace("Agência", ":Agencia")
+                                            .Replace("TAXA", ":TAXA")
+                                            .Replace("Razão", ":Razao")
+                                            .Replace("IOF.SEG", ":SEG")
+                                            .Replace("Carência", ":Carencia")
+                                            .Replace("Código Contábil", ":Contabil")
                                            .Trim().Split(':')
                                            .Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
 
-                        if (_linha.Contains("Razão"))
-                        {
-                            var x = _arrayLinha.ToList();
-                            x.Add("Razao");
-                            _arrayLinha = x.ToArray();
-                        }
-                        if (_linha.Contains("TAXA"))
-                        {
-                            var x = _arrayLinha.ToList();
-                            x.Add("TAXA");
-                            _arrayLinha = x.ToArray();
-                        }
-                        if (_linha.Contains("1º"))
-                        {
-                            var x = _arrayLinha.ToList();
-                            x.Add("1ºVENCIMENTO");
-                            _arrayLinha = x.ToArray();
-                        }
                         break;
                     }
                 case 18:
                     {
-                        _linha = Regex.Replace(_linha, @"[^0-9a-zà-úA-Z\/.,]+", " ");
+                        _linha = Regex.Replace(_linha, @"[^0-9a-zà-úA-Z\/.,\-]+", " ");
                         _arrayLinha = _linha
                                            .Replace("Taxa Juros", ":TaxaJuros").Trim()
                                            .Replace("Data 1 Vencimento", ":Data1v").Trim()
-                                           .Replace("Empreendimento", ":Empreendimento").Trim()
+                                           .Replace("Empreendimento", ":Emp").Trim()
                                            .Replace("Apólice", ":apolice").Trim()
                                            .Replace("Razão", ":Razao").Trim()
                                            .Replace("IOF.SEG", ":SEG").Trim()
                                            .Replace("Correção", ":Correcao").Trim()
                                            .Replace("Data Inclusao", ":DtInc").Trim()
+                                           .Replace("Agência", ":Agencia").Trim()
                                            .Trim().Split(':')
                                            .Where(x => !string.IsNullOrWhiteSpace(x.Trim())).ToArray();
                         break;
                     }
                 case 19:
                     {
+                        _linha = Regex.Replace(_linha, @"[^0-9a-zà-úA-Z\/.,\-]+", " ");
                         _arrayLinha = _linha
-                                           .Replace("Correção", "")
-                                           .Replace("Data Inclusao", ":")
-                                           .Replace("Data Re-Inclusão", ":")
-                                           .Replace("Data Ult. Alteração", ":")
-                                           .Replace("Apólice", ":")
+                                            .Replace("Correção", ":Correcao")
+                                            .Replace("Data Inclusao", ":DtInc")
+                                            .Replace("Data Re-Inclusão", ":DtReInc")
+                                            .Replace("Data Ult. Alteração", ":DtUltAlter")
+                                            .Replace("Apólice", ":Apolice")
                                            .Trim().Split(':')
-                                               .Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
-                        if (_linha.Contains("Data Ult. Alteração"))
-                        {
-                            var newItem = _arrayLinha.ToList();
-                            newItem.Add("ALTER");
-                            _arrayLinha = newItem.ToArray();
-                        }
-                        if (_linha.Contains("Data Re-Inclusão"))
-                        {
-                            var newItem = _arrayLinha.ToList();
-                            newItem.Add("Re-");
-                            _arrayLinha = newItem.ToArray();
-                        }
+                                           .Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
                         break;
                     }
                 case 20:
                     {
+                        _linha = Regex.Replace(_linha, @"[^0-9a-zà-úA-Z\/.,\-]+", " ");
                         _arrayLinha = _linha
-                                           .Replace("Tipo Financiamento", "")
-                                           .Replace("Data Ult. Alteração", ":")
-                                           .Replace("Data Re-Inclusão", ":")
-                                           .Trim().Split(':')
-                                           .Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
-
-                        if (_linha.Contains("Re-Inclusão"))
-                        {
-                            var newItem = _arrayLinha.ToList();
-                            newItem.Add("REINC");
-                            _arrayLinha = newItem.ToArray();
-                        }
+                                            .Replace("Tipo Financiamento", ":TipoFinanc")
+                                            .Replace("Data Ult. Alteração", ":DtUltAlter")
+                                            .Replace("Data Re-Inclusão", ":DtReInc")
+                                            .Trim().Split(':')
+                                            .Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
                         break;
                     }
                 case 21:
                     {
+                        _linha = Regex.Replace(_linha, @"[^0-9a-zà-úA-Z\/.,\-]+", " ");
                         _arrayLinha = _linha
-                                           .Replace("Tipo de Origem", "")
-                                           .Replace("Data Ult. Alteração", ":")
+                                           .Replace("Tipo de Origem", ":TipoOrig")
+                                           .Replace("Data Ult. Alteração", ":DtUltAlter")
                                            .Trim().Split(':')
                                            .Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
-
-                        if (_linha.Contains("Ult."))
-                        {
-                            var newItem = _arrayLinha.ToList();
-                            newItem.Add("Ult");
-                            _arrayLinha = newItem.ToArray();
-                        }
                         break;
                     }
                 case 22:
@@ -290,29 +238,17 @@ namespace ConvetPdfToLayoutAlta.Models
                     }
                 case 23:
                     {
+                        _linha = Regex.Replace(_linha, @"[^0-9a-zà-úA-Z\/.,\-]+", " ");
                         _arrayLinha = _linha
-                                            .Replace("Repactuação", "").Replace("REP","01")
-                                            .Replace("Empreendimento", ":")
-                                            .Replace("Valor Garanta", ":")
-                                            .Replace("Agência", ":")
-                                            .Replace("TAXA", ":")
-                                            .Replace("Razão", ":")
+                                            .Replace("Repactuação", ":Repac").Replace("REP", "01")
+                                            .Replace("Empreendimento", ":Emp")
+                                            .Replace("Valor Garanta", ":VlrGarantia")
+                                            .Replace("Agência", ":Agencia")
+                                            .Replace("TAXA", ":TAXA")
+                                            .Replace("Razão", ":Razao")
+                                            .Replace("IOF.SEG", ":SEG")
                                             .Trim().Split(':')
                                             .Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
-
-                        if (_linha.Contains("Empreendimento"))
-                        {
-                            var newItem = _arrayLinha.ToList();
-                            newItem.Add("Empreendimento");
-                            _arrayLinha = newItem.ToArray();
-                        }
-                        if (_linha.Contains("Razão"))
-                        {
-                            var newItem = _arrayLinha.ToList();
-                            newItem.Add("Razao");
-                            _arrayLinha = newItem.ToArray();
-                        }
-
                         break;
                     }
                 case 24:
@@ -350,6 +286,8 @@ namespace ConvetPdfToLayoutAlta.Models
             string _case = string.Empty;
             try
             {
+                int _id = 0;
+
                 switch (linha)
                 {
                     case 6:
@@ -364,7 +302,7 @@ namespace ConvetPdfToLayoutAlta.Models
                         {
                             _case = "7 - Metodo: TrataCabecalho -  campo: DataEmicao";
 
-                            obj.DataEmicao = Regex.Replace(_arrayLinha[1].Trim(), @"[^0-9\/$]+", "").Substring(0, 8);
+                            obj.DataEmicao = Regex.Replace(_arrayLinha[1].Trim(), @"[^0-9\/$]+", "").Substring(0, 10);
                             break;
                         }
                     case 8:
@@ -389,7 +327,7 @@ namespace ConvetPdfToLayoutAlta.Models
                         {
                             _case = "10 - Metodo: TrataCabecalho -  campo: EncdrecoImovel, CEP, Bairro...";
 
-                            string _bairroImovel = Regex.Replace(_arrayLinha[1].Trim(), @"[^A-Z$]+", " ");
+                            string _bairroImovel = Regex.Replace(_arrayLinha[1].Trim(), @"[^A-Z0-9$]+", " ");
 
                             obj.EnderecoImovel = _arrayLinha.Length > 0 ? Regex.Replace(_arrayLinha[0].Trim(), @"[^A-Za-z0-9\-.$]+", " ") : "";
                             obj.BairroImovel = _arrayLinha.Length > 1 ? _bairroImovel : "";
@@ -453,34 +391,96 @@ namespace ConvetPdfToLayoutAlta.Models
                     case 14:
                         {
                             _case = "14 - Metodo: TrataCabecalho -  campo: Plano, DataContrato, Origem...";
-                           
-                            obj.Plano = _arrayLinha[0].Trim();
-                            obj.DataContrato = Regex.Replace(_arrayLinha[1].Trim(), @"[^0-9\/$]+", "");
-                            if (_arrayLinha.Any(x => x.Equals("FGTS")))
-                                obj.FgtsUtilizado = Regex.Replace(_arrayLinha[2].Trim(), @"[^0-9$]+", "");
 
-                            if (_arrayLinha.Any(x => x.Equals("COMISSÃO")))
-                                obj.Comissao = Regex.Replace(_arrayLinha[2].Trim(), @"[^0-9$]+", "");
-                            else
-                                obj.OrigemRecurso = Regex.Replace(_arrayLinha[2].Trim(), @"[^0-9$]+", "");
+                            if (_arrayLinha.Any(n => n.Contains("Plano")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("Plano"));
+                                obj.Plano =_arrayLinha[_id].Replace("Plano", "").Trim();
+                            }
 
-                            obj.Prestacao = Regex.Replace(_arrayLinha[3].Trim(), @"[^0-9$]+", "");
+                            if (_arrayLinha.Any(n => n.Contains("DtContrato")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("DtContrato"));
+                                obj.DataContrato = Regex.Replace(_arrayLinha[_id].Replace("DtContrato", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+
+                            if (_arrayLinha.Any(n => n.Contains("Comisao")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("Comisao"));
+                                obj.Comissao = Regex.Replace(_arrayLinha[_id].Replace("Comisao", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+
+                            if (_arrayLinha.Any(n => n.Contains("FgtsUtil")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("FgtsUtil"));
+                                obj.FgtsUtilizado = Regex.Replace(_arrayLinha[_id].Replace("FgtsUtil", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+
+                            if (_arrayLinha.Any(n => n.Contains("OriRec")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("OriRec"));
+                                obj.OrigemRecurso = Regex.Replace(_arrayLinha[_id].Replace("OriRec", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+
+                            if (_arrayLinha.Any(n => n.Contains("Prestacao")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("Prestacao"));
+                                obj.Prestacao = Regex.Replace(_arrayLinha[_id].Replace("Prestacao", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+
                             break;
                         }
                     case 15:
                         {
                             _case = "15 - Metodo: TrataCabecalho -  campo: Sistema, CodigoContabel...";
 
-                            obj.Sistema = _arrayLinha[0].Trim().ToUpper().Contains("SAC") ? "S" : _arrayLinha[0].Trim().ToUpper().Contains("PRICE") ? "P" : _arrayLinha[0].Trim().ToUpper().ToUpper().Contains("LIVRE") ? "L" : _arrayLinha[0].Trim().ToUpper().Contains("SACRE") ? "R" : "O";
-                            obj.ValorFinanciamento = Regex.Replace(_arrayLinha[1].Trim(), @"[^0-9$]+", "");
-                            if (string.IsNullOrWhiteSpace(obj.FgtsUtilizado))
-                                obj.CodigoContabil = Regex.Replace(_arrayLinha[2].Trim(), @"[^0-9$]+", "");
-                            else
-                                obj.OrigemRecurso = Regex.Replace(_arrayLinha[2].Trim(), @"[^0-9$]+", "");
-                            if (_arrayLinha.Any(n => n.Equals("Razao")))
-                                obj.Razao = Regex.Replace(_arrayLinha[3].Trim(), @"[^0-9$]+", "");
+                            if (_arrayLinha.Any(n => n.Contains("Sistema")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("Sistema"));
+                                obj.Sistema = Regex.Replace(_arrayLinha[_id].Replace("Sistema", "").Trim(), @"[^A-Z0-9\/$]+", "");
+                            }
 
-                            obj.SeguroMIP = string.IsNullOrWhiteSpace(obj.Razao) || obj.Razao == "0" ? Regex.Replace(_arrayLinha[3].Trim(), @"[^0-9$]+", "") : "0";
+                            if (_arrayLinha.Any(n => n.Contains("VlrFinan")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("VlrFinan"));
+                                obj.ValorFinanciamento = Regex.Replace(_arrayLinha[_id].Replace("VlrFinan", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+
+                            if (_arrayLinha.Any(n => n.Contains("OrigRec")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("OrigRec"));
+                                obj.OrigemRecurso =_arrayLinha[_id].Replace("OriRec", "").Trim();
+                            }
+
+                            if (_arrayLinha.Any(n => n.Contains("Contabil")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("Contabil"));
+                                obj.CodigoContabil = Regex.Replace(_arrayLinha[_id].Replace("Contabil", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+
+                            if (_arrayLinha.Any(n => n.Contains("SeguroMIP")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("SeguroMIP"));
+                                obj.SeguroMIP = Regex.Replace(_arrayLinha[_id].Replace("SeguroMIP", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+
+                            if (_arrayLinha.Any(n => n.Contains("Razao")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("Razao"));
+                                obj.Razao = Regex.Replace(_arrayLinha[_id].Replace("Razao", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+
+                            if (_arrayLinha.Any(n => n.Contains("TAXA")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("TAXA"));
+                                obj.Taxa = Regex.Replace(_arrayLinha[_id].Replace("TAXA", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+
+                            if (_arrayLinha.Any(n => n.Contains("FgtsUtil")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("FgtsUtil"));
+                                obj.FgtsUtilizado = Regex.Replace(_arrayLinha[_id].Replace("FgtsUtil", "").Trim(), @"[^0-9\/$]+", "");
+                            }
 
                             break;
                         }
@@ -488,69 +488,119 @@ namespace ConvetPdfToLayoutAlta.Models
                         {
                             _case = "16 - Metodo: TrataCabecalho -  campo: DataGarantia, agencia...";
 
-                            obj.DataGarantia = Regex.Replace(_arrayLinha[0].Trim(), @"[^0-9\/$]+", "");
-                            if (string.IsNullOrWhiteSpace(obj.FgtsUtilizado))
-                                obj.Agencia = Regex.Replace(_arrayLinha[1].Trim(), @"[^0-9$]+", "");
-                            else
-                                obj.CodigoContabil = Regex.Replace(_arrayLinha[1].Trim(), @"[^0-9$]+", "");
+                            if (_arrayLinha.Any(n => n.Contains("DtGarantia")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("DtGarantia"));
+                                obj.DataGarantia = _arrayLinha[_id].Replace("DtGarantia", "").Trim();
+                            }
+                            if (_arrayLinha.Any(n => n.Contains("Agencia")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("Agencia"));
+                                obj.Agencia = Regex.Replace(_arrayLinha[_id].Replace("Agencia", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+                            if (_arrayLinha.Any(n => n.Contains("Contabil")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("Contabil"));
+                                obj.CodigoContabil = Regex.Replace(_arrayLinha[_id].Replace("Contabil", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+                            if (_arrayLinha.Any(n => n.Contains("SeguroDFi")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("SeguroDFi"));
+                                obj.SeguroDFI = Regex.Replace(_arrayLinha[_id].Replace("SeguroDFi", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+                            if (_arrayLinha.Any(n => n.Contains("OrigRec")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("OrigRec"));
+                                obj.OrigemRecurso = Regex.Replace(_arrayLinha[_id].Replace("OrigRec", "").Trim(), @"[^0-9\/$]+", "");
+                            }
 
-                            obj.SeguroDFI = Regex.Replace(_arrayLinha[2].Trim(), @"[^0-9$]+", "");
                             break;
                         }
                     case 17:
                         {
                             _case = "17 - Metodo: TrataCabecalho -  campo: ValorGarantia, Prazo, Taxa...";
-                            obj.Prazo = Regex.Replace(_arrayLinha[0].Trim(), @"[^0-9$]+", "").PadLeft(3, '0');
 
-                            if (_arrayLinha.Any(n => n.Equals("1ºVENCIMENTO")))
-                                obj.DataPrimeiroVencimento = Regex.Replace(_arrayLinha[1].Trim(), @"[^0-9$\/]", "");
-                            else
-                                obj.ValorGarantia = Regex.Replace(_arrayLinha[1].Trim(), @"[^0-9$]+", "");
+                            if (_arrayLinha.Any(n => n.Contains("Prazo")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("Prazo"));
+                                obj.Prazo = Regex.Replace(_arrayLinha[_id].Replace("Prazo", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+                            if (_arrayLinha.Any(n => n.Contains("vlrGrantia")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("vlrGrantia"));
+                                obj.ValorGarantia = Regex.Replace(_arrayLinha[_id].Replace("vlrGrantia", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+                            if (_arrayLinha.Any(n => n.Contains("Emp")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("Emp"));
+                                obj.Empreendimento = Regex.Replace(_arrayLinha[_id].Replace("Emp", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+                            if (_arrayLinha.Any(n => n.Contains("Dt1Venc")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("Dt1Venc"));
+                                obj.DataPrimeiroVencimento = Regex.Replace(_arrayLinha[_id].Replace("Dt1Venc", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+                            if (_arrayLinha.Any(n => n.Contains("Agencia")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("Agencia"));
+                                obj.Agencia = Regex.Replace(_arrayLinha[_id].Replace("Agencia", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+                            if (_arrayLinha.Any(n => n.Contains("TAXA")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("TAXA"));
+                                obj.Taxa = Regex.Replace(_arrayLinha[_id].Replace("TAXA", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+                            if (_arrayLinha.Any(n => n.Contains("Razao")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("Razao"));
+                                obj.Razao = Regex.Replace(_arrayLinha[_id].Replace("Razao", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+                            if (_arrayLinha.Any(n => n.Contains("SEG")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("SEG"));
+                                obj.Iof = Regex.Replace(_arrayLinha[_id].Replace("SEG", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+                            if (_arrayLinha.Any(n => n.Contains("Carencia")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("Carencia"));
+                                obj.Carencia = Regex.Replace(_arrayLinha[_id].Replace("Carencia", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+                            if (_arrayLinha.Any(n => n.Contains("Contabil")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("Contabil"));
+                                obj.CodigoContabil = Regex.Replace(_arrayLinha[_id].Replace("Contabil", "").Trim(), @"[^0-9\/$]+", "");
+                            }
 
-                            if (!string.IsNullOrWhiteSpace(obj.FgtsUtilizado))
-                                obj.Agencia = string.IsNullOrWhiteSpace(obj.Agencia) ? Regex.Replace(_arrayLinha[2].Trim(), @"[^0-9$]+", "") : obj.Agencia;
-                            else
-                                obj.Empreendimento = Regex.Replace(_arrayLinha[2].Trim(), @"[^0-9$]+", "");
 
-                            if (_arrayLinha.Any(n => n.Equals("Razao")))
-                                obj.Razao = Regex.Replace(_arrayLinha[3].Trim(), @"[^0-9$]+", "");
-                            else
-                                obj.Razao = "0";
-
-                            if (_arrayLinha.Any(n => n.Equals("TAXA")))
-                                obj.Taxa = Regex.Replace(_arrayLinha[3].Trim(), @"[^0-9$]+", "");
-                            else
-                                obj.Taxa = "0"; 
                             break;
                         }
 
                     case 18:
                         {
                             _case = "18 - Metodo: TrataCabecalho -  campo: TaxaJuros, PrimeiroVencimento, Apolice...";
-                            int _id = 0;
 
                             if (_arrayLinha.Any(n => n.Contains("TaxaJuros")))
                             {
                                 _id = _arrayLinha.ToList().FindIndex(f => f.Contains("TaxaJuros"));
-                                obj.TaxaJuros = Regex.Replace(_arrayLinha[_id].Split(' ')[1].Trim(), @"[^0-9\/$]+", "");
+                                obj.TaxaJuros = Regex.Replace(_arrayLinha[_id].Replace("TaxaJuros", "").Trim(), @"[^0-9\/$]+", "");
                             }
 
                             if (_arrayLinha.Any(n => n.Contains("Data1v")))
                             {
                                 _id = _arrayLinha.ToList().FindIndex(f => f.Contains("Data1v"));
-                                obj.DataPrimeiroVencimento = Regex.Replace(_arrayLinha[_id].Split(' ')[1].Trim(), @"[^0-9\/$]+", "");
+                                obj.DataPrimeiroVencimento = Regex.Replace(_arrayLinha[_id].Replace("Data1v", "").Trim(), @"[^0-9\/$]+", "");
                             }
 
                             if (_arrayLinha.Any(n => n.Contains("apolice")))
                             {
                                 _id = _arrayLinha.ToList().FindIndex(f => f.Contains("apolice"));
-                                obj.Apolice = Regex.Replace(_arrayLinha[_id].Split(' ')[1].Trim(), @"[^0-9$]+", "");
+                                obj.Apolice = Regex.Replace(_arrayLinha[_id].Replace("apolice", "").Trim(), @"[^0-9$]+", "");
                             }
 
                             if (_arrayLinha.Any(n => n.Contains("Razao")))
                             {
                                 _id = _arrayLinha.ToList().FindIndex(f => f.Contains("Razao"));
-                                obj.Razao = Regex.Replace(_arrayLinha[_id].Split(' ')[1].Trim(), @"[^0-9$]+", "");
+                                obj.Razao = Regex.Replace(_arrayLinha[_id].Replace("Razao", "").Trim(), @"[^0-9$]+", "");
                             }
                             else
                                 obj.Razao = !string.IsNullOrWhiteSpace(obj.Razao) && obj.Razao != "0" ? obj.Razao : "0";
@@ -558,7 +608,7 @@ namespace ConvetPdfToLayoutAlta.Models
                             if (_arrayLinha.Any(n => n.Contains("SEG")))
                             {
                                 _id = _arrayLinha.ToList().FindIndex(f => f.Contains("SEG"));
-                                obj.Iof = Regex.Replace(_arrayLinha[_id].Split(' ')[1].Trim(), @"[^0-9$]+", "");
+                                obj.Iof = Regex.Replace(_arrayLinha[_id].Replace("SEG", "").Trim(), @"[^0-9$]+", "");
                             }
                             else
                                 obj.Iof = !string.IsNullOrWhiteSpace(obj.Iof) && obj.Iof != "0" ? obj.Iof : "0";
@@ -566,28 +616,52 @@ namespace ConvetPdfToLayoutAlta.Models
                             if (_arrayLinha.Any(n => n.Contains("dtInc")))
                             {
                                 _id = _arrayLinha.ToList().FindIndex(f => f.Contains("dtInc"));
-                                obj.DataInclusao = Regex.Replace(_arrayLinha[_id].Split(' ')[1].Trim(), @"[^0-9\/$]+", "");
+                                obj.DataInclusao = Regex.Replace(_arrayLinha[_id].Replace("dtInc", "").Trim(), @"[^0-9\/$]+", "");
                             }
-                            else
-                                obj.DataInclusao = !string.IsNullOrWhiteSpace(obj.DataInclusao) && obj.DataInclusao != "0" ? obj.DataInclusao : "0";
+
+                            if (_arrayLinha.Any(n => n.Contains("Emp")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("Emp"));
+                                obj.Empreendimento = Regex.Replace(_arrayLinha[_id].Replace("Emp", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+
+                            if (_arrayLinha.Any(n => n.Contains("Agencia")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("Agencia"));
+                                obj.Agencia = Regex.Replace(_arrayLinha[_id].Replace("Agencia", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+
                             break;
                         }
                     case 19:
                         {
                             _case = "19 - Metodo: TrataCabecalho -  campo: Correção, DataInclusão...";
 
-                            obj.Correcao = Regex.Replace(_arrayLinha[0].Trim(), @"[^A-Za-z0-9\/$]+", "");
-
-                            if (_arrayLinha.Any(a => a.Equals("Re-")))
-                                obj.DataReinclusao = Regex.Replace(_arrayLinha[1].Trim(), @"[^0-9\/$]+", "");
-                            else
-                                obj.DataInclusao = Regex.Replace(_arrayLinha[1].Trim(), @"[^0-9\/$]+", "");
-
-                            if (_arrayLinha.Length > 2)
-                                if (_arrayLinha.Any(a => a.Equals("ALTER")))
-                                    obj.DataUltimaAlteracao = _arrayLinha[2];
-                                else
-                                    obj.Apolice = string.IsNullOrEmpty(obj.Apolice) ? Regex.Replace(_arrayLinha[2].Trim(), @"[^0-9$]+", "") : obj.Apolice;
+                            if (_arrayLinha.Any(n => n.Contains("Correcao")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("Correcao"));
+                                obj.Correcao = _arrayLinha[_id].Replace("Correcao", "").Trim();
+                            }
+                            if (_arrayLinha.Any(n => n.Contains("DtInc")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("DtInc"));
+                                obj.DataInclusao = Regex.Replace(_arrayLinha[_id].Replace("DtInc", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+                            if (_arrayLinha.Any(n => n.Contains("DtReInc")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("DtReInc"));
+                                obj.DataReinclusao = Regex.Replace(_arrayLinha[_id].Replace("DtReInc", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+                            if (_arrayLinha.Any(n => n.Contains("DtUltAlter")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("DtUltAlter"));
+                                obj.DataUltimaAlteracao = Regex.Replace(_arrayLinha[_id].Replace("DtUltAlter", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+                            if (_arrayLinha.Any(n => n.Contains("Apolice")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("Apolice"));
+                                obj.Apolice = Regex.Replace(_arrayLinha[_id].Replace("Apolice", "").Trim(), @"[^0-9\/$]+", "");
+                            }
 
                             break;
                         }
@@ -595,12 +669,22 @@ namespace ConvetPdfToLayoutAlta.Models
                         {
                             _case = "20 - Metodo: TrataCabecalho -  campo: TipoFinancimento, DataAlteracao...";
 
-                            obj.TipoFinanciamento = Regex.Replace(_arrayLinha[0].Trim(), @"[^A-Za-z0-9$]+", " ");
+                            if (_arrayLinha.Any(n => n.Contains("TipoFinanc")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("TipoFinanc"));
+                                obj.TipoFinanciamento = _arrayLinha[_id].Replace("TipoFinanc", "").Trim();
+                            }
+                            if (_arrayLinha.Any(n => n.Contains("DtUltAlter")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("DtUltAlter"));
+                                obj.DataUltimaAlteracao = Regex.Replace(_arrayLinha[_id].Replace("DtUltAlter", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+                            if (_arrayLinha.Any(n => n.Contains("DtReInc")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("DtReInc"));
+                                obj.DataReinclusao = Regex.Replace(_arrayLinha[_id].Replace("DtReInc", "").Trim(), @"[^0-9\/$]+", "");
+                            }
 
-                            if (_arrayLinha.Any(x => x.Equals("REINC")))
-                                obj.DataReinclusao = Regex.Replace(_arrayLinha[1].Trim(), @"[^0-9\/$]+", "");
-                            else
-                                obj.DataUltimaAlteracao = Regex.Replace(_arrayLinha[1].Trim(), @"[^0-9\/$]+", "");
                             break;
                         }
 
@@ -608,9 +692,16 @@ namespace ConvetPdfToLayoutAlta.Models
                         {
                             _case = "21 - Metodo: TrataCabecalho -  campo: TipoOrigem, DataUltimaAlteracao...";
 
-                            obj.TipoOrigem = Regex.Replace(_arrayLinha[0].Trim(), @"[^A-Za-z0-9$]+", " ");
-                            if (_arrayLinha.Any(x => x.Equals("Ult")))
-                                obj.DataUltimaAlteracao = Regex.Replace(_arrayLinha[1].Trim(), @"[^0-9\/$]+", "");
+                            if (_arrayLinha.Any(n => n.Contains("TipoOrig")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("TipoOrig"));
+                                obj.TipoOrigem = _arrayLinha[_id].Replace("TipoOrig", "");
+                            }
+                            if (_arrayLinha.Any(n => n.Contains("DtUltAlter")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("DtUltAlter"));
+                                obj.DataUltimaAlteracao = Regex.Replace(_arrayLinha[_id].Replace("DtUltAlter", "").Trim(), @"[^0-9\/$]+", "");
+                            }
 
                             break;
                         }
@@ -618,19 +709,37 @@ namespace ConvetPdfToLayoutAlta.Models
                         {
                             _case = "23 - Metodo: TrataCabecalho -  campo: Repactuação...";
 
-                            obj.Repactuacao = Regex.Replace(_arrayLinha[0].Trim(), @"[^A-Za-z0-9\/$]+", "");
-                            obj.ValorGarantia = Regex.Replace(_arrayLinha[1].Trim(), @"[^0-9$]", "");
-                            if (_arrayLinha.Any(o => o.Trim().Equals("Empreendimento")))
-                                obj.Empreendimento = Regex.Replace(_arrayLinha[2].Trim(), @"[^0-9$]", "");
-                            else
-                                obj.Agencia = Regex.Replace(_arrayLinha[2].Trim(), @"[^0-9$]", "");
-
-                            obj.Taxa = Regex.Replace(_arrayLinha[3].Trim(), @"[^0-9$]", "");
-
-                            if (_arrayLinha.Any(o => o.Trim().Equals("Razao")))
-                                obj.Razao = Regex.Replace(_arrayLinha[4].Trim(), @"[^0-9$]", "");
-                            else
-                                obj.Razao = "0";
+                            if (_arrayLinha.Any(n => n.Contains("Repac")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("Repac"));
+                                obj.Repactuacao = Regex.Replace(_arrayLinha[_id].Replace("Repac", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+                            if (_arrayLinha.Any(n => n.Contains("Emp")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("Emp"));
+                                obj.Empreendimento = Regex.Replace(_arrayLinha[_id].Replace("Emp", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+                            if (_arrayLinha.Any(n => n.Contains("VlrGarantia")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("VlrGarantia"));
+                                obj.ValorGarantia = Regex.Replace(_arrayLinha[_id].Replace("VlrGarantia", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+                            if (_arrayLinha.Any(n => n.Contains("Agencia")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("Agencia"));
+                                obj.Agencia = Regex.Replace(_arrayLinha[_id].Replace("Agencia", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+                            if (_arrayLinha.Any(n => n.Contains("TAXA")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("TAXA"));
+                                obj.Taxa = Regex.Replace(_arrayLinha[_id].Replace("TAXA", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+                            if (_arrayLinha.Any(n => n.Contains("Razao")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("Razao"));
+                                obj.Razao = Regex.Replace(_arrayLinha[_id].Replace("Razao", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+                            
                             break;
                         }
                     case 24:
@@ -674,14 +783,12 @@ namespace ConvetPdfToLayoutAlta.Models
         }
 
 
-
         public string[] TrataLinhaPDFPadrao2(string _linha, int _campo)
         {
             string[] _arrayLinha = null;
             string _case = string.Empty;
             try
             {
-
                 switch (_campo)
                 {
                     case 2:
@@ -767,15 +874,16 @@ namespace ConvetPdfToLayoutAlta.Models
             string _case = string.Empty;
             try
             {
-
                 switch (linha)
                 {
                     case 1:
                         {
                             _case = "1 - Metodo: TrataCabecalhoPadrao2 -  campo: Carteira, Contrato";
 
-                            obj.Carteira = Regex.Replace(_arrayLinha[3].Trim(), @"[^0-9$]+", "");
-                            obj.Contrato = Regex.Replace(_arrayLinha[5].Trim(), @"[^0-9$]+", "");
+                            string _contrato = _arrayLinha.First(u => Regex.IsMatch(u, @"(^\d{4}.\d{5}.\d{3}-\d{1}$)")) +"*" + _arrayLinha.First(u => Regex.IsMatch(u, @"(^\d{4}$)"));
+
+                            obj.Contrato = Regex.Replace(_contrato.Split('*')[0], @"[^0-9$]+", "");
+                            obj.Carteira = Regex.Replace(_contrato.Split('*')[1], @"[^0-9$]+", "");
                             break;
                         }
                     case 2:
@@ -841,63 +949,63 @@ namespace ConvetPdfToLayoutAlta.Models
         public Cabecalho PreencheCabecalho(Cabecalho obj)
         {
             return new Cabecalho() {
-                Agencia = string.IsNullOrWhiteSpace(obj.Agencia) ? "0" : obj.Agencia,
-                Apolice = string.IsNullOrWhiteSpace(obj.Apolice) ? "0" : obj.Apolice,
+                Agencia = string.IsNullOrWhiteSpace(obj.Agencia) ? "" : obj.Agencia,
+                Apolice = string.IsNullOrWhiteSpace(obj.Apolice) ? "" : obj.Apolice,
                 BairroImovel = string.IsNullOrWhiteSpace(obj.BairroImovel) ? "" : obj.BairroImovel,
-                CAC = string.IsNullOrWhiteSpace(obj.CAC) ? "0" : obj.CAC,
-                Carencia = string.IsNullOrWhiteSpace(obj.Carencia) ? "0" : obj.Carencia,
-                Carteira = string.IsNullOrWhiteSpace(obj.Carteira) ? "0" : obj.Carteira,
+                CAC = string.IsNullOrWhiteSpace(obj.CAC) ? "" : obj.CAC,
+                Carencia = string.IsNullOrWhiteSpace(obj.Carencia) ? "" : obj.Carencia,
+                Carteira = string.IsNullOrWhiteSpace(obj.Carteira) ? "" : obj.Carteira,
                 Cartorio = string.IsNullOrWhiteSpace(obj.Cartorio) ? "" : obj.Cartorio,
-                Categoria = string.IsNullOrWhiteSpace(obj.Categoria) ? "0" : obj.Categoria,
-                CepImovel = string.IsNullOrWhiteSpace(obj.CepImovel) ? "0" : obj.CepImovel,
+                Categoria = string.IsNullOrWhiteSpace(obj.Categoria) ? "" : obj.Categoria,
+                CepImovel = string.IsNullOrWhiteSpace(obj.CepImovel) ? "" : obj.CepImovel,
                 CidadeImovel = string.IsNullOrWhiteSpace(obj.CidadeImovel) ? "" : obj.CidadeImovel,
-                Cliente = string.IsNullOrWhiteSpace(obj.Cliente) ? "0" : obj.Cliente,
-                CodigoContabil = string.IsNullOrWhiteSpace(obj.CodigoContabil) ? "0" : obj.CodigoContabil,
-                Comissao = string.IsNullOrWhiteSpace(obj.Comissao) ? "0" : obj.Comissao,
-                ContaDeposito = string.IsNullOrWhiteSpace(obj.ContaDeposito) ? "0" : obj.ContaDeposito,
-                Contrato = string.IsNullOrWhiteSpace(obj.Contrato) ? "0" : obj.Contrato,
-                Correcao = string.IsNullOrWhiteSpace(obj.Correcao) ? "0" : obj.Correcao,
-                Cpf = string.IsNullOrWhiteSpace(obj.Cpf) ? "0" : obj.Cpf,
-                DataBase = string.IsNullOrWhiteSpace(obj.DataBase) ? "0" : obj.DataBase,
-                DataCaDoc = string.IsNullOrWhiteSpace(obj.DataCaDoc) ? "0" : obj.DataCaDoc,
-                DataContrato = string.IsNullOrWhiteSpace(obj.DataContrato) ? "00/00/0000" : obj.DataContrato,
-                DataEmicao = string.IsNullOrWhiteSpace(obj.DataEmicao) ? "00/00/0000" : obj.DataEmicao,
-                DataGarantia = string.IsNullOrWhiteSpace(obj.DataGarantia) ? "0" : obj.DataGarantia,
-                DataInclusao = string.IsNullOrWhiteSpace(obj.DataInclusao) ? "000/00/0000" : obj.DataInclusao,
-                DataNascimento = string.IsNullOrWhiteSpace(obj.DataNascimento) ? "00/00/0000" : obj.DataNascimento,
-                DataPrimeiroVencimento = string.IsNullOrWhiteSpace(obj.DataPrimeiroVencimento) ? "00/00/0000" : obj.DataPrimeiroVencimento,
-                DataReinclusao = string.IsNullOrWhiteSpace(obj.DataReinclusao) ? "00/00/0000" : obj.DataReinclusao,
-                DataUltimaAlteracao = string.IsNullOrWhiteSpace(obj.DataUltimaAlteracao) ? "00/00/0000" : obj.DataUltimaAlteracao,
-                Empreendimento = string.IsNullOrWhiteSpace(obj.Empreendimento) ? "0" : obj.Empreendimento,
+                Cliente = string.IsNullOrWhiteSpace(obj.Cliente) ? "" : obj.Cliente,
+                CodigoContabil = string.IsNullOrWhiteSpace(obj.CodigoContabil) ? "" : obj.CodigoContabil,
+                Comissao = string.IsNullOrWhiteSpace(obj.Comissao) ? "" : obj.Comissao,
+                ContaDeposito = string.IsNullOrWhiteSpace(obj.ContaDeposito) ? "" : obj.ContaDeposito,
+                Contrato = string.IsNullOrWhiteSpace(obj.Contrato) ? "" : obj.Contrato,
+                Correcao = string.IsNullOrWhiteSpace(obj.Correcao) ? "" : obj.Correcao,
+                Cpf = string.IsNullOrWhiteSpace(obj.Cpf) ? "" : obj.Cpf,
+                DataBase = string.IsNullOrWhiteSpace(obj.DataBase) ? "" : obj.DataBase,
+                DataCaDoc = string.IsNullOrWhiteSpace(obj.DataCaDoc) ? "" : obj.DataCaDoc,
+                DataContrato = string.IsNullOrWhiteSpace(obj.DataContrato) ? "" : obj.DataContrato,
+                DataEmicao = string.IsNullOrWhiteSpace(obj.DataEmicao) ? "" : obj.DataEmicao,
+                DataGarantia = string.IsNullOrWhiteSpace(obj.DataGarantia) ? "" : obj.DataGarantia,
+                DataInclusao = string.IsNullOrWhiteSpace(obj.DataInclusao) ? "" : obj.DataInclusao,
+                DataNascimento = string.IsNullOrWhiteSpace(obj.DataNascimento) ? "" : obj.DataNascimento,
+                DataPrimeiroVencimento = string.IsNullOrWhiteSpace(obj.DataPrimeiroVencimento) ? "" : obj.DataPrimeiroVencimento,
+                DataReinclusao = string.IsNullOrWhiteSpace(obj.DataReinclusao) ? "" : obj.DataReinclusao,
+                DataUltimaAlteracao = string.IsNullOrWhiteSpace(obj.DataUltimaAlteracao) ? "" : obj.DataUltimaAlteracao,
+                Empreendimento = string.IsNullOrWhiteSpace(obj.Empreendimento) ? "" : obj.Empreendimento,
                 EnderecoImovel = string.IsNullOrWhiteSpace(obj.EnderecoImovel) ? "" : obj.EnderecoImovel,
-                FgtsUtilizado = string.IsNullOrWhiteSpace(obj.FgtsUtilizado) ? "0" : obj.FgtsUtilizado,
+                FgtsUtilizado = string.IsNullOrWhiteSpace(obj.FgtsUtilizado) ? "" : obj.FgtsUtilizado,
                 Id = obj.Id,
-                Modalidade = string.IsNullOrWhiteSpace(obj.Modalidade) ? "0" : obj.Modalidade,
+                Modalidade = string.IsNullOrWhiteSpace(obj.Modalidade) ? "" : obj.Modalidade,
                 Nome = string.IsNullOrWhiteSpace(obj.Nome) ? "" : obj.Nome,
-                Numero = string.IsNullOrWhiteSpace(obj.Numero) ? "0" : obj.Numero,
-                OrigemRecurso = string.IsNullOrWhiteSpace(obj.OrigemRecurso) ? "0" : obj.OrigemRecurso,
+                Numero = string.IsNullOrWhiteSpace(obj.Numero) ? "" : obj.Numero,
+                OrigemRecurso = string.IsNullOrWhiteSpace(obj.OrigemRecurso) ? "" : obj.OrigemRecurso,
                 Pis = string.IsNullOrWhiteSpace(obj.Pis) ? "0" : obj.Pis,
                 Plano = string.IsNullOrWhiteSpace(obj.Plano) ? "" : obj.Plano,
-                Prazo = string.IsNullOrWhiteSpace(obj.Prazo) ? "0" : obj.Prazo,
-                Prestacao = string.IsNullOrWhiteSpace(obj.Prestacao) ? "0" : obj.Prestacao,
-                Razao = string.IsNullOrWhiteSpace(obj.Razao) ? "0"  : obj.Razao,
-                Reajuste = string.IsNullOrWhiteSpace(obj.Reajuste) ? "0" : obj.Reajuste,
+                Prazo = string.IsNullOrWhiteSpace(obj.Prazo) ? "" : obj.Prazo,
+                Prestacao = string.IsNullOrWhiteSpace(obj.Prestacao) ? "" : obj.Prestacao,
+                Razao = string.IsNullOrWhiteSpace(obj.Razao) ? ""  : obj.Razao,
+                Reajuste = string.IsNullOrWhiteSpace(obj.Reajuste) ? "" : obj.Reajuste,
                 Repactuacao = string.IsNullOrWhiteSpace(obj.Repactuacao) ? "0" : obj.Repactuacao,
-                SeguroDFI = string.IsNullOrWhiteSpace(obj.SeguroDFI) ? "0" : obj.SeguroDFI,
-                SeguroMIP = string.IsNullOrWhiteSpace(obj.SeguroMIP) ? "0" : obj.SeguroMIP,
+                SeguroDFI = string.IsNullOrWhiteSpace(obj.SeguroDFI) ? "" : obj.SeguroDFI,
+                SeguroMIP = string.IsNullOrWhiteSpace(obj.SeguroMIP) ? "" : obj.SeguroMIP,
                 Sistema = string.IsNullOrWhiteSpace(obj.Sistema) ? "" : obj.Sistema,
-                Situacao = string.IsNullOrWhiteSpace(obj.Situacao) ? "0" : obj.Situacao,
-                Taxa = string.IsNullOrWhiteSpace(obj.Taxa) ? "0" : obj.Taxa,
-                TaxaJuros = string.IsNullOrWhiteSpace(obj.TaxaJuros) ? "0" : obj.TaxaJuros,
+                Situacao = string.IsNullOrWhiteSpace(obj.Situacao) ? "" : obj.Situacao,
+                Taxa = string.IsNullOrWhiteSpace(obj.Taxa) ? "" : obj.Taxa,
+                TaxaJuros = string.IsNullOrWhiteSpace(obj.TaxaJuros) ? "" : obj.TaxaJuros,
                 TelefoneComercial = string.IsNullOrWhiteSpace(obj.TelefoneComercial) ? "0" : obj.TelefoneComercial,
                 TelefoneResidencia = string.IsNullOrWhiteSpace(obj.TelefoneResidencia) ? "0" : obj.TelefoneResidencia,
                 TipoFinanciamento = string.IsNullOrWhiteSpace(obj.TipoFinanciamento) ? "Contrato Normal" : obj.TipoFinanciamento,
                 TipoOrigem = string.IsNullOrWhiteSpace(obj.TipoOrigem) ? "" : obj.TipoOrigem,
-                TxCEMes = string.IsNullOrWhiteSpace(obj.TxCEMes) ? "0" : obj.TxCEMes,
-                TxCETAno = string.IsNullOrWhiteSpace(obj.TxCETAno) ? "0" : obj.TxCETAno,
+                TxCEMes = string.IsNullOrWhiteSpace(obj.TxCEMes) ? "" : obj.TxCEMes,
+                TxCETAno = string.IsNullOrWhiteSpace(obj.TxCETAno) ? "" : obj.TxCETAno,
                 UfImovel = string.IsNullOrWhiteSpace(obj.UfImovel) ? "" : obj.UfImovel,
-                ValorFinanciamento = string.IsNullOrWhiteSpace(obj.ValorFinanciamento) ? "0" : obj.ValorFinanciamento,
-                ValorGarantia = string.IsNullOrWhiteSpace(obj.ValorGarantia) ? "0" : obj.ValorGarantia,
+                ValorFinanciamento = string.IsNullOrWhiteSpace(obj.ValorFinanciamento) ? "" : obj.ValorFinanciamento,
+                ValorGarantia = string.IsNullOrWhiteSpace(obj.ValorGarantia) ? "" : obj.ValorGarantia,
                 Iof = string.IsNullOrWhiteSpace(obj.Iof) ? "0" : obj.Iof,
             };
         }
@@ -908,6 +1016,7 @@ namespace ConvetPdfToLayoutAlta.Models
 #if DEBUG
             _diretorioDestino = @"D:\PDFSTombamento\txt";
             _diretorioOrigem = @"D:\PDFSTombamento\";
+
 #endif
            
            
@@ -953,7 +1062,7 @@ namespace ConvetPdfToLayoutAlta.Models
                             strAlta += string.Format("{0}{1}{2}{3}", c.Cpf.Trim().PadRight(14, ' '), "".PadRight(3, ' '), _contratoGT.Trim().PadRight(20, ' '), "".PadRight(20, ' '));
                             strAlta += string.Format("{0}{1}", c.Modalidade.Trim().PadRight(40, ' '), (c.CidadeImovel.Trim().Length <= 31 ? c.CidadeImovel.Trim() : c.CidadeImovel.Trim().Substring(0, 31)).PadRight(31, ' '));
                             strAlta += string.Format("{0}{1}{2}", c.Plano.Trim().PadRight(10, ' '), c.DataContrato.Trim().PadRight(10, ' '), "".PadRight(2, ' '));
-                            strAlta += string.Format("{0}{1}", c.Prestacao.Trim().PadLeft(18, '0'), c.Sistema.Trim().PadRight(2, ' '));
+                            strAlta += string.Format("{0}{1}", c.Prestacao.Trim().PadLeft(18, '0'), c.Sistema.Trim().PadRight(3, ' '));
                             strAlta += string.Format("{0}{1}{2}", c.ValorFinanciamento.Trim().PadLeft(18, '0'), c.CodigoContabil.Trim().Substring(1).PadRight(15, '0'), c.SeguroMIP.Trim().PadLeft(18, '0'));
                             strAlta += string.Format("{0}{1}", (string.IsNullOrWhiteSpace(_reajuste) ? c.Reajuste.Trim() : _reajuste).PadRight(10, ' '), c.DataGarantia.Trim().PadRight(18, ' '));
                             strAlta += string.Format("{0}", c.SeguroDFI.Trim().PadLeft(18, '0'));
@@ -993,22 +1102,18 @@ namespace ConvetPdfToLayoutAlta.Models
                 Parcela _parcela = null;
                 Cabecalho _cabecalho = null, _cabecalhoAnterior = null;
                 List<string> lstTipoOcorrencia = new List<string>() { "004", "005", "010" };
-
                 
                 lstContratosPdf.ForEach(q =>
                 {
-                   
                     string _datavencimentoAnterior = string.Empty;
                     strAlta = string.Empty;
+
                     q.Ocorrencias.ForEach(o =>
                     {
                         try
                         {
                             _parcela = q.Parcelas.Find(m => m.Id == o.IdParcela);
 
-                            if (_parcela == null)
-                            {
-                            }
                             _datavencimentoAnterior = _parcela.Vencimento;
 
                             strAlta = string.Empty;
@@ -1079,7 +1184,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                         strAlta = _novaOcorrencia;
 
                                         strAlta += string.Format("{0}{1}{2}", "0".PadLeft(72, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'), "APOLICE".PadRight(30, ' '));
-                                        strAlta += string.Format("{0}{1}", _cabecalho.Apolice.Trim().PadLeft(30, '0'), _cabecalhoAnterior.Apolice.Trim().PadLeft(30, '0'));
+                                        strAlta += string.Format("{0}{1}", _cabecalho.Apolice.Trim().PadRight(30, ' '), _cabecalhoAnterior.Apolice.Trim().PadRight(30, ' '));
 
                                         if (!_cabecalhoAnterior.Reajuste.Equals(_cabecalho.Reajuste))
                                             strAlta += string.Format("{0}", _cabecalho.TaxaJuros.Trim().PadRight(30, ' '));
@@ -1259,6 +1364,7 @@ namespace ConvetPdfToLayoutAlta.Models
 
 
 
+                #region BLOCO QUE GERA O ARQUIVO DE PARCELAS
                 //======================= BLOCO QUE GERA O ARQUIVO DE PARCELAS ==================================================
                 strAlta = string.Empty;
                 using (StreamWriter escreverParcelas = new StreamWriter(_diretorioDestino + @"\TL16PARC.txt", true, Encoding.UTF8))
@@ -1299,7 +1405,8 @@ namespace ConvetPdfToLayoutAlta.Models
                     });
 
                 }
-                //=============================================================================================================
+                //===============================================================================================================
+                #endregion
                 strAlta = string.Empty;
             }
             #endregion

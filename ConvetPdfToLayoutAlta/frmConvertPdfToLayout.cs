@@ -81,7 +81,8 @@ namespace ConvetPdfToLayoutAlta
 
         private void button2_Click(object sender, EventArgs e)
         {
-            frmGerarLayoutAlta f = new frmGerarLayoutAlta(@"D:\PDFSTombamento\Exceptions", "", "TELA 16");
+            var dt = Convert.ToDateTime("0001/01/01");
+            frmGerarLayoutAlta f = new frmGerarLayoutAlta(@"D:\PDFSTombamento\Exceptions", "", "TELA16");
             f.ShowDialog();
             this.Show();
         }
