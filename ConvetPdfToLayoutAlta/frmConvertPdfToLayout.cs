@@ -18,18 +18,23 @@ namespace ConvetPdfToLayoutAlta
             {
                 SelectFolders();
 
+                string[] _arquivos = { textOrigemContratosPdf.Text + @"\config\SITU115A.TXT", textOrigemContratosPdf.Text + @"\config\ARQ_GARANTIA.TXT" };
+                string msg = string.Format("--- INFORME OS ARQUIVOS NO DIRETORIO ABAIXO ---\n\n");
+
                 if (!Directory.Exists(textOrigemContratosPdf.Text + @"\config"))
                     Directory.CreateDirectory(textOrigemContratosPdf.Text + @"\config");
 
                 if (!File.Exists(textOrigemContratosPdf.Text + @"\config\SITU115A.TXT"))
                 {
-                    MessageBox.Show("Não foi encontrato dentro da pasta 'config', o arquivo de SITUAÇÕES (SITU115A.TXT)", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    msg += string.Format("--> {0}\n--> {1}", _arquivos[0], _arquivos[1]);
+
+                    MessageBox.Show(msg, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                     return;
                 }
 
                 if (!File.Exists(textOrigemContratosPdf.Text + @"\config\ARQ_GARANTIA.TXT"))
                 {
-                    MessageBox.Show("Não foi encontrato dentro da pasta 'config', o arquivo de PONTEIRO (ARQ_GARANTIA.TXT).", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    MessageBox.Show(msg, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                     return;
                 }
                 btnIniciarConvercao.Enabled = (textDestinoLayout.TextLength > 0 && textOrigemContratosPdf.TextLength > 0);
@@ -62,10 +67,10 @@ namespace ConvetPdfToLayoutAlta
                 MessageBox.Show("Selecione uma tela para converção.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            this.Hide();
+            panelSpinner.Visible = !panelSpinner.Visible;
             frmGerarLayoutAlta f = new frmGerarLayoutAlta(this.textOrigemContratosPdf.Text, this.textDestinoLayout.Text, comboBoxTela.Text);
             f.ShowDialog();
-            this.Show();
+            panelSpinner.Visible = !panelSpinner.Visible;
         }
 
         private void Button1_Click(object sender, EventArgs e)
@@ -85,6 +90,14 @@ namespace ConvetPdfToLayoutAlta
             frmGerarLayoutAlta f = new frmGerarLayoutAlta(@"D:\PDFSTombamento\Exceptions", "", "TELA16");
             f.ShowDialog();
             this.Show();
+        }
+
+        private void FrmSelectFolder_Load(object sender, EventArgs e)
+        {
+#if DEBUG
+            button1.Visible = true;
+            button2.Visible = true;
+#endif
         }
     }
 }

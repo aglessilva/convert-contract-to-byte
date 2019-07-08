@@ -11,7 +11,7 @@ namespace ConvetPdfToLayoutAlta.Models
     {
         public Parcela TrataLinhaParcelas(Parcela _obj, string[] _linha, int sequencia, bool _hasTaxa, bool _hasIof)
         {
-            string  _case =  "VAZIO";
+            string _case = "VAZIO";
             try
             {
 
@@ -38,7 +38,7 @@ namespace ConvetPdfToLayoutAlta.Models
 
                             _obj.Pagamento = Regex.IsMatch(_linha[count].ToString(), @"^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[012])/[12][0-9]{3}$") ? Regex.Replace(_linha[count++], @"[^0-9\/$]", "") : "01/01/0001";
                             _obj.NumeroPrazo = Regex.Replace(_linha[count++], @"[^0-9$]", "");
-                            _obj.Indice = isIndice ? Regex.Replace(_linha[count++], @"[^0-9$]", "") : "0"; 
+                            _obj.Indice = isIndice ? Regex.Replace(_linha[count++], @"[^0-9$]", "") : "0";
                             _obj.Prestacao = Regex.Replace(_linha[count++], @"[^0-9$]", "");
                             _obj.Seguro = Regex.Replace(_linha[count++], @"[^0-9$]", "");
                             _obj.Taxa = _hasTaxa ? Regex.Replace(_linha[count++], @"[^0-9$]", "") : "0";
@@ -54,13 +54,24 @@ namespace ConvetPdfToLayoutAlta.Models
                         {
                             _case = "Case 3 - Metodo: TrataLinhaParcelas - PEGA A LINHA DE BANCO E AGENCIA";
                             int count = 0;
-                           
-                            _obj.Banco = _linha[count].Length == 3 ? Regex.Replace(_linha[count++], @"[^0-9\/$]", "") : "0";
-                            _obj.Agencia = Regex.IsMatch(_linha[count].Trim(), @"(^\d{6}.\d{1}$)")  ? Regex.Replace(_linha[count++], @"[^0-9\/$]", "") : "0";
-                            _obj.TPG_EVE_HIS = _linha[count].Length == 3 ? _linha[count++].Trim() : "0";
-                            _obj.Proc_Emi_Pag = Regex.IsMatch(_linha[count].Trim(), @"(^\d{2}\/\d{2}\/\d{4}$)")  ? Regex.Replace(_linha[count++], @"[^0-9\/$]", "") + Regex.Replace(_linha[count++], @"[^0-9\/$]", "") : "01/01/000101/01/0001";
-                            _obj.Pago = _linha.Length >=5 ? Regex.Replace(_linha[count++], @"[^0-9$]", "") : "0";
-                            _obj.Mora = _linha.Length > 6 ? Regex.Replace(_linha[count++], @"[^0-9$]", "") : "0";
+                            List<string> item = _linha.ToList();
+
+                            if (!item.Any(i => i.Equals("033") || i.Equals("999")))
+                                item.Insert(0, "999");
+
+                            if(!Regex.IsMatch(item[3].Trim(), @"(^\d{2}\/\d{2}\/\d{4}$)"))
+                            {
+                                item.RemoveAt(3);
+                            }
+                            
+                            _obj.Banco = item[count].Length == 3 ? Regex.Replace(item[count++], @"[^0-9\/$]", "") : "0";
+                            _obj.Agencia = Regex.IsMatch(item[count].Trim(), @"(^\d{6}.\d{1}$)") ? Regex.Replace(item[count++], @"[^0-9\/$]", "") : "0";
+                            _obj.TPG_EVE_HIS = item[count].Length == 3 ? item[count++].Trim() : "0";
+                            _obj.Proc_Emi_Pag = item.FirstOrDefault(d => Regex.IsMatch(d.Trim(), @"(^\d{2}\/\d{2}\/\d{4}$)")) + item.LastOrDefault(d => Regex.IsMatch(d.Trim(), @"(^\d{2}\/\d{2}\/\d{4}$)"));
+                            _obj.Pago = item.Count > 5 ? Regex.Replace(item[5], @"[^0-9$]", "") : "0";
+
+                            if (string.IsNullOrWhiteSpace(_obj.Mora) || _obj.Mora == "0")
+                                _obj.Mora = item.Count > 6 ? Regex.Replace(item[6], @"[^0-9$]", "") : "0";
 
                             break;
                         }
@@ -68,7 +79,7 @@ namespace ConvetPdfToLayoutAlta.Models
                         {
                             _case = "Case 4 - Metodo: TrataLinhaParcelas - PEGA A LINHA DE PROXIMO PAGAMENTO E MORA";
 
-                            _obj.Proc_Emi_Pag = Regex.Replace(_linha[0] + _linha[1].Replace("00/00/0000", "01/01/0001"), @"[^0-9\/$]", "");
+                            _obj.Proc_Emi_Pag = Regex.Replace(_linha[0] + _linha[1], @"[^0-9\/$]", "");
                             if (_linha.Length > 2)
                             {
                                 _obj.Mora = Regex.Replace(_linha[2], @"[^0-9$]", "");
@@ -85,7 +96,7 @@ namespace ConvetPdfToLayoutAlta.Models
                     default:
                         break;
                 }
-          
+
             }
             catch (Exception exOut)
             {
@@ -100,12 +111,12 @@ namespace ConvetPdfToLayoutAlta.Models
             return _linha.Split(' ').Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
         }
 
-        public bool ValidaLinha (string _linha)
+        public bool ValidaLinha(string _linha)
         {
             return _linha.Split('*').Any(f => f.Equals("( ) "));
         }
 
-        public string[] TratArrayPadrao2(string _linhaAtual, string _pagina )
+        public string[] TratArrayPadrao2(string _linhaAtual, string _pagina)
         {
             string _codigoOcorrencia = Regex.Replace(_linhaAtual.Trim(), @"[^A-Za-zà-ú0-9$.,]", " ").Trim(); ;
             string[] arrayPagina = _pagina.Split('\n');
@@ -116,37 +127,30 @@ namespace ConvetPdfToLayoutAlta.Models
 
             for (int i = 0; i < arrayPagina.Length; i++)
             {
-                if(arrayPagina[i].Equals(_linhaAtual) )
+                if (arrayPagina[i].Equals(_linhaAtual))
                 {
-                    //if (_countExption == contador)
-                    //{
-                         x = arrayPagina[(i - 1)].Split(' ').Where(j => !string.IsNullOrWhiteSpace(j)).ToList();
+                    x = arrayPagina[(i - 1)].Split(' ').Where(j => !string.IsNullOrWhiteSpace(j)).ToList();
 
-                        if (x.Any(l => l.Trim().Contains("PRO") || l.Trim().Contains("***")))
-                        {
+                    if (x.Any(l => l.Trim().Contains("PRO") || l.Trim().Contains("***")))
+                    {
+                        x = arrayPagina[(i + 1)].Split(' ').Where(j => !string.IsNullOrWhiteSpace(j)).ToList();
+                    }
+                    else
+                    {
+                        if (!Regex.IsMatch(x[0].ToString(), @"(\d{2}\/\d{2}\/\d{4})"))
                             x = arrayPagina[(i + 1)].Split(' ').Where(j => !string.IsNullOrWhiteSpace(j)).ToList();
-                        }
-                        else
+                    }
+
+                    x.Insert(2, _codigoOcorrencia);
+
+                    for (int t = 0; t < x.Count; t++)
+                    {
+                        if (x[t].Contains("(") || x[t].Contains(")"))
                         {
-                            if (!Regex.IsMatch(x[0].ToString(), @"(\d{2}\/\d{2}\/\d{4})"))
-                                x = arrayPagina[(i + 1)].Split(' ').Where(j => !string.IsNullOrWhiteSpace(j)).ToList();
+                            x.RemoveAt(t);
+                            t--;
                         }
-
-                        x.Insert(2, _codigoOcorrencia);
-
-                        for (int t = 0; t < x.Count; t++)
-                        {
-                            if(x[t].Contains("(") || x[t].Contains(")"))
-                            {
-                                x.RemoveAt(t);
-                                t--;
-                            }
-                        }
-
-                        
-                       // break;
-                    //}
-                   // contador++;
+                    }
                 }
             }
 
@@ -155,7 +159,7 @@ namespace ConvetPdfToLayoutAlta.Models
 
         public Ocorrencia TrataOcorrencia(string[] _linhaOcorrencia, string _diretorioDestino)
         {
-           
+
             Ocorrencia _obj = new Ocorrencia();
             string _case = string.Empty, _codigoOcorrencia = _linhaOcorrencia[2].Substring(0, 3).Trim();
             try
@@ -167,7 +171,7 @@ namespace ConvetPdfToLayoutAlta.Models
 
                 var x = _linhaOcorrencia.ToList();
 
-                x[1] = Regex.IsMatch(_linhaOcorrencia[1], @"(^\d{2}\/\d{2}\/\d{4}$)") ? _linhaOcorrencia[1]  : "01/01/0001";
+                x[1] = Regex.IsMatch(_linhaOcorrencia[1], @"(^\d{2}\/\d{2}\/\d{4}$)") ? _linhaOcorrencia[1] : "00/00/0000";
 
                 // remove da lista todos os indices que não são numeros
                 for (int i = 0; i < x.Count; i++)
@@ -423,12 +427,12 @@ namespace ConvetPdfToLayoutAlta.Models
                     default:
                         using (StreamWriter escreverNovaOcorrencia = new StreamWriter(_diretorioDestino + @"\NOVAS_OCORRENCIAS.txt", true, Encoding.UTF8))
                         {
-                            string _novaOocorrencia = string.Join(" ", _linhaOcorrencia);
+                            string _novaOocorrencia = string.Join(" ", _linhaOcorrencia.ToList().GetRange(0, 3));
                             escreverNovaOcorrencia.WriteLine(_novaOocorrencia);
                         }
                         break;
                 }
-                        
+
             }
             catch (Exception exOut)
             {
@@ -441,7 +445,8 @@ namespace ConvetPdfToLayoutAlta.Models
 
         public Parcela PreencheParcela(Parcela obj)
         {
-            return new Parcela() {
+            return new Parcela()
+            {
                 Agencia = string.IsNullOrWhiteSpace(obj.Agencia) ? "0" : obj.Agencia,
                 Amortizacao = string.IsNullOrWhiteSpace(obj.Amortizacao) ? "0" : obj.Amortizacao,
                 AmortizacaoCorrecao = string.IsNullOrWhiteSpace(obj.AmortizacaoCorrecao) ? "0" : obj.AmortizacaoCorrecao,
@@ -470,9 +475,5 @@ namespace ConvetPdfToLayoutAlta.Models
                 Iof = string.IsNullOrWhiteSpace(obj.Iof) ? "0" : obj.Iof,
             };
         }
-
-
-
-
     }
 }
