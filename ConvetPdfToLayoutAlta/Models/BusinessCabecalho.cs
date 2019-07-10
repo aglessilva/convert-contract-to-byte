@@ -1016,8 +1016,8 @@ namespace ConvetPdfToLayoutAlta.Models
         {
 
 #if DEBUG
-            _diretorioDestino = @"D:\PDFSTombamento\txt";
-            _diretorioOrigem = @"D:\PDFSTombamento\";
+            _diretorioDestino = @"C:\Tombamento\txt";
+            _diretorioOrigem = @"C:\Tombamento\";
 
 #endif
 
@@ -1118,9 +1118,8 @@ namespace ConvetPdfToLayoutAlta.Models
                     {
                         try
                         {
-                            _parcela = q.Parcelas.Find(m => m.Id == o.IdParcela);
+                            _parcela = q.Parcelas.SingleOrDefault(m => m.Id == o.IdParcela);
 
-                            _datavencimentoAnterior = _parcela.Vencimento;
 
                             strAlta = string.Empty;
 
@@ -1129,15 +1128,17 @@ namespace ConvetPdfToLayoutAlta.Models
                             else
                                 _cabecalho = q.Cabecalhos.Find(k => k.Id == _parcela.IdCabecalho);
 
+                            _datavencimentoAnterior = _cabecalho.DataPrimeiroVencimento;
+
                             if (q.Cabecalhos.Count > 1)
                             {
-                                if (q.Cabecalhos.Any(a => a.Id == (_parcela == null ? (o.IdCabecalho + 1) : (_parcela.IdCabecalho + 1))))
-                                    _cabecalhoAnterior = q.Cabecalhos.Find(xx => xx.Id == (_parcela == null ? (o.IdCabecalho + 1) : (_parcela.IdCabecalho + 1)));
+                                if (q.Cabecalhos.Any(a => a.Id == (o.IdCabecalho + 1)))
+                                    _cabecalhoAnterior = q.Cabecalhos.Find(xx => xx.Id == (o.IdCabecalho + 1));
                                 else
-                                    _cabecalhoAnterior = q.Cabecalhos.Find(xx => xx.Id == (_parcela == null ? (o.IdCabecalho - 1) : (_parcela.IdCabecalho - 1)));
+                                    _cabecalhoAnterior = q.Cabecalhos.Find(xx => xx.Id == (o.IdCabecalho - 1));
                             }
                             else
-                                _cabecalho = _cabecalhoAnterior = q.Cabecalhos.Find(k => k.Id == (_parcela == null ? (o.IdCabecalho) : (_parcela.IdCabecalho)));
+                                _cabecalho = _cabecalhoAnterior = q.Cabecalhos.Find(k => k.Id == o.IdCabecalho);
 
                             strAlta = string.Format("{0}", (q.Carteira.Substring(2, 2) + o.Contrato).PadRight(15, '0'));
                             strAlta += string.Format("{0}{1}", o.Vencimento.Trim().Trim().PadRight(10, '0'), o.Pagamento.Trim().Trim().PadRight(10, '0'));

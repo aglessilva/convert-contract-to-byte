@@ -79,15 +79,14 @@ namespace ConvetPdfToLayoutAlta
           //  var sbDados2 = "1,00200.00";
           //  var match = Regex.IsMatch(sbDados2.ToString(), @"^[0-2,]$");
 
-            frmGerarLayoutAlta f = new frmGerarLayoutAlta(@"D:\PDFSTombamento", "","TELA 16");
+            frmGerarLayoutAlta f = new frmGerarLayoutAlta(@"C:\Tombamento", "","TELA 16");
             f.ShowDialog();
             this.Show();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            var dt = Convert.ToDateTime("0001/01/01");
-            frmGerarLayoutAlta f = new frmGerarLayoutAlta(@"D:\PDFSTombamento\Exceptions", "", "TELA16");
+            frmGerarLayoutAlta f = new frmGerarLayoutAlta(@"C:\Tombamento\Exceptions", "", "TELA16");
             f.ShowDialog();
             this.Show();
         }

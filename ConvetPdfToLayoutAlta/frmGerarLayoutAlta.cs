@@ -108,8 +108,8 @@ namespace ConvetPdfToLayoutAlta
 
         private void BackgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
-
-            int numberPage = 0;
+            
+            int numberPage = 0,  countParcela = 0;
             List<string> lstSituacao = new List<string>();
             List<string> lstGT = new List<string>();
             List<Cabecalho> lstCabecalho = null;
@@ -171,7 +171,7 @@ namespace ConvetPdfToLayoutAlta
                         arquivoPdf = new FileInfo(w);
                         objContratoPdf = new ContratoPdf();
                         objCabecalho = new Cabecalho() { Id = (lstCabecalho.Count + 1) };
-                        objParcelas = new Parcela() { IdCabecalho = objCabecalho.Id, Id = 0 };
+                        objParcelas = new Parcela() { IdCabecalho = objCabecalho.Id, Id = 1 };
                         objParcelas = businessParcelas.PreencheParcela(objParcelas);
                         objCabecalho = businessCabecalho.PreencheCabecalho(objCabecalho);
 
@@ -182,6 +182,7 @@ namespace ConvetPdfToLayoutAlta
                             hasIof = false;
                             isParcelas = false;
                             isCabecalhoParcela = false;
+                            
 
                             pagina = string.Empty;
                             for (int i = 1; i <= reader.NumberOfPages; i++)
@@ -301,19 +302,19 @@ namespace ConvetPdfToLayoutAlta
                                             if (arrayLinhaParcela.Any(u => Regex.IsMatch(u, @"(^\d{3}\/\d{3}$)")))
                                             {
 
-                                                if (!lstParcelas.Any(j => j.Id == objParcelas.Id))
-                                                    lstParcelas.Add(objParcelas);
-                                                else
-                                                {
-                                                    lstParcelas.Remove(objParcelas);
-                                                    lstParcelas.Add(objParcelas);
-                                                }
+                                                //if (!lstParcelas.Any(j => j.Id == objParcelas.Id))
+                                                //    lstParcelas.Add(objParcelas);
+                                                //else
+                                                //{
+                                                //    lstParcelas.Remove(objParcelas);
+                                                //    lstParcelas.Add(objParcelas);
+                                                //}
 
-                                                objParcelas = new Parcela()
-                                                {
-                                                    Id = (lstParcelas.Count),
-                                                    IdCabecalho = objCabecalho.Id
-                                                };
+                                                //objParcelas = new Parcela()
+                                                //{
+                                                //    Id = (lstParcelas.Count),
+                                                //    IdCabecalho = objCabecalho.Id
+                                                //};
                                                 // SE A LINHA DE PAGAMENTO ESTIVER FORA DO PADRÃO, ENTRAR NESTE IF
                                                 if (arrayLinhaParcela.Length < 9)
                                                 {
@@ -349,7 +350,23 @@ namespace ConvetPdfToLayoutAlta
                                             // PEGA A LINHA DE BANCO E AGENCIA
                                             if (arrayLinhaParcela.Any(g => g.Trim().Equals("033") || g.Trim().Equals("999") || Regex.IsMatch(g.Trim(), @"(^\d{6}.\d{1}$)")))
                                             {
+
                                                 objParcelas = businessParcelas.TrataLinhaParcelas(objParcelas, arrayLinhaParcela, 3, hasTaxa, hasIof);
+
+                                                if (!lstParcelas.Any(j => j.Id == objParcelas.Id))
+                                                    lstParcelas.Add(objParcelas);
+                                                else
+                                                {
+                                                    lstParcelas.Remove(objParcelas);
+                                                    lstParcelas.Add(objParcelas);
+                                                }
+
+                                                objParcelas = new Parcela()
+                                                {
+                                                    Id = countParcela++,
+                                                    IdCabecalho = objCabecalho.Id
+                                                };
+
                                                 continue;
                                             }
                                             // PEGA A LINHA DE CORREÇÃO
@@ -370,16 +387,16 @@ namespace ConvetPdfToLayoutAlta
 
                                                 continue;
                                             }
-                                            if (arrayLinhaParcela.Any(x => x.Equals("ANT")) && i == 1)
-                                            {
-                                                if (lstParcelas.Any(x => x.Id == objParcelas.Id))
-                                                    objParcelas = lstParcelas.Find(x => x.Id == objParcelas.Id);
+                                            //if (arrayLinhaParcela.Any(x => x.Equals("ANT")) && i == 1)
+                                            //{
+                                            //    if (lstParcelas.Any(x => x.Id == objParcelas.Id))
+                                            //        objParcelas = lstParcelas.Find(x => x.Id == objParcelas.Id);
 
-                                                objParcelas.Vencimento = arrayLinhaParcela[0];
-                                                objParcelas.IsAnt = true;
-                                                lstParcelas.Add(objParcelas);
-                                                continue;
-                                            }
+                                            //    objParcelas.Vencimento = arrayLinhaParcela[0];
+                                            //    objParcelas.IsAnt = true;
+                                            //    lstParcelas.Add(objParcelas);
+                                            //    continue;
+                                            //}
                                             // PEGA A LINHA DE DAMP (se houver DAMP na parcela)
                                             if (arrayLinhaParcela.Any(x => x.Equals("DAMP")))
                                             {
@@ -736,6 +753,7 @@ namespace ConvetPdfToLayoutAlta
                                 lstOcorrencia.Clear();
                                 lstContratosPdf.Clear();
                                 contador = 0;
+                                countParcela = 1;
                             }
                             else
                                 backgroundWorker1.ReportProgress(_countPercent, userObject);
