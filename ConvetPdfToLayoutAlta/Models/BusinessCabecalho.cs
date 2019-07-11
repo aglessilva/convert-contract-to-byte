@@ -783,7 +783,6 @@ namespace ConvetPdfToLayoutAlta.Models
             return obj;
         }
 
-
         public string[] TrataLinhaPDFPadrao2(string _linha, int _campo)
         {
             string[] _arrayLinha = null;
@@ -868,7 +867,6 @@ namespace ConvetPdfToLayoutAlta.Models
             }
             return _arrayLinha;
         }
-
 
         public Cabecalho TrataCabecalhoPadrao2(Cabecalho obj, string[] _arrayLinha, int linha)
         {
