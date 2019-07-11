@@ -89,7 +89,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                 {
                                     _obj.Pago = Regex.Replace(lst[0], @"[^0-9$]", "");
                                     if (string.IsNullOrWhiteSpace(_obj.Mora) || _obj.Mora == "0")
-                                        _obj.Mora = Regex.Replace(item[1], @"[^0-9$]", "");
+                                        _obj.Mora = Regex.Replace(lst[1], @"[^0-9$]", "");
                                 }
                             }
 
@@ -99,7 +99,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                 _obj.Pago = Regex.Replace(lst[1], @"[^0-9$]", "");
 
                                 if (string.IsNullOrWhiteSpace(_obj.Mora) || _obj.Mora == "0")
-                                    _obj.Mora = Regex.Replace(item[2], @"[^0-9$]", "");
+                                    _obj.Mora = Regex.Replace(lst[2], @"[^0-9$]", "");
                             }
 
 

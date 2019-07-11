@@ -126,7 +126,7 @@
             this.btnIniciarConvercao.Name = "btnIniciarConvercao";
             this.btnIniciarConvercao.Size = new System.Drawing.Size(128, 32);
             this.btnIniciarConvercao.TabIndex = 1;
-            this.btnIniciarConvercao.Text = "Iniciar Converção";
+            this.btnIniciarConvercao.Text = "Iniciar Conversão";
             this.btnIniciarConvercao.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btnIniciarConvercao.UseVisualStyleBackColor = true;
             this.btnIniciarConvercao.Click += new System.EventHandler(this.BtnIniciarConvercao_Click);
