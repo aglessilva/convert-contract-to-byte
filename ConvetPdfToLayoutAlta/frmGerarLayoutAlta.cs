@@ -101,7 +101,20 @@ namespace ConvetPdfToLayoutAlta
             if (isErro)
                 MessageBox.Show("Processo finalizado COM ERROS!", "Erro de Converção", MessageBoxButtons.OK, MessageBoxIcon.Error);
             else
-                MessageBox.Show("Processo finalizado SEM erros", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            {
+                int err = 0;
+                if (Directory.Exists(string.Format(@"{0}\!Erro", diretorioOrigemPdf)))
+                {
+                    err = Directory.EnumerateFiles(string.Format(@"{0}\!Erro", diretorioOrigemPdf), "*.pdf", SearchOption.TopDirectoryOnly).Count();
+                }
+
+                string result = string.Format("Resultado\n\n");
+                result += string.Format("Total de Contratos: {0}\n", totalArquivo);
+                result += string.Format("Total Processados: {0}\n",( totalArquivo - err));
+                result += string.Format("Total Rejeitados: {0}\n", err );
+                result += string.Format("{0}", lblTempo.Text);
+                MessageBox.Show(result,"Finalizado com Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
 
             this.Close();
         }
@@ -171,7 +184,7 @@ namespace ConvetPdfToLayoutAlta
                         arquivoPdf = new FileInfo(w);
                         objContratoPdf = new ContratoPdf();
                         objCabecalho = new Cabecalho() { Id = (lstCabecalho.Count + 1) };
-                        objParcelas = new Parcela() { IdCabecalho = objCabecalho.Id, Id = 1 };
+                        objParcelas = new Parcela() { IdCabecalho = objCabecalho.Id, Id = 0 };
                         objParcelas = businessParcelas.PreencheParcela(objParcelas);
                         objCabecalho = businessCabecalho.PreencheCabecalho(objCabecalho);
 
@@ -209,11 +222,7 @@ namespace ConvetPdfToLayoutAlta
                                         if (line.Trim().Equals("a") || line.Trim().Equals("***") || line.Length < 2) continue;
                                         if (string.IsNullOrWhiteSpace(line)) continue;
                                         if (Regex.IsMatch(line, @"(^\d{1,2}:\d{1,2}:\d{1,2}$)"))
-                                        {
-                                            //if (!lstParcelas.Any(j => j.Id == objParcelas.Id))
-                                            //    lstParcelas.Add(objParcelas);
                                             continue;
-                                        }
 
                                         if (!isCabecalhoParcela)
                                         {
@@ -258,181 +267,206 @@ namespace ConvetPdfToLayoutAlta
                                             {
                                                 string[] _arraySituacao = line.Split('-');
                                                 if (_arraySituacao[0].Length == 4)
+                                                {
                                                     isFinal = true;
-                                            }
-
-                                            if (Regex.IsMatch(line, @"(^[0-9]{2}.[0-9]{3}\s\d{2}\/\d{2}\/\d{4}$)"))
-                                                continue;
-
-                                            if (arrayIgonorCampo.Where(k => line.Contains(k)).Count() > 0) continue;
-
-                                            // indica que não existe mais dados relevantes, e lê os restante das linhas sem qualquer ação
-                                            if (line.Contains("FGTS/Prestação") || line.Contains("Aberto") || line.Contains("CONTRATO LIQUIDADO"))
-                                            {
-                                                //if (!lstParcelas.Any(j => j.Id == objParcelas.Id))
-                                                //    lstParcelas.Add(objParcelas);
-
-                                                isFinal = true;
-                                            }
-
-                                            if (string.IsNullOrWhiteSpace(line))
-                                                continue;
-
-                                            if (Regex.IsMatch(line.Trim(), @"(^\d{1,2}:\d{1,2}:\d{1,2}$)"))
-                                            {
-                                                //if (!lstParcelas.Any(j => j.Id == objParcelas.Id))
-                                                //    lstParcelas.Add(objParcelas);
-                                                continue;
-                                            }
-
-                                            // Sair do loop após o preenchimento da lista de Situações indicando o final do arquivo
-                                            if (string.IsNullOrWhiteSpace(line)) break;
-
-                                            isNotiqual = businessParcelas.ValidaLinha(line);
-
-                                            if (!isNotiqual)
-                                                arrayLinhaParcela = businessParcelas.TrataArray(line);
-                                            else
-                                            {
-                                                arrayLinhaParcela = businessParcelas.TratArrayPadrao2(line, pagina);
-                                               
-                                            }
-
-                                            // PEGA A LINHA DE PAGAMENTO
-                                            if (arrayLinhaParcela.Any(u => Regex.IsMatch(u, @"(^\d{3}\/\d{3}$)")))
-                                            {
-
-                                                //if (!lstParcelas.Any(j => j.Id == objParcelas.Id))
-                                                //    lstParcelas.Add(objParcelas);
-                                                //else
-                                                //{
-                                                //    lstParcelas.Remove(objParcelas);
-                                                //    lstParcelas.Add(objParcelas);
-                                                //}
-
-                                                //objParcelas = new Parcela()
-                                                //{
-                                                //    Id = (lstParcelas.Count),
-                                                //    IdCabecalho = objCabecalho.Id
-                                                //};
-                                                // SE A LINHA DE PAGAMENTO ESTIVER FORA DO PADRÃO, ENTRAR NESTE IF
-                                                if (arrayLinhaParcela.Length < 9)
-                                                {
-                                                    List<string> x, y;
-                                                    y = strReader.ReadLine().Split(' ').Where(z => !string.IsNullOrWhiteSpace(z)).ToList();
-                                                    if (Regex.IsMatch(y[0].Trim(), @"(^\d{1,2}:\d{1,2}:\d{1,2}$)"))
-                                                        continue;
-
-                                                    x = arrayLinhaParcela.ToList();
-                                                    if (y.Contains("00/00/0000)"))
-                                                        x.Insert(1, y[0].Replace("(", ""));
-                                                    else
-                                                    {
-                                                        if (y.Count > 2)
-                                                        {
-                                                            x.Insert(1, y[0]);
-                                                            x.Insert(3, y[1]);
-                                                            x.Insert(5, y[2]);
-                                                        }
-                                                    }
-                                                    arrayLinhaParcela = x.ToArray();
-
-                                                    objParcelas.Proc_Emi_Pag = y[0].Replace("(", "") + y[1].Replace(")", "");
-
+                                                    if(objParcelas != null)
+                                                        if (!lstParcelas.Any(j => j.Id == objParcelas.Id) && (!string.IsNullOrWhiteSpace(objParcelas.Vencimento)))
+                                                            lstParcelas.Add(objParcelas);
+                                                    objParcelas = null;
                                                 }
-                                                if (!isFinal)
-                                                {
-                                                    objParcelas = businessParcelas.PreencheParcela(objParcelas);
-                                                    objParcelas = businessParcelas.TrataLinhaParcelas(objParcelas, arrayLinhaParcela, 2, hasTaxa, hasIof);
-                                                }
-                                                continue;
-                                            }
-                                            // PEGA A LINHA DE BANCO E AGENCIA
-                                            if (arrayLinhaParcela.Any(g => g.Trim().Equals("033") || g.Trim().Equals("999") || Regex.IsMatch(g.Trim(), @"(^\d{6}.\d{1}$)")))
-                                            {
-
-                                                objParcelas = businessParcelas.TrataLinhaParcelas(objParcelas, arrayLinhaParcela, 3, hasTaxa, hasIof);
-
-                                                if (!lstParcelas.Any(j => j.Id == objParcelas.Id))
-                                                    lstParcelas.Add(objParcelas);
-                                                else
-                                                {
-                                                    lstParcelas.Remove(objParcelas);
-                                                    lstParcelas.Add(objParcelas);
-                                                }
-
-                                                objParcelas = new Parcela()
-                                                {
-                                                    Id = countParcela++,
-                                                    IdCabecalho = objCabecalho.Id
-                                                };
-
-                                                continue;
-                                            }
-                                            // PEGA A LINHA DE CORREÇÃO
-                                            if (arrayLinhaParcela.Any(x => x.Equals("COR")))
-                                            {
-                                                // SE A LINHA DE OCORRENCIA ESTIVER FORA DO PADRÃO, ENTRAR NESTE IF
-                                                List<string> x, y;
-                                                if (arrayLinhaParcela.Length < 4)
-                                                {
-                                                    y = strReader.ReadLine().Split(' ').Where(z => !string.IsNullOrWhiteSpace(z)).ToList();
-                                                    x = arrayLinhaParcela.ToList();
-                                                    x.Insert(2, y[0]);
-                                                    x.Insert(3, y[1]);
-                                                    arrayLinhaParcela = x.ToArray();
-                                                }
-                                               
-                                                objParcelas = businessParcelas.TrataLinhaParcelas(objParcelas, arrayLinhaParcela, 1, hasTaxa, hasIof);
-
-                                                continue;
-                                            }
-                                            //if (arrayLinhaParcela.Any(x => x.Equals("ANT")) && i == 1)
-                                            //{
-                                            //    if (lstParcelas.Any(x => x.Id == objParcelas.Id))
-                                            //        objParcelas = lstParcelas.Find(x => x.Id == objParcelas.Id);
-
-                                            //    objParcelas.Vencimento = arrayLinhaParcela[0];
-                                            //    objParcelas.IsAnt = true;
-                                            //    lstParcelas.Add(objParcelas);
-                                            //    continue;
-                                            //}
-                                            // PEGA A LINHA DE DAMP (se houver DAMP na parcela)
-                                            if (arrayLinhaParcela.Any(x => x.Equals("DAMP")))
-                                            {
-                                                objParcelas = businessParcelas.TrataLinhaParcelas(objParcelas, arrayLinhaParcela, 5, hasTaxa, hasIof);
-                                                continue;
                                             }
 
-                                            if (line.Contains("***"))
+                                            if (objParcelas != null)
                                             {
-                                                if (arrayIgnoraOcorrencia.Any(n => n.Contains(line)))
+                                                if (Regex.IsMatch(line, @"(^[0-9]{2}.[0-9]{3}\s\d{2}\/\d{2}\/\d{4}$)"))
                                                     continue;
 
-                                                Ocorrencia objCorrencia = businessParcelas.TrataOcorrencia(arrayLinhaParcela, diretorioDestinoLayout);
-                                                objCorrencia.Contrato = objCabecalho.Contrato;
-                                                objCorrencia.IdParcela = objParcelas.Id;
-                                                objCorrencia.IdCabecalho = objCabecalho.Id;
-                                                lstOcorrencia.Add(objCorrencia);
+                                                if (arrayIgonorCampo.Where(k => line.Contains(k)).Count() > 0) continue;
 
-                                                continue;
+                                                // indica que não existe mais dados relevantes, e lê os restante das linhas sem qualquer ação
+                                                if (line.Contains("FGTS/Prestação") || line.Contains("Aberto") || line.Contains("CONTRATO LIQUIDADO"))
+                                                {
+                                                    isFinal = true;
+                                                    if (!lstParcelas.Any(j => j.Id == objParcelas.Id) && (!string.IsNullOrWhiteSpace(objParcelas.Vencimento)))
+                                                        lstParcelas.Add(objParcelas);
+                                                    objParcelas = null;
+                                                    continue;
+
+                                                }
+
+                                                if (string.IsNullOrWhiteSpace(line))
+                                                    continue;
+
+                                                if (Regex.IsMatch(line.Trim(), @"(^\d{1,2}:\d{1,2}:\d{1,2}$)"))
+                                                    continue;
+
+                                                // Sair do loop após o preenchimento da lista de Situações indicando o final do arquivo
+                                                if (string.IsNullOrWhiteSpace(line)) break;
+
+                                                isNotiqual = businessParcelas.ValidaLinha(line);
+
+                                                if (!isNotiqual)
+                                                    arrayLinhaParcela = businessParcelas.TrataArray(line);
+                                                else
+                                                {
+                                                    arrayLinhaParcela = businessParcelas.TratArrayPadrao2(line, pagina);
+
+                                                }
+
+                                                // PEGA A LINHA DE PAGAMENTO
+                                                if (arrayLinhaParcela.Any(u => Regex.IsMatch(u, @"(^\d{3}\/\d{3}$)")))
+                                                {
+
+                                                    //if (!lstParcelas.Any(j => j.Id == objParcelas.Id))
+                                                    //    lstParcelas.Add(objParcelas);
+                                                    //else
+                                                    //{
+                                                    //    lstParcelas.Remove(objParcelas);
+                                                    //    lstParcelas.Add(objParcelas);
+                                                    //}
+
+                                                    //objParcelas = new Parcela()
+                                                    //{
+                                                    //    Id = (lstParcelas.Count),
+                                                    //    IdCabecalho = objCabecalho.Id
+                                                    //};
+                                                    // SE A LINHA DE PAGAMENTO ESTIVER FORA DO PADRÃO, ENTRAR NESTE IF
+                                                    if (arrayLinhaParcela.Length < 9)
+                                                    {
+                                                        List<string> x, y;
+                                                        y = strReader.ReadLine().Split(' ').Where(z => !string.IsNullOrWhiteSpace(z)).ToList();
+                                                        if (Regex.IsMatch(y[0].Trim(), @"(^\d{1,2}:\d{1,2}:\d{1,2}$)"))
+                                                            continue;
+
+                                                        x = arrayLinhaParcela.ToList();
+                                                        if (y.Contains("00/00/0000)"))
+                                                            x.Insert(1, y[0].Replace("(", ""));
+                                                        else
+                                                        {
+                                                            if (y.Count > 2)
+                                                            {
+                                                                x.Insert(1, y[0]);
+                                                                x.Insert(3, y[1]);
+                                                                x.Insert(5, y[2]);
+                                                            }
+                                                        }
+                                                        arrayLinhaParcela = x.ToArray();
+
+                                                        objParcelas.Proc_Emi_Pag = y[0].Replace("(", "") + y[1].Replace(")", "");
+
+                                                    }
+                                                    if (!isFinal)
+                                                    {
+                                                        if (lstParcelas.Any(p => p.Id == objParcelas.Id))
+                                                        {
+                                                            objParcelas = new Parcela()
+                                                            {
+                                                                Id = countParcela++,
+                                                                IdCabecalho = objCabecalho.Id
+                                                            };
+                                                        }
+
+                                                        objParcelas = businessParcelas.PreencheParcela(objParcelas);
+                                                        objParcelas = businessParcelas.TrataLinhaParcelas(objParcelas, arrayLinhaParcela, 2, hasTaxa, hasIof);
+                                                    }
+                                                    continue;
+                                                }
+                                                // PEGA A LINHA DE BANCO E AGENCIA
+                                                if (arrayLinhaParcela.Any(g => g.Trim().Equals("033") || g.Trim().Equals("999") || Regex.IsMatch(g.Trim(), @"(^\d{6}.\d{1}$)")))
+                                                {
+
+                                                    objParcelas = businessParcelas.TrataLinhaParcelas(objParcelas, arrayLinhaParcela, 3, hasTaxa, hasIof);
+
+                                                    if (!lstParcelas.Any(j => j.Id == objParcelas.Id))
+                                                    {
+                                                        lstParcelas.Add(objParcelas);
+                                                    }
+                                                    else
+                                                    {
+                                                        lstParcelas.Remove(objParcelas);
+                                                        lstParcelas.Add(objParcelas);
+                                                    }
+
+                                                    objParcelas = new Parcela()
+                                                    {
+                                                        Id = countParcela++,
+                                                        IdCabecalho = objCabecalho.Id
+                                                    };
+
+                                                    continue;
+                                                }
+                                                // PEGA A LINHA DE CORREÇÃO
+                                                if (arrayLinhaParcela.Any(x => x.Equals("COR")))
+                                                {
+                                                    // SE A LINHA DE OCORRENCIA ESTIVER FORA DO PADRÃO, ENTRAR NESTE IF
+                                                    List<string> x, y;
+                                                    if (arrayLinhaParcela.Length < 4)
+                                                    {
+                                                        y = strReader.ReadLine().Split(' ').Where(z => !string.IsNullOrWhiteSpace(z)).ToList();
+                                                        x = arrayLinhaParcela.ToList();
+                                                        x.Insert(2, y[0]);
+                                                        x.Insert(3, y[1]);
+                                                        arrayLinhaParcela = x.ToArray();
+                                                    }
+
+                                                    if (lstParcelas.Any(p => p.Id == objParcelas.Id))
+                                                    {
+                                                        objParcelas = new Parcela()
+                                                        {
+                                                            Id = countParcela++,
+                                                            IdCabecalho = objCabecalho.Id
+                                                        };
+                                                    }
+
+                                                    objParcelas = businessParcelas.TrataLinhaParcelas(objParcelas, arrayLinhaParcela, 1, hasTaxa, hasIof);
+
+                                                    continue;
+                                                }
+                                                //if (arrayLinhaParcela.Any(x => x.Equals("ANT")) && i == 1)
+                                                //{
+                                                //    if (lstParcelas.Any(x => x.Id == objParcelas.Id))
+                                                //        objParcelas = lstParcelas.Find(x => x.Id == objParcelas.Id);
+
+                                                //    objParcelas.Vencimento = arrayLinhaParcela[0];
+                                                //    objParcelas.IsAnt = true;
+                                                //    lstParcelas.Add(objParcelas);
+                                                //    continue;
+                                                //}
+                                                // PEGA A LINHA DE DAMP (se houver DAMP na parcela)
+                                                if (arrayLinhaParcela.Any(x => x.Equals("DAMP")))
+                                                {
+                                                    objParcelas = businessParcelas.TrataLinhaParcelas(objParcelas, arrayLinhaParcela, 5, hasTaxa, hasIof);
+                                                    continue;
+                                                }
+
+                                                if (line.Contains("***"))
+                                                {
+                                                    if (arrayIgnoraOcorrencia.Any(n => n.Contains(line)))
+                                                        continue;
+
+                                                    if (lstParcelas.Count > 0)
+                                                    {
+                                                        objParcelas = lstParcelas.LastOrDefault();
+                                                    }
+                                                    Ocorrencia objCorrencia = businessParcelas.TrataOcorrencia(arrayLinhaParcela, diretorioDestinoLayout);
+                                                    objCorrencia.Contrato = objCabecalho.Contrato;
+                                                    objCorrencia.IdParcela = objParcelas.Id;
+                                                    objCorrencia.IdCabecalho = objCabecalho.Id;
+                                                    lstOcorrencia.Add(objCorrencia);
+
+                                                    continue;
+                                                }
+
+
+                                                if (arrayLinhaParcela.Any(v => v.Trim().Equals("00/00/0000")))
+                                                    objParcelas = businessParcelas.TrataLinhaParcelas(objParcelas, arrayLinhaParcela, 4, hasTaxa, hasIof);
                                             }
-
-
-                                            if (arrayLinhaParcela.Any(v => v.Trim().Equals("00/00/0000")))
-                                            {
-                                                objParcelas = businessParcelas.TrataLinhaParcelas(objParcelas, arrayLinhaParcela, 4, hasTaxa, hasIof);
-                                               // lstParcelas.Add(objParcelas);
-                                            }
-
                                             //  PEGAR AS SITUAÇOES DO CONTRATO PARA ATUALIZAR O ARQUIVO SITU115A.TXT
                                             if (i == reader.NumberOfPages)
                                             {
                                                 if (isFinal)
                                                 {
-                                                    if (!lstParcelas.Any(j => j.Id == objParcelas.Id && !j.Vencimento.Trim().Equals(objParcelas.Vencimento.Trim())))
-                                                        lstParcelas.Add(objParcelas);
-
+                                                  
                                                     if (!lstCabecalho.Any(z => z.Id == objCabecalho.Id))
                                                         lstCabecalho.Add(objCabecalho);
 
@@ -577,6 +611,7 @@ namespace ConvetPdfToLayoutAlta
                                             objCabecalho = businessCabecalho.TrataCabecalho(objCabecalho, cabecalho, 9);
                                             continue;
                                         }
+
                                         if (line.Contains("End.Imóvel"))
                                         {
                                             cabecalho = businessCabecalho.TrataLinhaPDF(line, 10);

@@ -16,6 +16,7 @@ namespace ConvetPdfToLayoutAlta.Models
         public string Prestacao { get; set; }
         public string Seguro { get; set; }
         public string Taxa { get; set; }
+        public string Fgts { get; set; }
         public string Iof { get; set; }
         public string Encargo { get; set; }
         public string Juros { get; set; }

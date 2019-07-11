@@ -33,11 +33,11 @@
             this.lblContrato = new System.Windows.Forms.Label();
             this.progressBarReaderPdf = new System.Windows.Forms.ProgressBar();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.lblLidos = new System.Windows.Forms.Label();
             this.lblPasta = new System.Windows.Forms.Label();
             this.lblPendente = new System.Windows.Forms.Label();
             this.lblQtd = new System.Windows.Forms.Label();
             this.lblTempo = new System.Windows.Forms.Label();
-            this.lblLidos = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -93,6 +93,17 @@
             this.panel1.TabIndex = 6;
             this.panel1.UseWaitCursor = true;
             // 
+            // lblLidos
+            // 
+            this.lblLidos.AutoSize = true;
+            this.lblLidos.ForeColor = System.Drawing.Color.ForestGreen;
+            this.lblLidos.Location = new System.Drawing.Point(371, 54);
+            this.lblLidos.Name = "lblLidos";
+            this.lblLidos.Size = new System.Drawing.Size(13, 13);
+            this.lblLidos.TabIndex = 10;
+            this.lblLidos.Text = "0";
+            this.lblLidos.UseWaitCursor = true;
+            // 
             // lblPasta
             // 
             this.lblPasta.AutoSize = true;
@@ -135,16 +146,6 @@
             this.lblTempo.TabIndex = 7;
             this.lblTempo.Text = "Tempo";
             this.lblTempo.UseWaitCursor = true;
-            // 
-            // lblLidos
-            // 
-            this.lblLidos.AutoSize = true;
-            this.lblLidos.ForeColor = System.Drawing.Color.ForestGreen;
-            this.lblLidos.Location = new System.Drawing.Point(374, 54);
-            this.lblLidos.Name = "lblLidos";
-            this.lblLidos.Size = new System.Drawing.Size(13, 13);
-            this.lblLidos.TabIndex = 10;
-            this.lblLidos.Text = "0";
             // 
             // frmGerarLayoutAlta
             // 

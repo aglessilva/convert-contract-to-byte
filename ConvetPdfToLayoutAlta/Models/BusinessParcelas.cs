@@ -68,10 +68,40 @@ namespace ConvetPdfToLayoutAlta.Models
                             _obj.Agencia = Regex.IsMatch(item[count].Trim(), @"(^\d{6}.\d{1}$)") ? Regex.Replace(item[count++], @"[^0-9\/$]", "") : "0";
                             _obj.TPG_EVE_HIS = item[count].Length == 3 ? item[count++].Trim() : "0";
                             _obj.Proc_Emi_Pag = item.FirstOrDefault(d => Regex.IsMatch(d.Trim(), @"(^\d{2}\/\d{2}\/\d{4}$)")) + item.LastOrDefault(d => Regex.IsMatch(d.Trim(), @"(^\d{2}\/\d{2}\/\d{4}$)"));
-                            _obj.Pago = item.Count > 5 ? Regex.Replace(item[5], @"[^0-9$]", "") : "0";
 
-                            if (string.IsNullOrWhiteSpace(_obj.Mora) || _obj.Mora == "0")
-                                _obj.Mora = item.Count > 6 ? Regex.Replace(item[6], @"[^0-9$]", "") : "0";
+
+                            List<string> lst = new List<string>();
+                            for (int i = (item.FindLastIndex(h => Regex.IsMatch(h.Trim(), @"(^\d{2}\/\d{2}\/\d{4}$)")) +1 ); i < item.Count; i++)
+                                lst.Add(item[i]);
+
+                            if (lst.Count == 1)
+                                _obj.Pago = Regex.Replace(lst[0], @"[^0-9$]", "");
+
+                            if (lst.Count == 2)
+                            {
+                                if (Convert.ToDecimal(lst[0]) < Convert.ToDecimal(lst[1]))
+                                {
+                                    _obj.Fgts = Regex.Replace(lst[0], @"[^0-9$]", "");
+                                    _obj.Pago = Regex.Replace(lst[1], @"[^0-9$]", "");
+
+                                }
+                                else
+                                {
+                                    _obj.Pago = Regex.Replace(lst[0], @"[^0-9$]", "");
+                                    if (string.IsNullOrWhiteSpace(_obj.Mora) || _obj.Mora == "0")
+                                        _obj.Mora = Regex.Replace(item[1], @"[^0-9$]", "");
+                                }
+                            }
+
+                            if (lst.Count == 3)
+                            {
+                                _obj.Fgts = Regex.Replace(lst[0], @"[^0-9$]", "");
+                                _obj.Pago = Regex.Replace(lst[1], @"[^0-9$]", "");
+
+                                if (string.IsNullOrWhiteSpace(_obj.Mora) || _obj.Mora == "0")
+                                    _obj.Mora = Regex.Replace(item[2], @"[^0-9$]", "");
+                            }
+
 
                             break;
                         }
@@ -467,10 +497,11 @@ namespace ConvetPdfToLayoutAlta.Models
                 Id = obj.Id,
                 IdCabecalho = obj.IdCabecalho,
                 Taxa = string.IsNullOrWhiteSpace(obj.Taxa) ? "0" : obj.Taxa,
+                Fgts = string.IsNullOrWhiteSpace(obj.Fgts) ? "0" : obj.Fgts,
                 TPG_EVE_HIS = string.IsNullOrWhiteSpace(obj.TPG_EVE_HIS) ? "0" : obj.TPG_EVE_HIS,
                 Vencimento = string.IsNullOrWhiteSpace(obj.Vencimento) ? "01/01/0001" : obj.Vencimento,
                 VencimentoCorrecao = string.IsNullOrWhiteSpace(obj.VencimentoCorrecao) ? "0" : obj.VencimentoCorrecao,
-                Dump = string.IsNullOrWhiteSpace(obj.Dump) ? "0" : obj.Dump,
+                Dump = string.IsNullOrWhiteSpace(obj.Dump) ? "" : obj.Dump,
                 DataVencimentoAnterior = string.IsNullOrWhiteSpace(obj.DataVencimentoAnterior) ? "01/01/0001" : obj.DataVencimentoAnterior,
                 Iof = string.IsNullOrWhiteSpace(obj.Iof) ? "0" : obj.Iof,
             };
