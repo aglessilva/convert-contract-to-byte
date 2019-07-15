@@ -39,6 +39,8 @@ namespace ConvetPdfToLayoutAlta.Models
         public string DataContrato { get; set; }
         public string OrigemRecurso { get; set; }
         public string FgtsUtilizado { get; set; }
+        public string DescontoAquisicao { get; set; }
+        public string Remuneracao { get; set; }
         public string Comissao { get; set; }
         public string Prestacao { get; set; }
         public string Sistema { get; set; }
@@ -48,6 +50,7 @@ namespace ConvetPdfToLayoutAlta.Models
         public string CodigoContabil { get; set; }
         public string SeguroMIP { get; set; }
         public string SeguroDFI { get; set; }
+        public string RemunDifJuros { get; set; }
         public string Reajuste { get; set; }
         public string DataGarantia { get; set; }
         public string Empreendimento { get; set; }
@@ -66,6 +69,7 @@ namespace ConvetPdfToLayoutAlta.Models
         public string Prazo { get; set; }
         public string TipoOrigem { get; set; }
         public string Situacao { get; set; }
-        
+        public string TaxaServico { get; set; }
+        public string Lastro { get; set; }
     }
 }

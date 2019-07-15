@@ -143,11 +143,11 @@ namespace ConvetPdfToLayoutAlta
 
             FileInfo arquivoPdf = null;
 
-            string[] arrayIgnoraOcorrencia = {"BRADESCO","SAFRA", "ITAU","ITAÚ", "PACTUAL","BTG", "UNIBANCO","HSBC", "NORDESTE","SATNANDER","BNDS","CITIBANK","CITI", "CITY"};
-            string[] arrayIgnorParcelas = { "Encargo", "Índice", "Devedor", "Proc.Emi/Pag", "Gerado", "QTDE", "TOTAL" };
+            string[] arrayIgnoraOcorrencia = { "Portabilidade", "BRADESCO","SAFRA", "ITAU","ITAÚ", "PACTUAL","BTG", "UNIBANCO","HSBC", "NORDESTE","SATNANDER","BNDS","CITIBANK","CITI", "CITY", "ECONOMICA", "FEDERAL" };
+            string[] arrayIgnorParcelas = { "Encargo", "Índice", "Devedor", "Proc.Emi/Pag", "Gerado", "QTDE", "TOTAL","PRO" };
             string[] arrayIgnorCabecalho = { "End.Correspondência", "Demonstrativo", "Telefone", "Modalidade", "Nome", "Novo", };
-            string[] arrayIgonorCampo = { "Nº", "CTFIN", "Emissão", "PRO", "Novo", "SANTANDER", "Carteira", "Data","CTFIN" };
-            string[] arrayOcorrencia = { "vencimento", "Amortização", "Sinistro", "Consolidação", "juros", "Transf.Parte", "contratual", "extra", "saldo", "garantia", "Liquidação" };
+            string[] arrayIgonorCampo = { "Nº", "CTFIN", "Emissão", "PRO","ANT", "Novo", "SANTANDER", "Carteira", "Data","CTFIN" };
+            //string[] arrayOcorrencia = { "vencimento", "Amortização", "Sinistro", "Consolidação", "juros", "Transf.Parte", "contratual", "extra", "saldo", "garantia", "Liquidação" };
             string pagina = string.Empty, readerContrato = string.Empty;
             string[] cabecalho = null;
             string[] arrayLinhaParcela = null;
@@ -176,7 +176,6 @@ namespace ConvetPdfToLayoutAlta
 
                 listContratoBlockPdf.ToList().ForEach(w =>
                 {
-
                   
                     ITextExtractionStrategy its;
                     try
@@ -260,7 +259,6 @@ namespace ConvetPdfToLayoutAlta
                                             objCabecalho = businessCabecalho.PreencheCabecalho(objCabecalho);
                                         }
 
-
                                         if (isParcelas)
                                         {
                                             if (line.Split('-').Length == 2)
@@ -308,55 +306,26 @@ namespace ConvetPdfToLayoutAlta
                                                 if (!isNotiqual)
                                                     arrayLinhaParcela = businessParcelas.TrataArray(line);
                                                 else
-                                                {
                                                     arrayLinhaParcela = businessParcelas.TratArrayPadrao2(line, pagina);
-
-                                                }
 
                                                 // PEGA A LINHA DE PAGAMENTO
                                                 if (arrayLinhaParcela.Any(u => Regex.IsMatch(u, @"(^\d{3}\/\d{3}$)")))
                                                 {
-
-                                                    //if (!lstParcelas.Any(j => j.Id == objParcelas.Id))
-                                                    //    lstParcelas.Add(objParcelas);
-                                                    //else
-                                                    //{
-                                                    //    lstParcelas.Remove(objParcelas);
-                                                    //    lstParcelas.Add(objParcelas);
-                                                    //}
-
-                                                    //objParcelas = new Parcela()
-                                                    //{
-                                                    //    Id = (lstParcelas.Count),
-                                                    //    IdCabecalho = objCabecalho.Id
-                                                    //};
+                                                   
                                                     // SE A LINHA DE PAGAMENTO ESTIVER FORA DO PADRÃO, ENTRAR NESTE IF
                                                     if (arrayLinhaParcela.Length < 9)
-                                                    {
-                                                        List<string> x, y;
-                                                        y = strReader.ReadLine().Split(' ').Where(z => !string.IsNullOrWhiteSpace(z)).ToList();
-                                                        if (Regex.IsMatch(y[0].Trim(), @"(^\d{1,2}:\d{1,2}:\d{1,2}$)"))
-                                                            continue;
-
-                                                        x = arrayLinhaParcela.ToList();
-                                                        if (y.Contains("00/00/0000)"))
-                                                            x.Insert(1, y[0].Replace("(", ""));
-                                                        else
-                                                        {
-                                                            if (y.Count > 2)
-                                                            {
-                                                                x.Insert(1, y[0]);
-                                                                x.Insert(3, y[1]);
-                                                                x.Insert(5, y[2]);
-                                                            }
-                                                        }
-                                                        arrayLinhaParcela = x.ToArray();
-
-                                                        objParcelas.Proc_Emi_Pag = y[0].Replace("(", "") + y[1].Replace(")", "");
-
-                                                    }
+                                                        arrayLinhaParcela = businessParcelas.TrataParcela2(line, pagina);
+                                                   
                                                     if (!isFinal)
                                                     {
+                                                       
+                                                        if (arrayLinhaParcela.Any(k => k.Contains("INCORP")))
+                                                        {
+                                                            var x = arrayLinhaParcela.ToList();
+                                                            x.RemoveAll(c => c.Contains("INCORP"));
+                                                            arrayLinhaParcela = x.ToArray();
+                                                        }
+
                                                         if (lstParcelas.Any(p => p.Id == objParcelas.Id))
                                                         {
                                                             objParcelas = new Parcela()
@@ -372,14 +341,17 @@ namespace ConvetPdfToLayoutAlta
                                                     continue;
                                                 }
                                                 // PEGA A LINHA DE BANCO E AGENCIA
-                                                if (arrayLinhaParcela.Any(g => g.Trim().Equals("033") || g.Trim().Equals("999") || Regex.IsMatch(g.Trim(), @"(^\d{6}.\d{1}$)")))
+                                                if ((arrayLinhaParcela.Any(g => Regex.IsMatch(g.Trim(), @"(^\d{6}.\d{1}$)")) || arrayLinhaParcela.Count(u => Regex.IsMatch(u, @"(^\d{2}\/\d{2}\/\d{4}$)")) == 2) && (!line.Contains("***")))
                                                 {
-
-                                                    objParcelas = businessParcelas.TrataLinhaParcelas(objParcelas, arrayLinhaParcela, 3, hasTaxa, hasIof);
+                                                    if (arrayLinhaParcela.Count(u => Regex.IsMatch(u, @"(^\d{2}\/\d{2}\/\d{4}$)")) == 2 && arrayLinhaParcela.Length == 2)
+                                                        objParcelas.Proc_Emi_Pag = Regex.Replace(string.Join(" ", arrayLinhaParcela), @"[^0-9\/$]", "");
+                                                    else
+                                                        objParcelas = businessParcelas.TrataLinhaParcelas(objParcelas, arrayLinhaParcela, 3, hasTaxa, hasIof);
 
                                                     if (!lstParcelas.Any(j => j.Id == objParcelas.Id))
                                                     {
-                                                        lstParcelas.Add(objParcelas);
+                                                        if (!string.IsNullOrWhiteSpace(objParcelas.Vencimento))
+                                                            lstParcelas.Add(objParcelas);
                                                     }
                                                     else
                                                     {
@@ -399,16 +371,9 @@ namespace ConvetPdfToLayoutAlta
                                                 if (arrayLinhaParcela.Any(x => x.Equals("COR")))
                                                 {
                                                     // SE A LINHA DE OCORRENCIA ESTIVER FORA DO PADRÃO, ENTRAR NESTE IF
-                                                    List<string> x, y;
                                                     if (arrayLinhaParcela.Length < 4)
-                                                    {
-                                                        y = strReader.ReadLine().Split(' ').Where(z => !string.IsNullOrWhiteSpace(z)).ToList();
-                                                        x = arrayLinhaParcela.ToList();
-                                                        x.Insert(2, y[0]);
-                                                        x.Insert(3, y[1]);
-                                                        arrayLinhaParcela = x.ToArray();
-                                                    }
-
+                                                        arrayLinhaParcela = businessParcelas.TrataArrayPadrao3(line, pagina);
+                                                       
                                                     if (lstParcelas.Any(p => p.Id == objParcelas.Id))
                                                     {
                                                         objParcelas = new Parcela()
@@ -422,16 +387,7 @@ namespace ConvetPdfToLayoutAlta
 
                                                     continue;
                                                 }
-                                                //if (arrayLinhaParcela.Any(x => x.Equals("ANT")) && i == 1)
-                                                //{
-                                                //    if (lstParcelas.Any(x => x.Id == objParcelas.Id))
-                                                //        objParcelas = lstParcelas.Find(x => x.Id == objParcelas.Id);
-
-                                                //    objParcelas.Vencimento = arrayLinhaParcela[0];
-                                                //    objParcelas.IsAnt = true;
-                                                //    lstParcelas.Add(objParcelas);
-                                                //    continue;
-                                                //}
+                                               
                                                 // PEGA A LINHA DE DAMP (se houver DAMP na parcela)
                                                 if (arrayLinhaParcela.Any(x => x.Equals("DAMP")))
                                                 {
@@ -441,7 +397,7 @@ namespace ConvetPdfToLayoutAlta
 
                                                 if (line.Contains("***"))
                                                 {
-                                                    if (arrayIgnoraOcorrencia.Any(n => n.Contains(line)))
+                                                    if (arrayIgnoraOcorrencia.Any(k => line.Split(' ').Any(p => k.Equals(p))))
                                                         continue;
 
                                                     if (lstParcelas.Count > 0)
@@ -777,7 +733,7 @@ namespace ConvetPdfToLayoutAlta
                             contador++;
                             _countPercent++;
                             // a cada X contratos lidos, escreve o conteudo no arquivo texto de contratos, ocorrencia parcelas...etc
-                            if (contador == 700)
+                            if (contador == 1000)
                             {
                                 userObject.DescricaoPercentural = string.Format("Gerando o {0}º Lote.", countLote++);
                                 backgroundWorker1.ReportProgress(_countPercent, userObject);
