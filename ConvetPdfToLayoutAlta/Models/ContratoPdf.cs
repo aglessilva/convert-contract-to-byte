@@ -14,14 +14,16 @@ namespace ConvetPdfToLayoutAlta.Models
             Cabecalhos = new List<Cabecalho>();
             Parcelas = new List<Parcela>();
             Ocorrencias = new List<Ocorrencia>();
-
+            Cronogramas = new List<string>();
+           
         }
         public string Carteira { get; set; }
         public string Contrato { get; set; }
         public List<Cabecalho> Cabecalhos { get; set; }
         public List<Parcela> Parcelas { get; set; }
         public List<Ocorrencia> Ocorrencias { get; set; }
-
+        public List<ContratoPdf> ContratoPdfs { get; set; }
+        public List<string> Cronogramas { get; set; }
     }
 
     public class UserObject

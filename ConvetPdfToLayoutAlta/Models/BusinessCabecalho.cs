@@ -139,6 +139,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                             .Replace("REMUNERAÇÃO", ":Remuneracao")
                                             .Replace("Seguro MIP", ":SeguroMIP")
                                             .Replace("TAXA", ":TAXA")
+                                            .Replace("Seguro DFI", ":SeguroDFi")
                                             .Replace("Razão", ":Razao")
                                             .Replace("FGTS.UTILIZADO", ":FgtsUtil")
                                             .Trim().Split(':')
@@ -434,7 +435,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                 _id = _arrayLinha.ToList().FindIndex(f => f.Contains("Lastro"));
                                 obj.Lastro = Regex.Replace(_arrayLinha[_id].Replace("Lastro", "").Trim(), @"[^0-9$]+", "");
                             }
-                            
+
                             if (_arrayLinha.Any(n => n.Contains("DESCARQUISICAO")))
                             {
                                 _id = _arrayLinha.ToList().FindIndex(f => f.Contains("DESCARQUISICAO"));
@@ -488,6 +489,12 @@ namespace ConvetPdfToLayoutAlta.Models
                             {
                                 _id = _arrayLinha.ToList().FindIndex(f => f.Contains("Contabil"));
                                 obj.CodigoContabil = Regex.Replace(_arrayLinha[_id].Replace("Contabil", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+
+                            if (_arrayLinha.Any(n => n.Contains("SeguroDFi")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("SeguroDFi"));
+                                obj.SeguroDFI = Regex.Replace(_arrayLinha[_id].Replace("SeguroDFi", "").Trim(), @"[^0-9\/$]+", "");
                             }
 
                             if (_arrayLinha.Any(n => n.Contains("Remuneracao")))
@@ -1075,8 +1082,21 @@ namespace ConvetPdfToLayoutAlta.Models
             };
         }
 
-        public void PopulaContrato(List<ContratoPdf> lstContratosPdf, List<string> lstGT, string _diretorioDestino, string _diretorioOrigem)
+        public void TestePopular (object parametro)
         {
+            var lstContratosPdf = (List<ContratoPdf>)parametro.GetType().GetProperty("item1").GetValue(parametro, null);
+            List<string> lstGT = (List<string>)parametro.GetType().GetProperty("item2").GetValue(parametro, null);
+            string _diretorioDestino = (string)parametro.GetType().GetProperty("item3").GetValue(parametro, null);
+            string _diretorioOrigem = (string)parametro.GetType().GetProperty("item4").GetValue(parametro, null);
+        }
+
+        public void PopulaContrato(object parametro)
+        {
+
+            List<ContratoPdf> lstContratosPdf = (List<ContratoPdf>)parametro.GetType().GetProperty("item1").GetValue(parametro, null);
+            List<string> lstGT = (List<string>)parametro.GetType().GetProperty("item2").GetValue(parametro, null);
+            string _diretorioDestino = (string)parametro.GetType().GetProperty("item3").GetValue(parametro, null);
+            string _diretorioOrigem = (string)parametro.GetType().GetProperty("item4").GetValue(parametro, null);
 
 #if DEBUG
             _diretorioDestino = @"D:\PDFSTombamento\txt";
@@ -1492,8 +1512,8 @@ namespace ConvetPdfToLayoutAlta.Models
             }
             #endregion
 
-            #region BLOCO QUE GERA O ARQUIVO DE PONTEIRO
             strAlta = string.Empty;
+            #region BLOCO QUE GERA O ARQUIVO DE PONTEIRO
             //======================= BLOCO QUE GERA O ARQUIVO DE PARCELAS ===================================================
             using (StreamWriter escreveArquiPont = new StreamWriter(_diretorioDestino + @"\ARQUPONT.txt", true, Encoding.UTF8))
             {
@@ -1504,8 +1524,21 @@ namespace ConvetPdfToLayoutAlta.Models
             }
             #endregion
 
+        
+            #region BLOCO QUE GERA O ARQUIVO DE CRONOGRAMA
+            //======================= BLOCO QUE GERA O ARQUIVO DE CRONOGRAMA ===================================================
+            using (StreamWriter escreveCronograma = new StreamWriter(_diretorioDestino + @"\TL16CRON.txt", true, Encoding.UTF8))
+            {
+                lstContratosPdf.ForEach(p =>
+                {
+                    p.Cronogramas.ForEach(cron =>
+                    {
+                        escreveCronograma.WriteLine(string.Format("{0}CRONOGRAMA", cron).PadRight(84, ' '));
+                    });
+                });
+            }
         }
-
+        #endregion
 
         public string ValidaData(string _data)
         {
@@ -1524,5 +1557,4 @@ namespace ConvetPdfToLayoutAlta.Models
         }
 
     }
-
 }

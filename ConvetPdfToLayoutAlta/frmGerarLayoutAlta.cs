@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace ConvetPdfToLayoutAlta
@@ -16,6 +17,7 @@ namespace ConvetPdfToLayoutAlta
     public partial class frmGerarLayoutAlta : Form
     {
         Stopwatch stopwatch = new Stopwatch();
+        Thread _thread = null;
         UserObject obj = null;
         List<string> _situacoesAtual = new List<string>();
         int contador = 0, countLote = 1, totalArquivo = 0, totalPorPasta = 0;
@@ -124,6 +126,7 @@ namespace ConvetPdfToLayoutAlta
             
             int numberPage = 0,  countParcela = 0;
             List<string> lstSituacao = new List<string>();
+            List<string> lstCronograma = new List<string>(); 
             List<string> lstGT = new List<string>();
             List<Cabecalho> lstCabecalho = null;
             List<Parcela> lstParcelas = null;
@@ -239,6 +242,9 @@ namespace ConvetPdfToLayoutAlta
                                             continue;
                                         if (arrayIgnorParcelas.Any(k => line.Split(' ').Any(p => k.Equals(p))))
                                             continue;
+
+                                        if (line.Contains("Cronograma"))
+                                            lstCronograma.Add(objCabecalho.Contrato);
 
                                         if (i > 1 && line.Contains("C.P.F."))
                                         {
@@ -715,11 +721,16 @@ namespace ConvetPdfToLayoutAlta
                             objContratoPdf.Cabecalhos.AddRange(lstCabecalho);
                             objContratoPdf.Parcelas.AddRange(lstParcelas);
                             objContratoPdf.Ocorrencias.AddRange(lstOcorrencia);
+
+                            if (lstCronograma.Count > 0)
+                                objContratoPdf.Cronogramas.AddRange(lstCronograma);
+
                             lstContratosPdf.Add(objContratoPdf);
 
                             lstParcelas.Clear();
                             lstCabecalho.Clear();
                             lstOcorrencia.Clear();
+                            lstCronograma.Clear();
                             objContratoPdf = null;
                             objCabecalho = null;
                             objCabecalho = null;
@@ -737,12 +748,23 @@ namespace ConvetPdfToLayoutAlta
                             {
                                 userObject.DescricaoPercentural = string.Format("Gerando o {0}º Lote.", countLote++);
                                 backgroundWorker1.ReportProgress(_countPercent, userObject);
-                                businessCabecalho.PopulaContrato(lstContratosPdf, lstGT, diretorioDestinoLayout, diretorioOrigemPdf);
+                                //  businessCabecalho.PopulaContrato(lstContratosPdf, lstGT, diretorioDestinoLayout, diretorioOrigemPdf);
+                                var tab = new
+                                {
+                                    item1 = lstContratosPdf,
+                                    item2 = lstGT,
+                                    item3 = diretorioDestinoLayout,
+                                    item4 = diretorioOrigemPdf
+                                };
 
+                                _thread = new Thread(new ParameterizedThreadStart(businessCabecalho.PopulaContrato));
+                                _thread.Start(tab);
+                                
                                 lstParcelas.Clear();
+                                lstCronograma.Clear();
                                 lstCabecalho.Clear();
                                 lstOcorrencia.Clear();
-                                lstContratosPdf.Clear();
+                                lstContratosPdf = new List<ContratoPdf>();
                                 contador = 0;
                                 countParcela = 1;
                             }
@@ -777,9 +799,19 @@ namespace ConvetPdfToLayoutAlta
 
                         File.Move(string.Format(@"{0}\{1}", arquivoPdf.DirectoryName, arquivoPdf.Name), string.Format(@"{0}\!Erro\{1}", diretorioOrigemPdf, arquivoPdf.Name));
 
-                        // SE HOUVER ALGUEM CONTRATO PARA SER FORMATADO PARA ALTA, O PROCESSO FINALIZA A FORMATAÇÃO APÓS A GERAR O LOG DE ERROS 
+                        // SE HOUVER ALGUM CONTRATO PARA SER FORMATADO PARA ALTA, O PROCESSO FINALIZA A FORMATAÇÃO APÓS A GERAR O LOG DE ERROS 
                         if (lstContratosPdf.Count() > 0)
-                            businessCabecalho.PopulaContrato(lstContratosPdf, lstGT, diretorioDestinoLayout, diretorioOrigemPdf);
+                        {
+                            var tab = new
+                            {
+                                item1 = lstContratosPdf,
+                                item2 = lstGT,
+                                item3 = diretorioDestinoLayout,
+                                item4 = diretorioOrigemPdf
+                            };
+                            businessCabecalho.PopulaContrato(tab);
+                            // businessCabecalho.PopulaContrato(lstContratosPdf, lstGT, diretorioDestinoLayout, diretorioOrigemPdf);
+                        }
 
                         padrao = 0;
                         contador++;
@@ -796,8 +828,20 @@ namespace ConvetPdfToLayoutAlta
                     DescricaoPercentural = "Finalizando Formatação"
                 };
                 backgroundWorker1.ReportProgress(_countPercent, userObject);
-             
-                businessCabecalho.PopulaContrato(lstContratosPdf, lstGT, diretorioDestinoLayout, diretorioOrigemPdf);
+
+                var tab = new
+                {
+                    item1 = lstContratosPdf,
+                    item2 = lstGT,
+                    item3 = diretorioDestinoLayout,
+                    item4 = diretorioOrigemPdf
+                };
+
+                if (_thread.ThreadState == System.Threading.ThreadState.Running)
+                    _thread.Join();
+
+                businessCabecalho.PopulaContrato(tab);
+               // businessCabecalho.PopulaContrato(lstContratosPdf, lstGT, diretorioDestinoLayout, diretorioOrigemPdf);
                 lstContratosPdf.Clear();
             }
 
