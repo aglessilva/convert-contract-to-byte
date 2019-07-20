@@ -69,6 +69,7 @@
             this.btnSelectDiretorioDestino.TabIndex = 5;
             this.btnSelectDiretorioDestino.Text = "...";
             this.btnSelectDiretorioDestino.UseVisualStyleBackColor = true;
+            this.btnSelectDiretorioDestino.Visible = false;
             this.btnSelectDiretorioDestino.Click += new System.EventHandler(this.BtnSelectDiretorioDestino_Click);
             // 
             // btnSelectDiretorioOrigem
@@ -87,18 +88,18 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(13, 23);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(165, 13);
+            this.label2.Size = new System.Drawing.Size(149, 13);
             this.label2.TabIndex = 3;
-            this.label2.Text = "Selecione o diretório de contratos";
+            this.label2.Text = "Selecione o diretório das VM\'s";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(13, 68);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(282, 13);
+            this.label1.Size = new System.Drawing.Size(114, 13);
             this.label1.TabIndex = 2;
-            this.label1.Text = "Selecione o diretório onde será gerado os arquivos da Alta";
+            this.label1.Text = "Diretório da conversão";
             // 
             // textDestinoLayout
             // 
@@ -119,7 +120,6 @@
             // btnIniciarConvercao
             // 
             this.btnIniciarConvercao.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.btnIniciarConvercao.Enabled = false;
             this.btnIniciarConvercao.Image = global::ConvetPdfToLayoutAlta.Properties.Resources._1485477153_arrow_right_78596;
             this.btnIniciarConvercao.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnIniciarConvercao.Location = new System.Drawing.Point(224, 170);
@@ -157,10 +157,11 @@
             "TELA 16",
             "TELA 18",
             "TELA 20",
-            "TELA 25"});
+            "TELA 25",
+            "Selecione o tipo de arquivo"});
             this.comboBoxTela.Location = new System.Drawing.Point(12, 13);
             this.comboBoxTela.Name = "comboBoxTela";
-            this.comboBoxTela.Size = new System.Drawing.Size(178, 21);
+            this.comboBoxTela.Size = new System.Drawing.Size(190, 21);
             this.comboBoxTela.TabIndex = 3;
             // 
             // button2
