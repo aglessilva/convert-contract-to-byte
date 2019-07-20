@@ -23,7 +23,7 @@ namespace ConvetPdfToLayoutAlta.Models
 
                             _obj.VencimentoCorrecao = _linha[0].Trim();
                             _obj.IndiceCorrecao = Regex.Replace(_linha[2], @"[^0-9$]", "");
-                            _obj.AmortizacaoCorrecao = Regex.Replace(_linha[3], @"[^0-9$]", "");
+                            _obj.AmortizacaoCorrecao = Regex.Replace(_linha[3], @"[^0-9$]", "") ;
                             _obj.SaldoDevedorCorrecao = Regex.Replace(_linha[4], @"[^0-9$]", "");
 
                             break;
@@ -34,8 +34,11 @@ namespace ConvetPdfToLayoutAlta.Models
                             _case = "Case 2 - Metodo: TrataLinhaParcelas - PEGA A LINHA DE PAGAMENTO";
                             int count = 0;
 
-                            if (!Regex.IsMatch(_pagamento[1].Trim(), @"(\d{2}\/\d{2}\/\d{4})"))
-                                _pagamento.Insert(1, "01/01/0001");
+                            if (!_pagamento.Any(l => l.Contains("INCORP")))
+                            {
+                                if (!Regex.IsMatch(_pagamento[1].Trim(), @"(\d{2}\/\d{2}\/\d{4})"))
+                                    _pagamento.Insert(1, "01/01/0001");
+                            }
 
                             if(!_pagamento.Any(f => Regex.IsMatch(_pagamento[3], @"(^\d{1},\d{6}$)")))
                                 _pagamento.Insert(3, "0");
@@ -44,7 +47,7 @@ namespace ConvetPdfToLayoutAlta.Models
 
                             //_obj.Pagamento = Regex.IsMatch(_linha[count].ToString(), @"^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[012])/[12][0-9]{3}$") ? Regex.Replace(_linha[count++], @"[^0-9\/$]", "") : "01/01/0001";
                             _obj.Vencimento = Regex.Replace(_linha[count++], @"[^0-9\/$]", "");
-                            _obj.Pagamento = Regex.Replace(_linha[count++], @"[^0-9\/$]", "");
+                            _obj.Pagamento = Regex.Replace(_linha[count++], @"[^0-9A-Z\/$]", "");
                             _obj.NumeroPrazo = Regex.Replace(_linha[count++], @"[^0-9$]", "");
                             _obj.Indice =  Regex.Replace(_linha[count++], @"[^0-9$]", "");
                             _obj.Prestacao = Regex.Replace(_linha[count++], @"[^0-9$]", "");
@@ -92,7 +95,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                 if (!_obj.TPG_EVE_HIS.Trim().Equals("000"))
                                     _obj.Pago = Regex.Replace(lst[0], @"[^0-9$]", "");
                                 else
-                                    _obj.Mora = Regex.Replace(lst[0], @"[^0-9$]", "");
+                                    _obj.Mora = _obj.Mora == "0" ? Regex.Replace(lst[0], @"[^0-9$]", "") : "0";
 
                             if (lst.Count == 2)
                             {
@@ -106,7 +109,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                 {
                                     _obj.Pago = Regex.Replace(lst[0], @"[^0-9$]", "");
                                     if (string.IsNullOrWhiteSpace(_obj.Mora) || _obj.Mora == "0")
-                                        _obj.Mora = Regex.Replace(lst[1], @"[^0-9$]", "");
+                                        _obj.Mora = _obj.Mora == "0" ? Regex.Replace(lst[1], @"[^0-9$]", "") : "0";
                                 }
                             }
 
@@ -116,7 +119,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                 _obj.Pago = Regex.Replace(lst[1], @"[^0-9$]", "");
 
                                 if (string.IsNullOrWhiteSpace(_obj.Mora) || _obj.Mora == "0")
-                                    _obj.Mora = Regex.Replace(lst[2], @"[^0-9$]", "");
+                                    _obj.Mora = _obj.Mora == "0" ? Regex.Replace(lst[2], @"[^0-9$]", "") : "0";
                             }
 
 
@@ -129,7 +132,7 @@ namespace ConvetPdfToLayoutAlta.Models
                             _obj.Proc_Emi_Pag = Regex.Replace(_linha[0] + _linha[1], @"[^0-9\/$]", "");
                             if (_linha.Length > 2)
                             {
-                                _obj.Mora = Regex.Replace(_linha[2], @"[^0-9$]", "");
+                                _obj.Mora = _obj.Mora == "0" ? Regex.Replace(_linha[2], @"[^0-9$]", "") : "0";
                             }
                             break;
                         }
@@ -560,7 +563,7 @@ namespace ConvetPdfToLayoutAlta.Models
                 Taxa = string.IsNullOrWhiteSpace(obj.Taxa) ? "0" : obj.Taxa,
                 Fgts = string.IsNullOrWhiteSpace(obj.Fgts) ? "0" : obj.Fgts,
                 TPG_EVE_HIS = string.IsNullOrWhiteSpace(obj.TPG_EVE_HIS) ? "0" : obj.TPG_EVE_HIS,
-                Vencimento = string.IsNullOrWhiteSpace(obj.Vencimento) ? "01/01/0001" : obj.Vencimento,
+                Vencimento = string.IsNullOrWhiteSpace(obj.Vencimento) ? "" : obj.Vencimento,
                 VencimentoCorrecao = string.IsNullOrWhiteSpace(obj.VencimentoCorrecao) ? "0" : obj.VencimentoCorrecao,
                 Dump = string.IsNullOrWhiteSpace(obj.Dump) ? "" : obj.Dump,
                 DataVencimentoAnterior = string.IsNullOrWhiteSpace(obj.DataVencimentoAnterior) ? "01/01/0001" : obj.DataVencimentoAnterior,
