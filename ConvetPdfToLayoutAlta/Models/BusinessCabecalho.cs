@@ -42,33 +42,18 @@ namespace ConvetPdfToLayoutAlta.Models
                     {
                         string _nome = string.Empty, _cpf = string.Empty, _dataNascimento = string.Empty;
 
-                        _arrayLinha = _linha.Trim().Replace("C.P.F.", ":").Replace("Data Nascimento", "").Split(':');
-                        if (_arrayLinha.Length < 3)
-                        {
-                            var x = TrataArray(_linha).ToList();
+                        _arrayLinha = _linha.Split(' ');
+                        var x = TrataArray(_linha).ToList();
 
-                            _dataNascimento = x.Last();
+                        _cpf = x.Find(y => Regex.IsMatch(y, @"(\d{3}.\d{3}.\d{3}\-\d{2})"));
+                        x.Remove(_cpf);
+                        _dataNascimento = x.Last();
+                        x.Remove(_dataNascimento);
 
-                            for (int i = 0; i < x.Count; i++)
-                            {
-                                if (!x[i].Contains("."))
-                                {
-                                    _nome += x[i] + " ";
-                                    x.Remove(x[i]);
-                                    i--;
-                                }
-                                else break;
-                            }
-                            for (int i = 0; i < x.Count; i++)
-                            {
-                                if (Regex.IsMatch(x[i], @"\d{3}.\d{3}.\d{3}-\d{2}"))
-                                {
-                                    _cpf = x[i];
-                                }
-                            }
+                        x.RemoveRange((x.Count - 3), 3);
 
-                            _arrayLinha = new string[] { _nome, _cpf, _dataNascimento };
-                        }
+                        _nome = string.Join(" ", x.Where(f => !string.IsNullOrWhiteSpace(f)));
+                        _arrayLinha = new string[] { _nome, _cpf, _dataNascimento };
 
                         break;
                     }
@@ -181,6 +166,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                             .Replace("IOF.SEG", ":SEG")
                                             .Replace("Carência", ":Carencia")
                                             .Replace("Código Contábil", ":Contabil")
+                                            .Replace("Apólice",":apolice")
                                            .Trim().Split(':')
                                            .Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
 
@@ -277,10 +263,21 @@ namespace ConvetPdfToLayoutAlta.Models
                     }
                 case 25:
                     {
+                        _linha = Regex.Replace(_linha, @"[^0-9a-zà-úA-Z\/.,\-]+", " ");
                         _arrayLinha = _linha
                                             .Replace("Taxa Juros", "")
                                             .Replace("Data Inclusao", ":")
                                             .Replace("Apólice", ":")
+                                            .Trim().Split(':')
+                                            .Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
+
+                        break;
+                    }
+                case 26:
+                    {
+                        _arrayLinha = _linha
+                                            .Replace("Taxa Juros", ":TJuros")
+                                            .Replace("Data Inclusao", ":DtInc")
                                             .Trim().Split(':')
                                             .Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
 
@@ -345,7 +342,7 @@ namespace ConvetPdfToLayoutAlta.Models
                             obj.EnderecoImovel = _arrayLinha.Length > 0 ? Regex.Replace(_arrayLinha[0].Trim(), @"[^A-Za-z0-9\-.$]+", " ") : "";
                             obj.BairroImovel = _arrayLinha.Length > 1 ? _bairroImovel : "";
                             obj.CepImovel = _arrayLinha.Length > 2 ? Regex.Replace(_arrayLinha[2].Trim(), @"[^0-9\-$]+", "") : "";
-                            obj.CidadeImovel = _arrayLinha.Length > 3 ? Regex.Replace(_arrayLinha[3].Trim(), @"[^A-Z$]+", " ") + "-" + Regex.Replace(_arrayLinha[4].Trim(), @"[^A-Z$]+", "") : "";
+                            obj.CidadeImovel = _arrayLinha.Length > 3 ? Regex.Replace(_arrayLinha[3].Trim(), @"[^A-Z0-9$]+", " ") + "-" + Regex.Replace(_arrayLinha[4].Trim(), @"[^A-Z$]+", "") : "";
                             obj.UfImovel = _arrayLinha.Length > 4 ? Regex.Replace(_arrayLinha[4].Trim(), @"[^A-Z$]+", "") : "";
 
                             obj.EnderecoImovel = string.IsNullOrWhiteSpace(obj.EnderecoImovel.Trim()) ? "***NAO INFORMADO***" : obj.EnderecoImovel;
@@ -637,6 +634,11 @@ namespace ConvetPdfToLayoutAlta.Models
                                 _id = _arrayLinha.ToList().FindIndex(f => f.Contains("Contabil"));
                                 obj.CodigoContabil = Regex.Replace(_arrayLinha[_id].Replace("Contabil", "").Trim(), @"[^0-9\/$]+", "");
                             }
+                            if (_arrayLinha.Any(n => n.Contains("apolice")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("apolice"));
+                                obj.Apolice = Regex.Replace(_arrayLinha[_id].Replace("apolice", "").Trim(), @"[^0-9$]+", "");
+                            }
 
 
                             break;
@@ -848,6 +850,20 @@ namespace ConvetPdfToLayoutAlta.Models
 
                             break;
                         }
+                    case 26:
+                        {
+                            if (_arrayLinha.Any(n => n.Contains("TJuros")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("TJuros"));
+                                obj.TaxaJuros = Regex.Replace(_arrayLinha[_id].Replace("TJuros", "").Trim(), @"[^0-9$]+", "");
+                            }
+                            if (_arrayLinha.Any(n => n.Contains("DtInc")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("DtInc"));
+                                obj.DataInclusao = Regex.Replace(_arrayLinha[_id].Replace("DtInc", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+                            break;
+                        }
 
                     default:
                         return obj;
@@ -940,10 +956,11 @@ namespace ConvetPdfToLayoutAlta.Models
                             _endereco = _endereco.Length > 80 ? _endereco.Substring(0, 79) : _endereco.Trim();
                             var lstItens = new List<string>() { _endereco.Trim(), _bairro.Trim(), _cidade.Trim(), _uf.Trim(), _cep.Trim() }.Where(t => !string.IsNullOrWhiteSpace(t)).ToList();
 
-                            lstItens.ForEach(y =>
+                            for (int i = 0; i < lstItens.Count; i++)
                             {
-                                y = Regex.Replace(y, @"[^A-ZÀ-Ú0-9.\-$]", " ");
-                            });
+                                lstItens[i] = Regex.Replace(lstItens[i], @"\s+", " ");
+                            }
+                           
 
                             _arrayLinha = lstItens.ToArray();
 
@@ -1148,9 +1165,9 @@ namespace ConvetPdfToLayoutAlta.Models
 
             string strAlta = string.Empty;
             string _contratoGT = string.Empty;
-            string  _dataPrimeiroVencimento, _taxaJurosContrato, _valorgarantia;
+            string  _dataPrimeiroVencimento, _taxaJurosContrato, _valorgarantia, _reajuste;
 
-            _dataPrimeiroVencimento = _taxaJurosContrato = _valorgarantia = string.Empty;
+            _dataPrimeiroVencimento = _taxaJurosContrato = _valorgarantia = _reajuste = string.Empty;
 
             #region BLOCO QUE GERA O ARQUIVO DE CONTRATO
             //======================= BLOCO QUE GERA O ARQUIVO DE CONTRATO================================================
@@ -1171,8 +1188,8 @@ namespace ConvetPdfToLayoutAlta.Models
                             //    _apolice = l.Apolice.Trim();
                             //if (!l.Prazo.Trim().Equals(_prazo))
                             //    _prazo = l.Prazo.Trim();
-                            //if (!l.Reajuste.Trim().Equals(_reajuste))
-                            //    _reajuste = l.Reajuste.Trim();
+                            if (!l.Reajuste.Trim().Equals(_reajuste))
+                                _reajuste = l.Reajuste.Trim();
                             if (!l.ValorGarantia.Trim().Equals(_valorgarantia))
                                 _valorgarantia = l.ValorGarantia.Trim();
                             if (!l.DataPrimeiroVencimento.Trim().Equals(_dataPrimeiroVencimento))
@@ -1194,8 +1211,8 @@ namespace ConvetPdfToLayoutAlta.Models
                             strAlta += string.Format("{0}{1}{2}", c.ValorFinanciamento.Trim().PadLeft(18, '0'), c.CodigoContabil.Trim().Substring(1).PadRight(15, '0'), c.SeguroMIP.Trim().PadLeft(18, '0'));
 
                             // O Luis disse que na construção do contrato, "REAJUSTE"  é sempre o original
-                            //strAlta += string.Format("{0}{1}", (string.IsNullOrWhiteSpace(_reajuste) ? c.Reajuste.Trim() : _reajuste).PadRight(10, ' '), c.DataGarantia.Trim().PadRight(18, ' '));
-                            strAlta += string.Format("{0}{1}", c.Reajuste.Trim().PadRight(10, ' '), c.DataGarantia.Trim().PadRight(18, ' '));
+                            //strAlta += string.Format("{0}{1}", c.Reajuste.Trim().PadRight(10, ' '), c.DataGarantia.Trim().PadRight(18, ' '));
+                            strAlta += string.Format("{0}{1}", (string.IsNullOrWhiteSpace(_reajuste) ? c.Reajuste.Trim() : _reajuste).PadRight(10, ' '), c.DataGarantia.Trim().PadRight(18, ' '));
                             strAlta += string.Format("{0}", c.SeguroDFI.Trim().PadLeft(18, '0'));
 
                             // O Luis disse que na construção do contrato, "PRAZO e VALOR GARANTIA"  é sempre o original
@@ -1535,16 +1552,15 @@ namespace ConvetPdfToLayoutAlta.Models
                             try
                             {
                                 strAlta = string.Empty;
-                                //if (!p.IsAnt)
-                                //{
+                                
                                 bool hasOcorrencia = q.Ocorrencias.Any(x => x.IdParcela == p.Id);
                                 strAlta = string.Format("{0}", (q.Carteira.Substring(2, 2) + q.Contrato).PadRight(15, '0'));
                                 strAlta += string.Format("{0}{1}", p.Vencimento.Trim().PadLeft(10, '0'), (p.Indice.Trim().Equals("") ? p.IndiceCorrecao.Trim() : p.Indice.Trim()).PadRight(7, '0'));
-                                strAlta += string.Format("{0}{1}", (p.Pagamento.Trim().Equals("01/01/0001") ? "" : p.Pagamento.Trim().Contains("INCORP") ? "INCORP" : p.Pagamento.Trim()).PadLeft(10, ' '), p.NumeroPrazo.Trim().PadLeft(3, '0'));
+                                strAlta += string.Format("{0}{1}", (p.Pagamento.Trim().Equals("01/01/0001") ? "" : p.Pagamento.Trim().Contains("INCORP") ? "INCORP" : p.Pagamento.Trim()).PadRight(10, ' '), p.NumeroPrazo.Trim().PadLeft(3, '0'));
                                 strAlta += string.Format("{0}{1}", p.Prestacao.Trim().PadLeft(18, '0'), p.Seguro.Trim().PadLeft(18, '0'));
-                                strAlta += string.Format("{0}{1}", p.Taxa.Trim().PadLeft(18, '0'), p.Fgts.PadLeft(18, '0'));
+                                strAlta += string.Format("{0}{1}", p.Taxa.Trim().PadLeft(18, '0'), Regex.Replace(p.Fgts.Trim(), @"[^0-9$]+", "").PadLeft(18, '0'));
                                 strAlta += string.Format("{0}{1}", p.AmortizacaoCorrecao.Trim().PadLeft(17, '0'), "+" + p.SaldoDevedorCorrecao.Trim().PadLeft(18, '0'));
-                                strAlta += string.Format("{0}{1}", p.Encargo.Trim().PadLeft(18, '0'), p.Pago.Trim().PadLeft(18, '0'));
+                                strAlta += string.Format("{0}{1}", Regex.Replace(p.Encargo.Trim(), @"[^0-9$]+", "").PadLeft(18, '0'), p.Pago.Trim().PadLeft(18, '0'));
                                 strAlta += string.Format("{0}{1}", p.Juros.Trim().PadLeft(18, '0'), p.Mora.Trim().PadLeft(18, '0'));
                                 strAlta += string.Format("{0}{1}", p.Amortizacao.Trim().PadLeft(17, '0'), "+" + p.SaldoDevedor.Trim().PadLeft(18, '0'));
                                 strAlta += string.Format("{0}{1}", "0".PadLeft(4, '0'), "0".PadLeft(10, '0'));
@@ -1552,7 +1568,6 @@ namespace ConvetPdfToLayoutAlta.Models
 
                                 escreverParcelas.WriteLine(strAlta);
                                 strAlta = string.Empty;
-                               // }
                             }
                             catch (Exception exp)
                             {
@@ -1574,6 +1589,7 @@ namespace ConvetPdfToLayoutAlta.Models
             //======================= BLOCO QUE GERA O ARQUIVO DE PARCELAS ===================================================
             using (StreamWriter escreveArquiPont = new StreamWriter(_diretorioDestino + @"\ARQUPONT.txt", true, Encoding.Default))
             {
+                lstContratosPdf.Sort();
                 lstContratosPdf.ForEach(p =>
                 {
                     escreveArquiPont.WriteLine(string.Format("01{0}1", Regex.Replace(p.Contrato, "[^0-9$]", "")));
