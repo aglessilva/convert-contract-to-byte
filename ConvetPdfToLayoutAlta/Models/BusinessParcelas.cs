@@ -45,7 +45,6 @@ namespace ConvetPdfToLayoutAlta.Models
 
                             _linha = _pagamento.ToArray();
 
-                            //_obj.Pagamento = Regex.IsMatch(_linha[count].ToString(), @"^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[012])/[12][0-9]{3}$") ? Regex.Replace(_linha[count++], @"[^0-9\/$]", "") : "01/01/0001";
                             _obj.Vencimento = Regex.Replace(_linha[count++], @"[^0-9\/$]", "");
                             _obj.Pagamento = Regex.Replace(_linha[count++], @"[^0-9A-Z\/$]", "");
                             _obj.NumeroPrazo = Regex.Replace(_linha[count++], @"[^0-9$]", "");
@@ -60,7 +59,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                 _obj.Taxa = "0";
                             }
                             _obj.Iof = _hasIof ? Regex.Replace(_linha[count++], @"[^0-9$]", "") : "0";
-                            _obj.Encargo = Regex.Replace(_linha[count++], @"[^0-9$]", "");
+                            _obj.Encargo = Regex.Replace(_linha[count++], @"[^0-9.,$]", "");
                             _obj.Juros = Regex.Replace(_linha[count++], @"[^0-9$]", "");
                             _obj.Amortizacao = Regex.Replace(_linha[count++], @"[^0-9$]", "");
                             _obj.SaldoDevedor = Regex.Replace(_linha[count++], @"[^0-9$]", "");
@@ -76,52 +75,69 @@ namespace ConvetPdfToLayoutAlta.Models
                             if (!item.Any(i => i.Equals("033") || i.Equals("999")))
                                 item.Insert(0, "999");
 
-                            if(!Regex.IsMatch(item[3].Trim(), @"(^\d{2}\/\d{2}\/\d{4}$)"))
-                            {
-                                item.RemoveAt(3);
-                            }
-                            
                             _obj.Banco = item[count].Length == 3 ? Regex.Replace(item[count++], @"[^0-9\/$]", "") : "0";
                             _obj.Agencia = Regex.IsMatch(item[count].Trim(), @"(^\d{6}.\d{1}$)") ? Regex.Replace(item[count++], @"[^0-9\/$]", "") : "0";
                             _obj.TPG_EVE_HIS = item[count].Length == 3 ? item[count++].Trim() : "0";
                             _obj.Proc_Emi_Pag = item.FirstOrDefault(d => Regex.IsMatch(d.Trim(), @"(^\d{2}\/\d{2}\/\d{4}$)")) + item.LastOrDefault(d => Regex.IsMatch(d.Trim(), @"(^\d{2}\/\d{2}\/\d{4}$)"));
 
+                            int _id = item.ToList().FindLastIndex(d => Regex.IsMatch(d.Trim(), @"(^\d{2}\/\d{2}\/\d{4}$)"));
 
-                            List<string> lst = new List<string>();
-                            for (int i = (item.FindLastIndex(h => Regex.IsMatch(h.Trim(), @"(^\d{2}\/\d{2}\/\d{4}$)")) +1 ); i < item.Count; i++)
-                                lst.Add(item[i]);
+                            var newItem = item.Skip((_id + 1)).ToList();
 
-                            if (lst.Count == 1)
-                                if (!_obj.TPG_EVE_HIS.Trim().Equals("000"))
-                                    _obj.Pago = Regex.Replace(lst[0], @"[^0-9$]", "");
-                                else
-                                    _obj.Mora = _obj.Mora == "0" ? Regex.Replace(lst[0], @"[^0-9$]", "") : "0";
+                            if (newItem.Count == 0)
+                                break;
+                                
+                            // TRATAMENTO FODA PARA FGTS, MORA, PAGAMENTO
+                            if (newItem.Count == 1)
+                                _obj.Pago = Regex.Replace(newItem[0].Trim(), @"[^0-9$]+", "");
 
-                            if (lst.Count == 2)
+                            else if (newItem.Count == 2)
                             {
-                                if (Convert.ToDecimal(lst[0]) < Convert.ToDecimal(lst[1]))
+                                // SE o primeiro valor da lista form >= ao Encargo da parcela, entap..
+                                if (Convert.ToDecimal(newItem[0]) >= Convert.ToDecimal(_obj.Encargo))
                                 {
-                                    _obj.Fgts = Regex.Replace(lst[0], @"[^0-9$]", "");
-                                    _obj.Pago = Regex.Replace(lst[1], @"[^0-9$]", "");
-
+                                    _obj.Pago = Regex.Replace(newItem[0].Trim(), @"[^0-9$]+", "");
+                                    _obj.Mora = Regex.Replace(newItem[1].Trim(), @"[^0-9$]+", "");
                                 }
                                 else
                                 {
-                                    _obj.Pago = Regex.Replace(lst[0], @"[^0-9$]", "");
-                                    if (string.IsNullOrWhiteSpace(_obj.Mora) || _obj.Mora == "0")
-                                        _obj.Mora = _obj.Mora == "0" ? Regex.Replace(lst[1], @"[^0-9$]", "") : "0";
+                                    if (Convert.ToDecimal(newItem[1]) >= Convert.ToDecimal(_obj.Encargo))
+                                    {
+                                        _obj.Fgts = Regex.Replace(newItem[0].Trim(), @"[^0-9$]+", "");
+                                        _obj.Pago = Regex.Replace(newItem[1].Trim(), @"[^0-9$]+", "");
+                                    }
+                                    else
+                                    {
+                                        // Se a data de pagamento for igual a INCORP, então usar a data do proximo pagamento da propriedade "Proc_Emi_Pag"
+                                        if (Convert.ToDateTime(_obj.Vencimento) == (_obj.Pagamento.Equals("INCORP") ? Convert.ToDateTime(_obj.Proc_Emi_Pag.Substring(10)) : Convert.ToDateTime(_obj.Pagamento)))
+                                        {
+                                            _obj.Fgts = Regex.Replace(newItem[0].Trim(), @"[^0-9$]+", "");
+                                            _obj.Pago = Regex.Replace(newItem[1].Trim(), @"[^0-9$]+", "");
+                                        }
+                                        else
+                                        {
+                                            // Se o segundo valor da lista sobre o "Encargo" form <= 8% então preencha os campos "Pago", "Mora"
+                                            if (((Convert.ToDecimal(newItem[1]) / Convert.ToDecimal(_obj.Encargo)) * 100) <= 8)
+                                            {
+                                                _obj.Pago = Regex.Replace(newItem[0].Trim(), @"[^0-9$]+", ""); 
+                                                _obj.Mora = Regex.Replace(newItem[1].Trim(), @"[^0-9$]+", "");
+                                            }
+                                            else
+                                            {
+                                                _obj.Fgts = Regex.Replace(newItem[0].Trim(), @"[^0-9$]+", "");
+                                                _obj.Pago = Regex.Replace(newItem[1].Trim(), @"[^0-9$]+", "");
+                                            }
+                                        }
+                                    }
                                 }
                             }
 
-                            if (lst.Count == 3)
+                            else
                             {
-                                _obj.Fgts = Regex.Replace(lst[0], @"[^0-9$]", "");
-                                _obj.Pago = Regex.Replace(lst[1], @"[^0-9$]", "");
-
-                                if (string.IsNullOrWhiteSpace(_obj.Mora) || _obj.Mora == "0")
-                                    _obj.Mora = _obj.Mora == "0" ? Regex.Replace(lst[2], @"[^0-9$]", "") : "0";
+                                _obj.Fgts = Regex.Replace(newItem[0].Trim(), @"[^0-9$]+", "");
+                                _obj.Pago = Regex.Replace(newItem[1].Trim(), @"[^0-9$]+", "");
+                               _obj.Mora = Regex.Replace(newItem[2].Trim(), @"[^0-9$]+", "");
                             }
-
 
                             break;
                         }

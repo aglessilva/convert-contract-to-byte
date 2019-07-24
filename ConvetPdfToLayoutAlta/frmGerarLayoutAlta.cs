@@ -153,7 +153,7 @@ namespace ConvetPdfToLayoutAlta
             string[] arrayIgnoraOcorrencia = { "Portabilidade", "BRADESCO","SAFRA", "ITAU","ITAÚ", "PACTUAL","BTG", "UNIBANCO","HSBC", "NORDESTE","SATNANDER","BNDS","CITIBANK","CITI", "CITY", "ECONOMICA", "FEDERAL" };
             string[] arrayIgnorParcelas = { "Encargo", "Índice", "Devedor", "Proc.Emi/Pag", "Mora", "Gerad", };
             string[] arrayIgnorCabecalho = { "End.Correspondência", "Demonstrativo", "Telefone", "Modalidade", "Nome", "Novo", };
-            string[] arrayIgonorCampo = { "Nº", "CTFIN", "Emissão", "PRO","ANT", "Novo", "SANTANDER", "Carteira", "Data","CTFIN","Carteira","Contrato","v","Seguro","TAXA", };
+            string[] arrayIgonorCampo = { "Nº", "CTFIN", "Emissão", "PRO","ANT", "Novo", "SANTANDER", "Carteira", "Data","CTFIN","Carteira","Contrato","Seguro","TAXA", };
             string[] arrayFinalParcela = { "TOTAL","Aberto", "SEGURO", "CONTRATO LIQUIDADO", "FGTS/Prestação", "QTD" };
             string pagina = string.Empty, readerContrato = string.Empty;
             string[] cabecalho = null;
@@ -226,7 +226,7 @@ namespace ConvetPdfToLayoutAlta
                                     while ((line = strReader.ReadLine()) != null)
                                     {
 
-                                        if (line.Trim().Equals("a") || line.Trim().Equals("***") || line.Length < 2) continue;
+                                        if (line.Trim().Equals("a") || line.Trim().Equals("v") || line.Trim().Equals("***") || line.Length < 2) continue;
                                         if (string.IsNullOrWhiteSpace(line)) continue;
                                         if (Regex.IsMatch(line, @"(^\d{1,2}:\d{1,2}:\d{1,2}$)"))
                                             continue;
@@ -331,12 +331,12 @@ namespace ConvetPdfToLayoutAlta
                                                     if (!isFinal)
                                                     {
                                                        
-                                                        if (arrayLinhaParcela.Any(k => k.Contains("INCORP")))
-                                                        {
+                                                        //if (arrayLinhaParcela.Any(k => k.Contains("INCORP")))
+                                                        //{
                                                             //var x = arrayLinhaParcela.ToList();
                                                             //x.RemoveAll(c => c.Contains("INCORP"));
                                                             //arrayLinhaParcela = x.ToArray();
-                                                        }
+                                                        //}
 
                                                         if (lstParcelas.Any(p => p.Id == objParcelas.Id))
                                                         {
@@ -358,7 +358,13 @@ namespace ConvetPdfToLayoutAlta
                                                     if (arrayLinhaParcela.Count(u => Regex.IsMatch(u, @"(^\d{2}\/\d{2}\/\d{4}$)")) == 2 && arrayLinhaParcela.Length == 2)
                                                         objParcelas.Proc_Emi_Pag = Regex.Replace(string.Join(" ", arrayLinhaParcela), @"[^0-9\/$]", "");
                                                     else
-                                                        objParcelas = businessParcelas.TrataLinhaParcelas(objParcelas, arrayLinhaParcela, 3, hasTaxa, hasIof);
+                                                    {
+                                                        List<string> lstValores = arrayLinhaParcela.ToList();
+                                                        if (!Regex.IsMatch(lstValores[3].Trim(), @"(^\d{2}\/\d{2}\/\d{4}$)"))
+                                                            lstValores.RemoveAt(3);
+
+                                                        objParcelas = businessParcelas.TrataLinhaParcelas(objParcelas, lstValores.ToArray(), 3, hasTaxa, hasIof);
+                                                    }
 
                                                     if (!lstParcelas.Any(j => j.Id == objParcelas.Id))
                                                     {
@@ -689,10 +695,17 @@ namespace ConvetPdfToLayoutAlta
                                             objCabecalho = businessCabecalho.TrataCabecalho(objCabecalho, cabecalho, 24);
                                             continue;
                                         }
+                                       
                                         if (line.Contains("Apólice") && !line.Contains("Seguro"))
                                         {
                                             cabecalho = businessCabecalho.TrataLinhaPDF(line, 25);
                                             objCabecalho = businessCabecalho.TrataCabecalho(objCabecalho, cabecalho, 25);
+                                            continue;
+                                        }
+                                        if (line.Contains("Taxa Juros") && line.Contains("Data Inclusao"))
+                                        {
+                                            cabecalho = businessCabecalho.TrataLinhaPDF(line, 26);
+                                            objCabecalho = businessCabecalho.TrataCabecalho(objCabecalho, cabecalho, 26);
                                             continue;
                                         }
                                         if (line.Contains("Situações"))
@@ -749,6 +762,7 @@ namespace ConvetPdfToLayoutAlta
                             isNotiqual = false;
                             pagina = string.Empty;
                             its = null;
+
 
                             padrao = 0;
                             contador++;
@@ -837,6 +851,7 @@ namespace ConvetPdfToLayoutAlta
                     PdfInfo = new FileInfo(listDiretory.Last()),
                     DescricaoPercentural = "Finalizando Formatação"
                 };
+               
                 backgroundWorker1.ReportProgress(_countPercent, userObject);
 
                 var tab = new
