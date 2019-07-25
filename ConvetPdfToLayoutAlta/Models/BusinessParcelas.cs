@@ -136,7 +136,7 @@ namespace ConvetPdfToLayoutAlta.Models
                             {
                                 _obj.Fgts = Regex.Replace(newItem[0].Trim(), @"[^0-9$]+", "");
                                 _obj.Pago = Regex.Replace(newItem[1].Trim(), @"[^0-9$]+", "");
-                               _obj.Mora = Regex.Replace(newItem[2].Trim(), @"[^0-9$]+", "");
+                                _obj.Mora = Regex.Replace(newItem[2].Trim(), @"[^0-9$]+", "");
                             }
 
                             break;
@@ -146,9 +146,14 @@ namespace ConvetPdfToLayoutAlta.Models
                             _case = "Case 4 - Metodo: TrataLinhaParcelas - PEGA A LINHA DE PROXIMO PAGAMENTO E MORA";
 
                             _obj.Proc_Emi_Pag = Regex.Replace(_linha[0] + _linha[1], @"[^0-9\/$]", "");
-                            if (_linha.Length > 2)
+                            if (_linha.Length > 2 &&  (_linha.Length <4))
                             {
                                 _obj.Mora = _obj.Mora == "0" ? Regex.Replace(_linha[2], @"[^0-9$]", "") : "0";
+                            }
+                            if (_linha.Length > 3 )
+                            {
+                                _obj.Fgts = _obj.Fgts == "0" ? Regex.Replace(_linha[2], @"[^0-9$]", "") : "0";
+                                _obj.Mora = _obj.Mora == "0" ? Regex.Replace(_linha[3], @"[^0-9$]", "") : "0";
                             }
                             break;
                         }
@@ -166,7 +171,7 @@ namespace ConvetPdfToLayoutAlta.Models
             }
             catch (Exception exOut)
             {
-                throw new ArgumentOutOfRangeException("Ocorrencia do PDF - Arquivo: BusinessParcelas " + _case, exOut.InnerException); ;
+                throw new ArgumentOutOfRangeException("Ocorrencia do PDF - Arquivo: BusinessParcelas " + _case, exOut.InnerException); 
             }
             return _obj;
         }
@@ -536,7 +541,7 @@ namespace ConvetPdfToLayoutAlta.Models
                             break;
                         }
                     default:
-                        using (StreamWriter escreverNovaOcorrencia = new StreamWriter(_diretorioDestino + @"\NOVAS_OCORRENCIAS.txt", true, Encoding.UTF8))
+                        using (StreamWriter escreverNovaOcorrencia = new StreamWriter(_diretorioDestino + @"\NOVAS_OCORRENCIAS.txt", true, Encoding.Default))
                         {
                             string _novaOocorrencia = "NOVO CODIGO DE CONTRADO ENCONTRADO: " + _codigoOcorrencia;
                             escreverNovaOcorrencia.WriteLine(_novaOocorrencia);
@@ -584,6 +589,7 @@ namespace ConvetPdfToLayoutAlta.Models
                 Dump = string.IsNullOrWhiteSpace(obj.Dump) ? "" : obj.Dump,
                 DataVencimentoAnterior = string.IsNullOrWhiteSpace(obj.DataVencimentoAnterior) ? "01/01/0001" : obj.DataVencimentoAnterior,
                 Iof = string.IsNullOrWhiteSpace(obj.Iof) ? "0" : obj.Iof,
+                Contrato = string.IsNullOrWhiteSpace(obj.Contrato) ? "0" : obj.Contrato,
             };
         }
 

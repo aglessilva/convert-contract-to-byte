@@ -35,5 +35,6 @@ namespace ConvetPdfToLayoutAlta.Models
         public int IdCabecalho { get; set; }
         public string DataVencimentoAnterior { get; set; }
         public bool IsAnt { get; set; }
+        public string Contrato { get; set; }
     }
 }

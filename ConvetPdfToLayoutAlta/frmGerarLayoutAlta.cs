@@ -343,7 +343,8 @@ namespace ConvetPdfToLayoutAlta
                                                             objParcelas = new Parcela()
                                                             {
                                                                 Id = countParcela++,
-                                                                IdCabecalho = objCabecalho.Id
+                                                                IdCabecalho = objCabecalho.Id,
+                                                                Contrato = objCabecalho.Contrato
                                                             };
                                                         }
 
@@ -380,7 +381,8 @@ namespace ConvetPdfToLayoutAlta
                                                     objParcelas = new Parcela()
                                                     {
                                                         Id = countParcela++,
-                                                        IdCabecalho = objCabecalho.Id
+                                                        IdCabecalho = objCabecalho.Id,
+                                                        Contrato = objCabecalho.Contrato
                                                     };
 
                                                     continue;
@@ -397,7 +399,8 @@ namespace ConvetPdfToLayoutAlta
                                                         objParcelas = new Parcela()
                                                         {
                                                             Id = countParcela++,
-                                                            IdCabecalho = objCabecalho.Id
+                                                            IdCabecalho = objCabecalho.Id,
+                                                            Contrato = objCabecalho.Contrato
                                                         };
                                                     }
 
