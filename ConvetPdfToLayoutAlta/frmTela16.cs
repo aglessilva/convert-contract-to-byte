@@ -14,7 +14,7 @@ using System.Windows.Forms;
 
 namespace ConvetPdfToLayoutAlta
 {
-    public partial class frmGerarLayoutAlta : Form
+    public partial class FrmTela16 : Form
     {
         Stopwatch stopwatch = new Stopwatch();
         Thread _thread = null;
@@ -26,7 +26,7 @@ namespace ConvetPdfToLayoutAlta
         IEnumerable<string> listDiretory = null;
         string diretorioOrigemPdf, diretorioDestinoLayout, tmp, tela;
 
-        public frmGerarLayoutAlta(string _diretoioPdf, string _diretorioDestino, string _tela)
+        public FrmTela16(string _diretoioPdf, string _diretorioDestino, string _tela)
         {
             diretorioOrigemPdf = _diretoioPdf; diretorioDestinoLayout = _diretorioDestino; tela = Regex.Replace(_tela, @"[^A-Z0-9$]", "");
             InitializeComponent();
@@ -425,10 +425,15 @@ namespace ConvetPdfToLayoutAlta
                                                     {
                                                         objParcelas = lstParcelas.LastOrDefault();
                                                     }
+                                                                                                       
                                                     Ocorrencia objCorrencia = businessParcelas.TrataOcorrencia(arrayLinhaParcela, diretorioDestinoLayout);
                                                     objCorrencia.Contrato = objCabecalho.Contrato;
                                                     objCorrencia.IdParcela = objParcelas.Id;
                                                     objCorrencia.IdCabecalho = objCabecalho.Id;
+
+                                                    if (lstParcelas.Count == 0)
+                                                        objCorrencia.NaoTemParcela = true;
+
                                                     lstOcorrencia.Add(objCorrencia);
 
                                                     continue;
@@ -751,7 +756,8 @@ namespace ConvetPdfToLayoutAlta
                             if (lstCronograma.Count > 0)
                                 objContratoPdf.Cronogramas.AddRange(lstCronograma);
 
-                            lstContratosPdf.Add(objContratoPdf);
+                            if (!lstContratosPdf.Any(pdf => pdf.Contrato.Trim().Equals(objContratoPdf.Contrato.Trim())))
+                                lstContratosPdf.Add(objContratoPdf);
 
                             lstParcelas.Clear();
                             lstCabecalho.Clear();

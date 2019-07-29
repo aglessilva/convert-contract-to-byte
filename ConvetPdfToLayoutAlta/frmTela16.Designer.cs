@@ -1,6 +1,6 @@
 ﻿namespace ConvetPdfToLayoutAlta
 {
-    partial class frmGerarLayoutAlta
+    partial class FrmTela16
     {
         /// <summary>
         /// Required designer variable.

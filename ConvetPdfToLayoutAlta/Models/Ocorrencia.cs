@@ -13,5 +13,6 @@
         public string FGTS { get; set; }
         public string CodigoOcorrencia { get; set; }
         public string Descricao { get; set; }
+        public bool NaoTemParcela { get; set; }
     }
 }
