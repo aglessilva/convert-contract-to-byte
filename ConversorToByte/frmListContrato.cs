@@ -28,22 +28,23 @@ namespace ConversorToByte
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            this.Height = (Screen.PrimaryScreen.Bounds.Height -30);
 
-            IEnumerable<string> lstItem = Directory.EnumerateFiles(Path.GetTempPath(), "*.pdf", SearchOption.TopDirectoryOnly)
-              .Where(x => new FileInfo(x).CreationTime.Date.ToShortDateString().Equals(DateTime.Today.Date.ToShortDateString()));
+            //IEnumerable<string> lstItem = Directory.EnumerateFiles(Path.GetTempPath(), "*.pdf", SearchOption.TopDirectoryOnly)
+            //  .Where(x => new FileInfo(x).CreationTime.Date.ToShortDateString().Equals(DateTime.Today.Date.ToShortDateString()));
 
-            lstItem.ToList().ForEach(f => { File.Delete(f); });
+            //lstItem.ToList().ForEach(f => { File.Delete(f); });
 
             
-            fsf = new FileSafeOperations();
-            Users obj = fsf.CheckUser(Environment.UserName);
+            //fsf = new FileSafeOperations();
+            //Users obj = fsf.CheckUser(Environment.UserName);
 
-            ValidaPermissao(obj);
-            List<FileSafe> lst =  fsf.GetFilesSafe(null,null);
-            dataGridViewContract.AutoGenerateColumns = false;
+            //ValidaPermissao(obj);
+            //List<FileSafe> lst =  fsf.GetFilesSafe(null,null);
+            //dataGridViewContract.AutoGenerateColumns = false;
 
 
-            dataGridViewContract.DataSource = lst.ToList();
+            //dataGridViewContract.DataSource = lst.ToList();
         }
 
         private void ValidaPermissao(Users obj)

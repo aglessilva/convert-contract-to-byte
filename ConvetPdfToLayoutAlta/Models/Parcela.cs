@@ -7,6 +7,8 @@ namespace ConvetPdfToLayoutAlta.Models
         public Parcela()
         {
         }
+        public string Dump { get; set; }
+
         public string VencimentoCorrecao { get; set; }
         public string Vencimento { get; set; }
         public string Pagamento { get; set; }
@@ -30,7 +32,6 @@ namespace ConvetPdfToLayoutAlta.Models
         public string Proc_Emi_Pag { get; set; }
         public string Pago { get; set; }
         public string Mora { get; set; }
-        public string Dump { get; set; }
         public int Id { get; set; }
         public int IdCabecalho { get; set; }
         public string DataVencimentoAnterior { get; set; }

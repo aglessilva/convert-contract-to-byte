@@ -1314,6 +1314,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                     strAlta += string.Format("{0}", _parcela.Dump.Trim().PadRight(30, ' '));
                                 }
 
+
                                 if (lstTipoOcorrencia.Any(t => t.Equals(o.CodigoOcorrencia.Trim()))) // Alteração Contratual, Alteração de garantia, Mudança dia vencimento
                                 {
                                     if (o.CodigoOcorrencia.Equals("010"))
@@ -1368,7 +1369,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                             }
 
                                             strAlta += string.Format("{0}{1}{2}", "0".PadLeft(72, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'), "PRAZO".PadRight(30, ' '));
-                                            strAlta += string.Format("{0}{1}", _cabecalho.Prazo.Trim().PadRight(30, ' '), _cabecalhoAnterior.Prazo.Trim().PadRight(30, ' '));
+                                            strAlta += string.Format("{0}{1}", _parcela.NumeroPrazo.Substring(3).Trim().PadRight(30, ' '), _cabecalhoAnterior.Prazo.Trim().PadRight(30, ' '));
 
                                             if (!_cabecalhoAnterior.Reajuste.Equals(_cabecalho.Reajuste))
                                                 strAlta += string.Format("{0}", _cabecalho.TaxaJuros.Trim().PadRight(30, ' '));
@@ -1423,11 +1424,26 @@ namespace ConvetPdfToLayoutAlta.Models
                                     {
                                         if (!_cabecalhoAnterior.DataPrimeiroVencimento.Equals(_cabecalho.DataPrimeiroVencimento))
                                         {
-                                            strAlta += string.Format("{0}{1}{2}", "0".PadLeft(72, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'), Convert.ToDateTime(ValidaData(_datavencimentoAnterior)).ToString("yyyyMMdd").Trim().PadRight(30, ' '));
+                                            string altaAnterior = strAlta;
+
+                                            // Ajuste quando a ocorrencia nao tem parcela associada 
+                                            // Reunião com Emerson e Luis no Radar [Data: 27/07/2019]
+                                            if (o.NaoTemParcela)
+                                            {
+                                                strAlta += string.Format("{0}{1}{2}", "0".PadLeft(72, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'), "PRAZO".PadRight(30, ' '));
+                                                strAlta += string.Format("{0}{1}{2}","".PadLeft(30,' '), _parcela.NumeroPrazo.Substring(3).Trim().PadRight(30, ' '), "00010101".PadRight(30, ' '));
+                                                escreverOcorrencia.WriteLine(strAlta);
+                                                strAlta = string.Empty;
+                                            }
+
+                                            strAlta = altaAnterior;
+                                            strAlta += string.Format("{0}{1}{2}", "0".PadLeft(72, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'),"".PadRight(30, ' '));
                                             strAlta += string.Format("{0}{1}", _cabecalho.DataPrimeiroVencimento.Trim().PadRight(30, ' '), _cabecalhoAnterior.DataPrimeiroVencimento.Trim().PadRight(30, ' '));
                                             strAlta += string.Format("{0}", "".PadLeft(30, ' '));
+
+                                            altaAnterior = string.Empty;
                                         }
-                                        else
+                                        else 
                                         {
                                             strAlta = string.Empty;
                                             _parcela = null;

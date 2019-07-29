@@ -90,11 +90,16 @@ namespace ConvetPdfToLayoutAlta
             }
             panelSpinner.Visible = !panelSpinner.Visible;
 
-           
-            //textOrigemContratosPdf.Text = Path.GetDirectoryName(Application.ExecutablePath);
-            //textDestinoLayout.Text = Path.GetDirectoryName(Application.ExecutablePath) + @"\ALTA";
 
-            frmGerarLayoutAlta f = new frmGerarLayoutAlta(textOrigemContratosPdf.Text, textDestinoLayout.Text, comboBoxTela.Text);
+            Form f = null;
+
+            if (comboBoxTela.Text.ToUpper().Equals("TELA 16"))
+                f = new FrmTela16(textOrigemContratosPdf.Text, textDestinoLayout.Text, comboBoxTela.Text);
+
+            if (comboBoxTela.Text.ToUpper().Equals("TELA 18"))
+                f = new FrmTela18(textOrigemContratosPdf.Text, textDestinoLayout.Text, comboBoxTela.Text);
+
+            this.Text += "-" + comboBoxTela.Text;
             f.ShowDialog();
             panelSpinner.Visible = !panelSpinner.Visible;
         }
@@ -105,14 +110,14 @@ namespace ConvetPdfToLayoutAlta
           //  var sbDados2 = "1,00200.00";
           //  var match = Regex.IsMatch(sbDados2.ToString(), @"^[0-2,]$");
 
-            frmGerarLayoutAlta f = new frmGerarLayoutAlta(@"D:\PDFSTombamento", "","TELA 16");
+            FrmTela16 f = new FrmTela16(@"D:\PDFSTombamento", "","TELA 16");
             f.ShowDialog();
             this.Show();
         }
 
         private void Button2_Click(object sender, EventArgs e)
         {
-            frmGerarLayoutAlta f = new frmGerarLayoutAlta(@"D:\PDFSTombamento\Exceptions", "", "TELA16");
+            FrmTela16 f = new FrmTela16(@"D:\PDFSTombamento\Exceptions", "", "TELA16");
             f.ShowDialog();
             this.Show();
         }
@@ -121,9 +126,15 @@ namespace ConvetPdfToLayoutAlta
         {
             comboBoxTela.SelectedIndex = 4;
 #if DEBUG
-            button1.Visible = true;
-            button2.Visible = true;
+            button1.Visible = button2.Visible = button3.Visible = true;
 #endif
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            FrmTela18 f = new FrmTela18(@"D:\PDFSTombamento\Exceptions18", "", "TELA18");
+            f.ShowDialog();
+            this.Show();
         }
     }
 }

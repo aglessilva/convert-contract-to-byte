@@ -586,10 +586,10 @@ namespace ConvetPdfToLayoutAlta.Models
                 TPG_EVE_HIS = string.IsNullOrWhiteSpace(obj.TPG_EVE_HIS) ? "0" : obj.TPG_EVE_HIS,
                 Vencimento = string.IsNullOrWhiteSpace(obj.Vencimento) ? "" : obj.Vencimento,
                 VencimentoCorrecao = string.IsNullOrWhiteSpace(obj.VencimentoCorrecao) ? "0" : obj.VencimentoCorrecao,
-                Dump = string.IsNullOrWhiteSpace(obj.Dump) ? "" : obj.Dump,
                 DataVencimentoAnterior = string.IsNullOrWhiteSpace(obj.DataVencimentoAnterior) ? "01/01/0001" : obj.DataVencimentoAnterior,
                 Iof = string.IsNullOrWhiteSpace(obj.Iof) ? "0" : obj.Iof,
                 Contrato = string.IsNullOrWhiteSpace(obj.Contrato) ? "0" : obj.Contrato,
+                Dump = string.IsNullOrWhiteSpace(obj.Dump) ? "0" : obj.Dump,
             };
         }
 
