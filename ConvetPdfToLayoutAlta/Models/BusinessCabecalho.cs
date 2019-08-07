@@ -1121,7 +1121,7 @@ namespace ConvetPdfToLayoutAlta.Models
                 SeguroMIP = string.IsNullOrWhiteSpace(obj.SeguroMIP) ? "" : obj.SeguroMIP,
                 Sistema = string.IsNullOrWhiteSpace(obj.Sistema) ? "" : obj.Sistema,
                 Situacao = string.IsNullOrWhiteSpace(obj.Situacao) ? "" : obj.Situacao,
-                Taxa = string.IsNullOrWhiteSpace(obj.Taxa) ? "" : obj.Taxa,
+                Taxa = string.IsNullOrWhiteSpace(obj.Taxa) ? "0" : obj.Taxa,
                 TaxaJuros = string.IsNullOrWhiteSpace(obj.TaxaJuros) ? "" : obj.TaxaJuros,
                 TelefoneComercial = string.IsNullOrWhiteSpace(obj.TelefoneComercial) ? "0" : obj.TelefoneComercial,
                 TelefoneResidencia = string.IsNullOrWhiteSpace(obj.TelefoneResidencia) ? "0" : obj.TelefoneResidencia,
@@ -1137,6 +1137,7 @@ namespace ConvetPdfToLayoutAlta.Models
                 DescontoAquisicao = string.IsNullOrWhiteSpace(obj.DescontoAquisicao) ? "0" : obj.DescontoAquisicao,
                 RemunDifJuros = string.IsNullOrWhiteSpace(obj.RemunDifJuros) ? "0" : obj.RemunDifJuros,
                 Remuneracao = string.IsNullOrWhiteSpace(obj.Remuneracao) ? "0" : obj.Remuneracao,
+                           
             };
         }
 
@@ -1147,21 +1148,13 @@ namespace ConvetPdfToLayoutAlta.Models
             List<ContratoPdf> lstContratosPdf = (List<ContratoPdf>)parametro.GetType().GetProperty("item1").GetValue(parametro, null);
             List<string> lstGT = (List<string>)parametro.GetType().GetProperty("item2").GetValue(parametro, null);
             string _diretorioDestino = (string)parametro.GetType().GetProperty("item3").GetValue(parametro, null);
-            string _diretorioOrigem = (string)parametro.GetType().GetProperty("item4").GetValue(parametro, null);
             List<string> lstContratosNovos = new List<string>();
-
-#if DEBUG
-            _diretorioDestino = @"D:\PDFSTombamento\txt";
-            _diretorioOrigem = @"D:\PDFSTombamento\";
-
-#endif
-
 
             string strAlta = string.Empty;
             string _contratoGT = string.Empty;
-            string  _dataPrimeiroVencimento, _taxaJurosContrato, _valorgarantia, _reajuste;
+            string  _dataPrimeiroVencimento, _taxaJurosContrato, _valorgarantia, _reajuste, _apolice;
 
-            _dataPrimeiroVencimento = _taxaJurosContrato = _valorgarantia = _reajuste = string.Empty;
+            _dataPrimeiroVencimento = _taxaJurosContrato = _valorgarantia = _reajuste = _apolice = string.Empty;
 
             #region BLOCO QUE GERA O ARQUIVO DE CONTRATO
             //======================= BLOCO QUE GERA O ARQUIVO DE CONTRATO================================================
@@ -1176,6 +1169,8 @@ namespace ConvetPdfToLayoutAlta.Models
 
                         item.Cabecalhos.ForEach(l =>
                         {
+                            _apolice = l.Apolice;
+
                             if (!l.TaxaJuros.Trim().Equals(_taxaJurosContrato))
                                 _taxaJurosContrato = l.TaxaJuros.Trim();
                             //if (!l.Apolice.Trim().Equals(_apolice))
@@ -1220,7 +1215,7 @@ namespace ConvetPdfToLayoutAlta.Models
 
                             // O Luis disse que na construção do contrato, "APOLICE"  é sempre o original
                             //strAlta += string.Format("{0}{1}{2}", (string.IsNullOrWhiteSpace(_dataPrimeiroVencimento) ? c.DataPrimeiroVencimento.Trim() : _dataPrimeiroVencimento).Substring(0, 10).PadLeft(10, '0'), (string.IsNullOrWhiteSpace(_apolice) ? c.Apolice.Trim() : _apolice).PadLeft(6, '0'), (c.CepImovel.Trim() + "-" + (c.BairroImovel.Trim().Length > 24 ? c.BairroImovel.Trim().Substring(0, 24) : c.BairroImovel.Trim())).PadRight(34, ' '));
-                            strAlta += string.Format("{0}{1}{2}", (string.IsNullOrWhiteSpace(_dataPrimeiroVencimento) ? c.DataPrimeiroVencimento.Trim() : _dataPrimeiroVencimento).Substring(0, 10).PadLeft(10, '0'), c.Apolice.Trim().PadLeft(6, '0'), (c.CepImovel.Trim() + "-" + (c.BairroImovel.Trim().Length > 24 ? c.BairroImovel.Trim().Substring(0, 24) : c.BairroImovel.Trim())).PadRight(34, ' '));
+                            strAlta += string.Format("{0}{1}{2}", (string.IsNullOrWhiteSpace(_dataPrimeiroVencimento) ? c.DataPrimeiroVencimento.Trim() : _dataPrimeiroVencimento).Substring(0, 10).PadLeft(10, '0'), _apolice.Trim().PadLeft(6, '0'), (c.CepImovel.Trim() + "-" + (c.BairroImovel.Trim().Length > 24 ? c.BairroImovel.Trim().Substring(0, 24) : c.BairroImovel.Trim())).PadRight(34, ' '));
                             strAlta += string.Format("{0}{1}{2}{3}", "0".PadRight(11, '0'), c.Correcao.Trim().PadRight(10, ' '), "0".PadLeft(2, '0'), c.Razao.Trim().PadLeft(18, '0'));
                             strAlta += string.Format("{0}{1}", "0".PadLeft(2, '0'), c.Situacao.Trim()).PadRight(60, ' ');
                             c = null;
@@ -1235,13 +1230,13 @@ namespace ConvetPdfToLayoutAlta.Models
                         {
 
                             lstContratosNovos.Add(c.Contrato.Trim());
-                            ExceptionError.NovoContratoGT(c.Contrato, _diretorioOrigem);
+                            ExceptionError.NovoContratoGT(c.Contrato, _diretorioDestino);
                         }
                     }
                     catch (Exception ex)
                     {
                         string _detalhes = "Metodo: PopulaContrato - Classe: BusinessCabecalho - Ação: tentativa de gerear o registro no arquivo TL16CONT.txt";
-                        ExceptionError.TrataErros(ex, c.Contrato, _detalhes, _diretorioOrigem);
+                        ExceptionError.TrataErros(ex, c.Contrato, _detalhes, _diretorioDestino);
                     }
                     
                 }
@@ -1301,24 +1296,77 @@ namespace ConvetPdfToLayoutAlta.Models
 
                                 if (o.CodigoOcorrencia.Equals("020")) //Amortização extra
                                 {
+                                    string strAltaNovoPrazo = strAlta;
+
                                     strAlta += string.Format("{0}{1}", "0".PadLeft(18, '0'), Regex.Replace(o.Juros, "[^0-9$]", "").Trim().PadLeft(18, '0'));
                                     strAlta += string.Format("{0}{1}{2}", "0".PadLeft(18, '0'), o.Amortizacao.Trim().PadLeft(18, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'));
-                                    strAlta += string.Format("{0}", Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd").Trim().PadRight(30, ' '), "".PadRight(90, ' '));
+                                    
+                                    //alteração feita na data: 29/07/2019 as 21:30 pedido pelo Emerson e Luis 
+                                    //Alteração feita na data: 30/01/2019 14: 47 (quando não houver parcelas para vencimento da ocorrencia, então; deixar a data de vencimento em 'Branco')
+                                    strAlta += string.Format("{0}", (o.NaoTemParcela ? "" : Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd")).Trim().PadRight(30, ' '), "".PadRight(90, ' '));
+
+                                    strAlta = strAlta.PadRight(281, ' ');
+                                    escreverOcorrencia.WriteLine(strAlta);
+                                    strAlta = string.Empty;
+                                    // O Luis falou que, sempre que encontrar uma ocorrencia de 'Novo Prazo' após uma ocorencia do tipo 'Amortização extra' de codigo '020'
+                                    // gerar uma nova ocorrencia com os dados zerados exceto o Saldo devedor
+                                    //Data: 31/07/2019 as 10:00hs
+                                    if (o.IsNovoPrazo)
+                                    {
+                                        strAltaNovoPrazo += string.Format("{0}{1}{2}", "0".PadLeft(72, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'), "PRAZO".PadRight(30, ' '));
+                                        strAltaNovoPrazo += string.Format("{0}{1}", _parcela.NumeroPrazo.Substring(3).Trim().PadRight(30, ' '), o.NovoNumeroPrazo.PadLeft(3, '0').Trim().PadRight(30, ' '));
+
+                                        if (!_cabecalhoAnterior.Reajuste.Equals(_cabecalho.Reajuste))
+                                            strAltaNovoPrazo += string.Format("{0}", _cabecalho.TaxaJuros.Trim().PadRight(30, ' '));
+                                        else
+                                            //**************************************VOLTA ESSA LINHA SE DER ALGO DE ERRADO NO VENCIMENTO DO PRAZO ************************************** DATA:01/08/2019
+                                            //strAltaNovoPrazo += string.Format("{0}", Convert.ToDateTime((_parcela == null ? _cabecalho.DataGarantia : _parcela.Vencimento)).ToString("yyyyMMdd").Trim().PadRight(30, ' '));
+                                            strAltaNovoPrazo += string.Format("{0}", Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd").Trim().PadRight(30, ' '));
+
+                                        strAltaNovoPrazo = strAltaNovoPrazo.PadRight(281, ' ');
+                                        escreverOcorrencia.WriteLine(strAltaNovoPrazo);
+
+                                        strAlta = "";
+                                    }
                                 }
 
                                 if (o.CodigoOcorrencia.Equals("021")) //Amortização rec. Fgts
                                 {
+                                    string strAltaNovoPrazo = strAlta;
+
                                     strAlta += string.Format("{0}{1}{2}", "0".PadLeft(18, '0'), Regex.Replace(o.Juros, "[^0-9$]", "").Trim().PadLeft(18, '0'), "0".PadLeft(18, '0'));
                                     strAlta += string.Format("{0}{1}", o.Amortizacao.Trim().PadLeft(18, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'));
                                     strAlta += string.Format("{0}{1}", Convert.ToDateTime((_parcela == null ? _cabecalho.DataGarantia : _parcela.Vencimento)).ToString("yyyyMMdd").Trim().PadRight(30, ' '), "".PadRight(60, ' '));
-                                    strAlta += string.Format("{0}", _parcela.Dump.Trim().PadRight(30, ' '));
+                                    strAlta += string.Format("{0}", (string.IsNullOrWhiteSpace(o.Damp) ? string.Empty : o.Damp).Trim().PadRight(30, ' '));
+
+                                    strAlta = strAlta.PadRight(281, ' ');
+                                    escreverOcorrencia.WriteLine(strAlta);
+                                    strAlta = string.Empty;
+
+                                    // O Luis falou que, sempre que encontrar uma ocorrencia de 'Novo Prazo' após uma ocorencia do tipo 'Amortização extra' de codigo '021'
+                                    // gerar uma nova ocorrencia com os dados zerados exceto o Saldo devedor
+                                    //Data: 31/07/2019 as 10:30hs
+                                    if (o.IsNovoPrazo)
+                                    {
+                                        strAltaNovoPrazo += string.Format("{0}{1}{2}", "0".PadLeft(72, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'), "PRAZO".PadRight(30, ' '));
+                                        strAltaNovoPrazo += string.Format("{0}{1}", _parcela.NumeroPrazo.Substring(3).Trim().PadRight(30, ' '), o.NovoNumeroPrazo.PadLeft(3, '0').Trim().PadRight(30, ' '));
+
+                                        if (!_cabecalhoAnterior.Reajuste.Equals(_cabecalho.Reajuste))
+                                            strAltaNovoPrazo += string.Format("{0}", _cabecalho.TaxaJuros.Trim().PadRight(30, ' '));
+                                        else
+                                            strAltaNovoPrazo += string.Format("{0}", Convert.ToDateTime((_parcela == null ? _cabecalho.DataGarantia : _parcela.Vencimento)).ToString("yyyyMMdd").Trim().PadRight(30, ' '));
+
+                                        strAltaNovoPrazo = strAltaNovoPrazo.PadRight(281, ' ');
+                                        escreverOcorrencia.WriteLine(strAltaNovoPrazo);
+                                    }
                                 }
 
-
+                                // ALTERAÇÃO CONTRATUAL COM OS TIPOS DE OCORRENCIAS
+                                // TIPO DE OCORRENCIA: 004", "005", "010"
                                 if (lstTipoOcorrencia.Any(t => t.Equals(o.CodigoOcorrencia.Trim()))) // Alteração Contratual, Alteração de garantia, Mudança dia vencimento
                                 {
                                     if (o.CodigoOcorrencia.Equals("010"))
-                                    {
+                                    { 
                                         bool hasDiferenca = false; //  variavel que setada como true caso entre nos blocos de IF de taxa de juros, apolice e prazo
 
                                         if (!_cabecalhoAnterior.TaxaJuros.Equals(_cabecalho.TaxaJuros)) // TAXA DE JUROS")
@@ -1326,18 +1374,41 @@ namespace ConvetPdfToLayoutAlta.Models
                                             hasDiferenca = true;
                                             _consistencia = true;
 
+                                            if (o.NaoTemParcela)
+                                            {
+                                                string altaAnterior = strAlta;
+
+                                                strAlta += string.Format("{0}{1}{2}", "0".PadLeft(72, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'), "PRAZO".PadRight(30, ' '));
+                                                strAlta += string.Format("{0}{1}{2}", "".PadLeft(30, ' '), _parcela.NumeroPrazo.Substring(3).Trim().PadRight(30, ' '), "00010101".PadRight(30, ' '));
+                                                strAlta = strAlta.PadRight(281, ' ');
+                                                escreverOcorrencia.WriteLine(strAlta);
+                                                strAlta = altaAnterior;
+                                            }
+
                                             strAlta += string.Format("{0}{1}{2}", "0".PadLeft(72, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'), "TAXA JUROS".PadRight(30, ' '));
                                             strAlta += string.Format("{0}{1}", _cabecalho.TaxaJuros.Trim().PadRight(30, ' '), _cabecalhoAnterior.TaxaJuros.Trim().PadRight(30, ' '));
 
                                             if (!_cabecalhoAnterior.Reajuste.Equals(_cabecalho.Reajuste))
                                                 strAlta += string.Format("{0}", _cabecalho.TaxaJuros.Trim().PadRight(30, ' '));
                                             else
-                                                strAlta += string.Format("{0}", Convert.ToDateTime((_parcela == null ? _cabecalho.DataGarantia : _parcela.Vencimento)).ToString("yyyyMMdd").Trim().PadRight(30, ' '));
+                                                // Adicionado o valor '00010101' se houver uma ocorrencia de  TAXA DE JUROS sem parcelas
+                                                // Data: 30/07/2019 as 17:5
+                                                strAlta += string.Format("{0}", (o.NaoTemParcela ? "00010101" : Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd")).Trim().PadRight(30, ' '));
 
+                                            strAlta = strAlta.PadRight(281, ' ');
                                             escreverOcorrencia.WriteLine(strAlta);
                                             strAlta = string.Empty;
                                         }
-
+                                        //else
+                                        //{
+                                        //    strAlta += string.Format("{0}{1}", "0".PadLeft(72, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'));
+                                        //    strAlta += string.Format("{0}", Convert.ToDateTime((_parcela == null ? _cabecalho.DataGarantia : _parcela.Vencimento)).ToString("yyyyMMdd").Trim().PadRight(30, ' '));
+                                        //    strAlta += string.Format("{0}", _cabecalho.DataPrimeiroVencimento.PadRight(30, ' '));
+                                        //    strAlta += string.Format("{0}", _cabecalhoAnterior.DataPrimeiroVencimento.Trim().PadRight(60, ' '));
+                                        //    strAlta = strAlta.PadRight(281, ' ');
+                                        //    escreverOcorrencia.WriteLine(strAlta);
+                                        //    strAlta = string.Empty;
+                                        //}
 
                                         if (!_cabecalhoAnterior.Apolice.Equals(_cabecalho.Apolice)) // APOLICE
                                         {
@@ -1352,12 +1423,19 @@ namespace ConvetPdfToLayoutAlta.Models
                                             else
                                                 strAlta += string.Format("{0}", Convert.ToDateTime((_parcela == null ? _cabecalho.DataGarantia : _parcela.Vencimento)).ToString("yyyyMMdd").Trim().PadRight(30, ' '));
 
+                                            strAlta = strAlta.PadRight(281, ' ');
                                             escreverOcorrencia.WriteLine(strAlta);
                                             strAlta = string.Empty;
                                         }
 
                                         if (!_cabecalhoAnterior.Prazo.Equals(_cabecalho.Prazo)) // PRAZO
                                         {
+
+                                            // se o prazo da parcela da ocorrencia '010' for igual ao prazo do cabeçalho anterior, então, não imprime a ocorrencia
+                                            // Logica alinhada com o Luis para não gerar a linha de prazo se caso a ocorrencia anterior for um 'Novo Prazo'
+                                            // Data: 31/07/2019  as 13:10hs
+                                            if (_parcela.NumeroPrazo.Substring(3).Trim().Equals(_cabecalhoAnterior.Prazo.PadLeft(3, '0').Trim())) return;
+
                                             strAlta = _novaOcorrencia;
 
                                             hasDiferenca = true;
@@ -1369,13 +1447,20 @@ namespace ConvetPdfToLayoutAlta.Models
                                             }
 
                                             strAlta += string.Format("{0}{1}{2}", "0".PadLeft(72, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'), "PRAZO".PadRight(30, ' '));
-                                            strAlta += string.Format("{0}{1}", _parcela.NumeroPrazo.Substring(3).Trim().PadRight(30, ' '), _cabecalhoAnterior.Prazo.Trim().PadRight(30, ' '));
+
+                                            // Alterado, ocorrencia  igual a '010' por via de regra, deve comparar cabeçalho atual com Anterior
+                                            // seguido pelos campos 'Taxa de Juros', 'Apolice', 'Prazo', 'Data do Primeiro Vencimento'
+                                            // Data: 30/07/2019 as 17:48hs
+                                            // linha de codigo alterada
+                                            // ====> strAlta += string.Format("{0}{1}", _parcela.NumeroPrazo.Substring(3).Trim().PadRight(30, ' '), _cabecalhoAnterior.Prazo.PadLeft(3,'0').Trim().PadRight(30, ' '));
+                                            strAlta += string.Format("{0}{1}", _cabecalho.Prazo.PadLeft(3, '0').Trim().PadRight(30, ' '), _cabecalhoAnterior.Prazo.PadLeft(3,'0').Trim().PadRight(30, ' '));
 
                                             if (!_cabecalhoAnterior.Reajuste.Equals(_cabecalho.Reajuste))
                                                 strAlta += string.Format("{0}", _cabecalho.TaxaJuros.Trim().PadRight(30, ' '));
                                             else
                                                 strAlta += string.Format("{0}", Convert.ToDateTime((_parcela == null ? _cabecalho.DataGarantia : _parcela.Vencimento)).ToString("yyyyMMdd").Trim().PadRight(30, ' '));
 
+                                            strAlta = strAlta.PadRight(281, ' ');
                                             escreverOcorrencia.WriteLine(strAlta);
                                             strAlta = string.Empty;
                                         }
@@ -1387,16 +1472,20 @@ namespace ConvetPdfToLayoutAlta.Models
                                             strAlta += string.Format("{0}{1}", "0".PadLeft(72, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'));
                                             strAlta += string.Format("{0}", Convert.ToDateTime((_parcela == null ? _cabecalho.DataGarantia : _parcela.Vencimento)).ToString("yyyyMMdd").Trim().PadRight(30, ' '));
                                             strAlta += string.Format("{0}", _cabecalho.DataPrimeiroVencimento.PadRight(30, ' '));
-                                            strAlta += string.Format("{0}", _cabecalhoAnterior.DataPrimeiroVencimento.Trim().PadRight(30, ' '));
-
+                                            strAlta += string.Format("{0}", _cabecalhoAnterior.DataPrimeiroVencimento.Trim().PadRight(60, ' '));
+                                            strAlta = strAlta.PadRight(281, ' ');
                                             escreverOcorrencia.WriteLine(strAlta);
                                             strAlta = string.Empty;
                                         }
 
                                         if (!hasDiferenca)
                                         {
-                                            strAlta = string.Empty;
-                                            return;
+                                            // Alteramos para quando não houver mdiferença entre os cabeçalhos, zerar os demais campos e pegar somente o saldo devedor
+                                            // e 0 campo PRAZo deve servazio mantendo o posicionamento do campo
+                                            // Data: 30/07/2019 
+                                            strAlta += string.Format("{0}{1}{2}", "0".PadLeft(72, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'), "PRAZO".PadRight(30, ' '));
+                                            strAlta += string.Format("{0}{1}","".PadRight(30, ' '), _cabecalhoAnterior.Prazo.Trim().PadRight(30, ' '));
+                                            strAlta += string.Format("{0}", "00010101".PadRight(30, ' '));
                                         }
                                     }
 
@@ -1432,12 +1521,17 @@ namespace ConvetPdfToLayoutAlta.Models
                                             {
                                                 strAlta += string.Format("{0}{1}{2}", "0".PadLeft(72, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'), "PRAZO".PadRight(30, ' '));
                                                 strAlta += string.Format("{0}{1}{2}","".PadLeft(30,' '), _parcela.NumeroPrazo.Substring(3).Trim().PadRight(30, ' '), "00010101".PadRight(30, ' '));
+                                                strAlta = strAlta.PadRight(281, ' ');
                                                 escreverOcorrencia.WriteLine(strAlta);
                                                 strAlta = string.Empty;
                                             }
 
                                             strAlta = altaAnterior;
-                                            strAlta += string.Format("{0}{1}{2}", "0".PadLeft(72, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'),"".PadRight(30, ' '));
+
+                                            // Alteramos o campo data de Vencimento, no trecho [o.NaoTemParcela ? "" : Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd")]
+                                            //Quando não houver parcela de vencimento para ocorrencia, colocar a data de vencimento vazia 
+                                            // Data: 30/30/2019 - ajustado em acordo com o Luis e Emerson
+                                            strAlta += string.Format("{0}{1}{2}{3}", "0".PadLeft(72, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'), o.NaoTemParcela ? "".PadLeft(8,' ') : Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd"),"".PadRight(22, ' '));
                                             strAlta += string.Format("{0}{1}", _cabecalho.DataPrimeiroVencimento.Trim().PadRight(30, ' '), _cabecalhoAnterior.DataPrimeiroVencimento.Trim().PadRight(30, ' '));
                                             strAlta += string.Format("{0}", "".PadLeft(30, ' '));
 
@@ -1471,11 +1565,11 @@ namespace ConvetPdfToLayoutAlta.Models
 
                                 if (o.CodigoOcorrencia.Equals("032")) // Incorporação juros
                                 {
-                                    _cabecalho = q.Cabecalhos[0];
-                                    _cabecalho.DataPrimeiroVencimento = ValidaData(_cabecalho.DataPrimeiroVencimento);
+                                    //_cabecalho = q.Cabecalhos[0];
+                                    //_cabecalho.DataPrimeiroVencimento = ValidaData(_cabecalho.DataPrimeiroVencimento);
 
                                     strAlta += string.Format("{0}{1}{2}", "0".PadLeft(54, '0'), o.Amortizacao.Trim().PadLeft(18, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'));
-                                    strAlta += string.Format("{0}", Convert.ToDateTime(_cabecalho.DataPrimeiroVencimento).ToString("yyyyMMdd").Trim().PadRight(30, ' '), "".PadRight(90, ' '));
+                                    strAlta += string.Format("{0}", Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd").Trim().PadRight(30, ' '), "".PadRight(90, ' '));
                                 }
 
                                 if (o.CodigoOcorrencia.Equals("040")) // Transferencia
@@ -1485,7 +1579,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                     _cabecalho.DataPrimeiroVencimento = ValidaData(_cabecalho.DataPrimeiroVencimento);
 
                                     strAlta += string.Format("{0}{1}{2}", "0".PadLeft(54, '0'), o.Amortizacao.Trim().PadLeft(18, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'));
-                                    strAlta += string.Format("{0}", Convert.ToDateTime(_cabecalho.DataPrimeiroVencimento).ToString("yyyyMMdd").Trim().PadRight(30, ' '), "".PadRight(90, ' '));
+                                    strAlta += string.Format("{0}", Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd").Trim().PadRight(30, ' '), "".PadRight(90, ' '));
                                 }
 
                                 if (o.CodigoOcorrencia.Equals("044")) // Transf.Parte ideal
@@ -1499,7 +1593,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                     strAlta += string.Format("{0}{1}{2}", "0".PadLeft(18, '0'), Regex.Replace(o.Juros, "[^0-9$]", "").Trim().PadLeft(18, '0'), "0".PadLeft(18, '0'));
                                     strAlta += string.Format("{0}{1}", o.Amortizacao.Trim().PadLeft(18, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'));
                                     strAlta += string.Format("{0}{1}", Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd").Trim().PadRight(30, ' '), "".PadRight(60, ' '));
-                                    strAlta += string.Format("{0}", _parcela.Dump.Trim().PadRight(30, ' '));
+                                    strAlta += string.Format("{0}", (string.IsNullOrWhiteSpace(o.Damp) ? string.Empty : o.Damp).Trim().PadRight(30, ' '));
                                 }
 
                                 if (o.CodigoOcorrencia.Equals("050")) // Liquidação Antecipada
@@ -1543,7 +1637,7 @@ namespace ConvetPdfToLayoutAlta.Models
                             }
                             catch (Exception exOc)
                             {
-                                ExceptionError.TrataErros(exOc, q.Contrato, "Metodo: PopulaContrato - Classe: BusinessCabecalho - Ação: Erro gerado ao tentar escrever a Ocorrencia no arquivo TL16OCOR.txt", _diretorioOrigem);
+                                ExceptionError.TrataErros(exOc, q.Contrato, "Metodo: PopulaContrato - Classe: BusinessCabecalho - Ação: Erro gerado ao tentar escrever a Ocorrencia no arquivo TL16OCOR.txt", _diretorioDestino);
                             }
                         }
                     });
@@ -1588,7 +1682,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                 }
                                 catch (Exception exp)
                                 {
-                                    ExceptionError.TrataErros(exp, q.Contrato, "Metodo: PopulaContrato - Classe: BusinessCabecalho - Ação: Erro gerado ao tentar escrever a parcela no arquivo TL16PARC.txt", _diretorioOrigem);
+                                    ExceptionError.TrataErros(exp, q.Contrato, "Metodo: PopulaContrato - Classe: BusinessCabecalho - Ação: Erro gerado ao tentar escrever a parcela no arquivo TL16PARC.txt", _diretorioDestino);
                                 }
                             }
                         });

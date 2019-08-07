@@ -56,20 +56,34 @@
     <Compile Include="frmConvertPdfToLayout.Designer.cs">
       <DependentUpon>frmConvertPdfToLayout.cs</DependentUpon>
     </Compile>
-    <Compile Include="FrmTela18 .cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FrmTela18 .Designer.cs">
-      <DependentUpon>FrmTela18 .cs</DependentUpon>
-    </Compile>
     <Compile Include="FrmTela16.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FrmTela16.Designer.cs">
       <DependentUpon>FrmTela16.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmTela18 .cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmTela18 .Designer.cs">
+      <DependentUpon>FrmTela18 .cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmTela20.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmTela20.Designer.cs">
+      <DependentUpon>FrmTela20.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmTela25.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmTela25.Designer.cs">
+      <DependentUpon>FrmTela25.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\BusinessCabecalho.cs" />
-    <Compile Include="Models\BusinessTela18cs.cs" />
+    <Compile Include="Models\BusinessTela18.cs" />
+    <Compile Include="Models\BusinessTela20.cs" />
+    <Compile Include="Models\BusinessTela25.cs" />
     <Compile Include="Models\Cabecalho.cs" />
     <Compile Include="Models\ContratoPdf.cs" />
     <Compile Include="Models\ExceptionError.cs" />
@@ -77,16 +91,24 @@
     <Compile Include="Models\Parcela.cs" />
     <Compile Include="Models\BusinessParcelas.cs" />
     <Compile Include="Models\Tela18.cs" />
+    <Compile Include="Models\Tela20.cs" />
+    <Compile Include="Models\Tela25.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="frmConvertPdfToLayout.resx">
       <DependentUpon>frmConvertPdfToLayout.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FrmTela16.resx">
+      <DependentUpon>FrmTela16.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FrmTela18 .resx">
       <DependentUpon>FrmTela18 .cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FrmTela16.resx">
-      <DependentUpon>FrmTela16.cs</DependentUpon>
+    <EmbeddedResource Include="FrmTela20.resx">
+      <DependentUpon>FrmTela20.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmTela25.resx">
+      <DependentUpon>FrmTela25.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

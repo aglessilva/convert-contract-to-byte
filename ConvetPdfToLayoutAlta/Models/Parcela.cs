@@ -7,7 +7,6 @@ namespace ConvetPdfToLayoutAlta.Models
         public Parcela()
         {
         }
-        public string Dump { get; set; }
 
         public string VencimentoCorrecao { get; set; }
         public string Vencimento { get; set; }

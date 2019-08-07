@@ -25,9 +25,24 @@ namespace ConvetPdfToLayoutAlta.Models
 
         }
 
+
+        public static void TrataErros(string _contrato, string _detalhes, string _path)
+        {
+            using (StreamWriter sw = new StreamWriter(_path + @"\LogErroContratos.txt", true, Encoding.UTF8))
+            {
+
+                StringBuilder strErro = new StringBuilder();
+                strErro.AppendLine(string.Format("CONTRATO: {0}", _contrato))
+                        .AppendLine(string.Format("DETALHES: {0}", _detalhes));
+                sw.Write(strErro);
+                sw.WriteLine("================================================================================================================================================");
+            }
+
+        }
+
         public static void NovoContratoGT(string _contrato, string _path)
         {
-            using (StreamWriter sw = new StreamWriter(_path + @"\NovosContratos.txt", true, Encoding.UTF8))
+            using (StreamWriter sw = new StreamWriter(_path + @"\NOVOS_CONTRATOS.txt", true, Encoding.UTF8))
             {
                 if (_contrato != "0")
                     sw.WriteLine(_contrato);
