@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace ConvetPdfToLayoutAlta.Models
 {
-    public class BusinessTela18cs
+    public class BusinessTela18
     {
         public string[] GetArrayLine(string _line)
         {
@@ -46,15 +47,13 @@ namespace ConvetPdfToLayoutAlta.Models
                     parcelaFgts.SaldoFgtsQUO = Regex.Replace(_ArrayLine[4].Trim(), @"[^0-9\/$]", "");
                     parcelaFgts.SobraMes = Regex.Replace(_ArrayLine[5].Trim(), @"[^0-9\-$]", "");
                     parcelaFgts.SobraAcumulada = Regex.Replace(_ArrayLine[6].Trim(), @"[^0-9$]", "");
-                    //parcelaFgts.DataPagamento = Regex.Replace(_ArrayLine[7].Trim(), @"[^0-9\/$]", "");
-                    //parcelaFgts.ValorUtilizado = Regex.Replace(_ArrayLine[8].Trim(), @"[^0-9\/$]", "");
                 }
                 
             }
-            catch (System.Exception)
+            catch (Exception exOut)
             {
 
-                throw;
+                throw new ArgumentOutOfRangeException("Leitura das parcelas do FGTS da TELA18- Arquivo: BusinessTela18 - Metodo: [GetParcelaFgts]", exOut.Message);
             }
 
             return parcelaFgts;
@@ -64,22 +63,16 @@ namespace ConvetPdfToLayoutAlta.Models
         public void PopulaTela18(object parametro)
         {
             List<Tela18> lstTela18 = (List<Tela18>)parametro.GetType().GetProperty("item1").GetValue(parametro, null);
-            string _diretorioDestino = (string)parametro.GetType().GetProperty("item3").GetValue(parametro, null);
-            string _diretorioOrigem = (string)parametro.GetType().GetProperty("item4").GetValue(parametro, null);
+            string _diretorioDestino = (string)parametro.GetType().GetProperty("item2").GetValue(parametro, null);
             string strAlta, strAltaFgts;
             strAlta = strAltaFgts = string.Empty;
 
-#if DEBUG
-            _diretorioDestino = @"D:\PDFSTombamento\txt";
-            _diretorioOrigem = @"D:\PDFSTombamento\";
-
-#endif
             using (StreamWriter escreverTela18 = new StreamWriter(_diretorioDestino + @"\TL18FGTS.txt", true, Encoding.UTF8))
             {
-               // int x = 0, y = 0;
-
+                string _contract = "";
                 lstTela18.ForEach(t18 =>
                 {
+                    _contract = t18.Contrato;
                     try
                     {
                         t18.Damps.ForEach(dmp => {
@@ -101,10 +94,10 @@ namespace ConvetPdfToLayoutAlta.Models
 
                         });
                     }
-                    catch (System.Exception ex)
+                    catch (Exception exTela18)
                     {
-                        //string erro = ex.Message + x + " - " + y ;
-                        throw;
+                        string _err0 = string.Format(" Leitura das parcelas do FGTS da TELA18- Arquivo: BusinessTela18 - Metodo: [GetParcelaFgts] - Detalhes: {0}", exTela18.Message);
+                        ExceptionError.TrataErros(exTela18, _contract, _err0, _diretorioDestino);
                     }
                 });
             }
