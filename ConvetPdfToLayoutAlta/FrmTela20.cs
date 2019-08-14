@@ -19,7 +19,7 @@ namespace ConvetPdfToLayoutAlta
         Stopwatch stopwatch = new Stopwatch();
         Thread _thread = null;
         UserObject obj = null;
-        int contador = 0, totalArquivo = 0, totalPorPasta = 0 , countError = 0;
+        int contador = 0, totalArquivo = 0, totalPorPasta = 0 , countpercent = 0;
         bool isErro = false;
         IEnumerable<string> listContratoBlockPdf = null;
         IEnumerable<string> listDiretory = null;
@@ -104,8 +104,8 @@ namespace ConvetPdfToLayoutAlta
             {
                 string result = string.Format("Resultado\n\n");
                 result += string.Format("Total de Contratos: {0}\n", totalArquivo);
-                result += string.Format("Total Processados: {0}\n", (totalArquivo - countError));
-                result += string.Format("Total Rejeitados: {0}\n",  countError);
+                result += string.Format("Total Processados: {0}\n", (totalArquivo - ExceptionError.countError));
+                result += string.Format("Total Corrompido: {0}\n", ExceptionError.countError);
                 result += string.Format("{0}", lblTempo.Text);
                 MessageBox.Show(result, "Erro de Converção", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -193,7 +193,7 @@ namespace ConvetPdfToLayoutAlta
                                                     {
                                                         isNotTela20 = true;
                                                         isErro = true;
-                                                        countError++;
+                                                        ExceptionError.countError++;
                                                         ExceptionError.TrataErros(arquivoPdf.Name, "O Arquivo não é do tipo CTFIN/O020A", diretorioDestinoLayout);
                                                         break;
                                                     }
@@ -300,6 +300,7 @@ namespace ConvetPdfToLayoutAlta
 
                                 tela20 = null;
                                 contador++;
+                                countpercent++;
 
                                 if (contador == 1000)
                                 {
@@ -324,8 +325,8 @@ namespace ConvetPdfToLayoutAlta
                         }
                         catch (ArgumentOutOfRangeException ex)
                         {
-                            countError++;
-                            BackgroundWorkerTela20.ReportProgress(contador, null);
+                            ExceptionError.countError++;
+                            BackgroundWorkerTela20.ReportProgress(countpercent, null);
 
                             isErro = true;
                             if (!File.Exists(diretorioDestinoLayout + @"\LogErroContratos.txt"))
@@ -343,6 +344,36 @@ namespace ConvetPdfToLayoutAlta
                                 sw.Write(strErro);
                                 sw.WriteLine("================================================================================================================================================");
                             }
+                        }
+
+                        catch (iTextSharp.text.exceptions.InvalidPdfException pdfExeception)
+                        {
+                            ExceptionError.countError++;
+                            BackgroundWorkerTela20.ReportProgress(countpercent, null);
+
+                            isErro = true;
+                            if (!File.Exists(diretorioDestinoLayout + @"\LogErroContratos.txt"))
+                            {
+                                StreamWriter item = File.CreateText(diretorioDestinoLayout + @"\LogErroContratos.txt");
+                                item.Dispose();
+                            }
+                            using (StreamWriter sw = new StreamWriter(diretorioDestinoLayout + @"\LogErroContratos.txt", true, Encoding.UTF8))
+                            {
+                                string Erro_ = string.Format("{0} - mensagem original: {1}", "Arquivo danificado, não é possivel fazer a leitura ", pdfExeception.Message);
+                                StringBuilder strErro = new StringBuilder();
+                                strErro.AppendLine(string.Format("ARQUIVO: {0}", arquivoPdf.Name))
+                                        .AppendLine(string.Format("PAGINA DO ERRO: {0}", numberPage))
+                                        .AppendLine(string.Format("DESCRIÇÃO DO ERRO: {0}", Erro_))
+                                        .AppendLine(string.Format("DIRETORIO DO ARQUIVO: {0}", arquivoPdf.DirectoryName));
+                                sw.Write(strErro);
+                                sw.WriteLine("================================================================================================================================================");
+                            }
+
+                            if (!Directory.Exists(string.Format(@"{0}\!Erro", diretorioDestinoLayout)))
+                                Directory.CreateDirectory(string.Format(@"{0}\!Erro", diretorioDestinoLayout));
+
+                            if (!File.Exists(string.Format(@"{0}\!Erro\{1}", diretorioDestinoLayout, arquivoPdf.Name)))
+                                File.Move(string.Format(@"{0}\{1}", arquivoPdf.DirectoryName, arquivoPdf.Name), string.Format(@"{0}\!Erro\{1}", diretorioDestinoLayout, arquivoPdf.Name));
                         }
 
                     });

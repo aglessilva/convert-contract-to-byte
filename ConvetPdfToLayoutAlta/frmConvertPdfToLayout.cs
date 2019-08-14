@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -10,6 +11,9 @@ namespace ConvetPdfToLayoutAlta
 {
     public partial class FrmSelectFolder : Form
     {
+        List<string> lstDamp3 = new List<string>();
+        bool[] consistencia = { false, false, false, false };
+        bool[] isProcessado = { false, false, false, false };
         public FrmSelectFolder()
         {
             InitializeComponent();
@@ -43,7 +47,7 @@ namespace ConvetPdfToLayoutAlta
                         MessageBox.Show(msg, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                         return;
                     }
-                    btnIniciarConvercao.Enabled = btnDuplicata.Enabled = (textDestinoLayout.TextLength > 0 && textOrigemContratosPdf.TextLength > 0);
+                    btnDuplicata.Enabled = comboBoxTela.Enabled = (textDestinoLayout.TextLength > 0 && textOrigemContratosPdf.TextLength > 0);
                 }
             }
         }
@@ -66,12 +70,14 @@ namespace ConvetPdfToLayoutAlta
             DialogResult result = DialogResult.Cancel;
             DirectoryInfo dirInfor = new DirectoryInfo(folderBrowserDialog1.SelectedPath);
 
-            if (!dirInfor.Root.Name.ToUpper().Contains("C"))
+            if (!new string[] { "C", "D" }.Any(f => dirInfor.Root.Name.ToUpper().Contains(f)))
             {
                 result = MessageBox.Show("O processo de conversão ficará muito lento se executado pela rede. \nDeseja seguir com esse mapeamento? ", "Aviso", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (result == DialogResult.No)
                     return result;
             }
+            else
+                result = DialogResult.Yes;
 
             if (campo == 1) 
             {
@@ -81,46 +87,50 @@ namespace ConvetPdfToLayoutAlta
             else
                 textDestinoLayout.Text = Directory.GetCurrentDirectory() + @"\ALTA";
 
-
-
             return result;
         }
 
         private void BtnIniciarConvercao_Click(object sender, EventArgs e)
         {
-
-            if (comboBoxTela.Text.Equals("Selecione o tipo de arquivo"))
+            if (comboBoxTela.SelectedIndex.Equals(4))
             {
                 MessageBox.Show("Selecione uma tela para converção.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            panelSpinner.Visible = !panelSpinner.Visible;
 
+            if (!isProcessado[comboBoxTela.SelectedIndex])
+            {
+                panelSpinner.Visible = !panelSpinner.Visible;
+                Form f = null;
 
-            Form f = null;
+                if (comboBoxTela.Text.ToUpper().Equals("TELA 16"))
+                    f = new FrmTela16(textOrigemContratosPdf.Text, textDestinoLayout.Text, comboBoxTela.Text);
 
-            if (comboBoxTela.Text.ToUpper().Equals("TELA 16"))
-                f = new FrmTela16(textOrigemContratosPdf.Text, textDestinoLayout.Text, comboBoxTela.Text);
+                if (comboBoxTela.Text.ToUpper().Equals("TELA 18"))
+                    f = new FrmTela18(textOrigemContratosPdf.Text, textDestinoLayout.Text, comboBoxTela.Text);
 
-            if (comboBoxTela.Text.ToUpper().Equals("TELA 18"))
-                f = new FrmTela18(textOrigemContratosPdf.Text, textDestinoLayout.Text, comboBoxTela.Text);
+                if (comboBoxTela.Text.ToUpper().Equals("TELA 20"))
+                    f = new FrmTela20(textOrigemContratosPdf.Text, textDestinoLayout.Text, comboBoxTela.Text);
 
-            if (comboBoxTela.Text.ToUpper().Equals("TELA 20"))
-                f = new FrmTela20(textOrigemContratosPdf.Text, textDestinoLayout.Text, comboBoxTela.Text);
+                if (comboBoxTela.Text.ToUpper().Equals("TELA 25"))
+                    f = new FrmTela25(textOrigemContratosPdf.Text, textDestinoLayout.Text, comboBoxTela.Text);
 
-            if (comboBoxTela.Text.ToUpper().Equals("TELA 25"))
-                f = new FrmTela25(textOrigemContratosPdf.Text, textDestinoLayout.Text, comboBoxTela.Text);
+                isProcessado[comboBoxTela.SelectedIndex] = true;
 
-            this.Text += "-" + comboBoxTela.Text;
-            f.ShowDialog();
-            panelSpinner.Visible = !panelSpinner.Visible;
+                Text += "-" + comboBoxTela.Text;
+                f.ShowDialog();
+                panelSpinner.Visible = !panelSpinner.Visible;
+                Text = Text.Split('-')[0];
+            }
+            else
+            {
+                string msg = string.Format("A {0} já foi processada!", comboBoxTela.Text.ToUpper());
+                MessageBox.Show(msg, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
 
         private void Button1_Click(object sender, EventArgs e)
         {
-          //  var sbDados2 = "1,00200.00";
-          //  var match = Regex.IsMatch(sbDados2.ToString(), @"^[0-2,]$");
-
             FrmTela16 f = new FrmTela16(@"D:\PDFSTombamento", @"D:\PDFSTombamento\txt", "TELA 16");
             f.ShowDialog();
             this.Show();
@@ -136,9 +146,19 @@ namespace ConvetPdfToLayoutAlta
         private void FrmSelectFolder_Load(object sender, EventArgs e)
         {
             comboBoxTela.SelectedIndex = 4;
+            ToolTip toolTip = new ToolTip();
+            toolTip.SetToolTip(btnDuplicata, "Filtra os arquivos com base no PONTEIRO e remove duplicidade de pdfs das VM's.");
 #if DEBUG
-            button1.Visible = button2.Visible = button3.Visible = button4.Visible = button5.Visible = button6.Visible = button7.Visible = button8.Visible = true;
+            button1.Visible = button9.Visible = button2.Visible = button3.Visible = button4.Visible = button5.Visible = button6.Visible = button7.Visible = button8.Visible = true;
 #endif
+
+            string _pathDamp = string.Format("{0}{1}", Directory.GetCurrentDirectory(), @"\config\DAMP03.TXT");
+            using (StreamReader sw = new StreamReader(_pathDamp, Encoding.UTF8))
+            {
+                while (!sw.EndOfStream)
+                    lstDamp3.Add(sw.ReadLine());
+
+            }
         }
 
         private void Button3_Click(object sender, EventArgs e)
@@ -179,27 +199,50 @@ namespace ConvetPdfToLayoutAlta
 
         private void BtnDuplicata_Click(object sender, EventArgs e)
         {
+            if (comboBoxTela.SelectedIndex == 4)
+            {
+                MessageBox.Show("Selecione um tipo de tela.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
+            consistencia[comboBoxTela.SelectedIndex] = true;
+
+            Text += "-" + comboBoxTela.Text;
+            panelSpinner.Visible = !panelSpinner.Visible;
+            FrmDuplicadoFiltro f = new FrmDuplicadoFiltro(textOrigemContratosPdf.Text, comboBoxTela.Text, lstDamp3);
+            f.ShowDialog();
+            panelSpinner.Visible = !panelSpinner.Visible;
+            Text = Text.Split('-')[0];
+
+            btnIniciarConvercao.Enabled = consistencia.ToList().TrueForAll(iis => iis);
+
+        }
+
+        private void comboBoxTela_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBoxTela.SelectedIndex.Equals(4))
+                btnDuplicata.Enabled = false;
+            else
+                btnDuplicata.Enabled = true;
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
             List<string> lstArquiPoint = new List<string>();
+            using (StreamReader sw = new StreamReader(@"D:\HomologacaoFerramenta\config\ARQUPONT.TXT", Encoding.UTF8))
+            {
+                while (!sw.EndOfStream)
+                    lstArquiPoint.Add(sw.ReadLine());
+            }
 
-            string _tela = string.Format("*_{0}.hbt", Regex.Replace(comboBoxTela.Text, @"[^0-9$]", ""));
-            var arr = Directory.GetFiles(textOrigemContratosPdf.Text, _tela , SearchOption.AllDirectories).ToList();
+            List<string> lst16 = Directory.GetFiles(@"D:\HomologacaoFerramenta", "*_16.pdf", SearchOption.AllDirectories).ToList();
+                List<string> listaTela16 = new List<string>();
+                lst16.ForEach(h => { listaTela16.Add(new FileInfo(h).Name.Split('_')[0].Trim()); });
 
+            //string[] l1 = { "1", "2", "3", "4", "5", "6","7", "9", "10", "11" };
+            //string[] l2 = { "1", "2", "3", "4", "5", "8" };
 
-            //for (int i = 0; i < arr.Count; i++)
-            //{
-            //    FileInfo f = new FileInfo(arr[i]);
-
-            //    string[] lst = Directory.EnumerateFiles(@"D:\PDFSTombamento\2019-06-27", string.Format("*{0}_16.pdf", f.Name.Split('_')[0]), SearchOption.AllDirectories).ToArray();
-
-            //    if (lst.Length > 0)
-            //        if (File.Exists(lst[0]))
-            //        {
-            //            if (File.Exists(@"D:\PDFSTombamento\filtro\" + f.Name.Split('.')[0] + ".Err"))
-            //                File.Delete(@"D:\PDFSTombamento\filtro\" + f.Name.Split('.')[0] + ".Err");
-
-            //            File.Move(lst[0], @"D:\PDFSTombamento\filtro\" + f.Name.Split('.')[0] + ".Err");
-            //        }
-            //}
+            //var result = l1.GroupJoin(l2, k => k, y => y, (k, y) => new { t1 = k, t2 = y.FirstOrDefault()}).ToList();
+            var result1 = lstArquiPoint.GroupJoin(listaTela16, k => k, y => y, (k, y) => new { t1 = k, t2 = y.FirstOrDefault()}).Where(g => string.IsNullOrWhiteSpace(g.t1)).ToList();
         }
     }
 }

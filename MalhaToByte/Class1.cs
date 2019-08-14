@@ -19,23 +19,26 @@ namespace ConvertToByte
         {
             List<string> lstArquiPoint = new List<string>();
 
-            var arr = Directory.GetFiles(@"D:\PDFSTombamento\2019-06-27", "*.sel", SearchOption.AllDirectories).ToList();
+            //var arr = Directory.GetFiles(@"U:\TOMBAMENTO_PF\Processamento\Processamento Agles\", "*_25.pdf", SearchOption.AllDirectories).ToList();
 
-
-            for (int i = 0; i < arr.Count; i++)
+            string damp = string.Empty;
+            using (StreamReader sw = new StreamReader(@"D:\PDFSTombamento\RELADAMP.txt",  Encoding.UTF8))
             {
-                FileInfo f = new FileInfo(arr[i]);
+                using (StreamWriter escr = new StreamWriter(@"D:\PDFSTombamento\COMPARE_RELADAMP.txt", true, Encoding.UTF8))
+                {
 
-                string[] lst = Directory.EnumerateFiles(@"D:\PDFSTombamento\2019-06-27", string.Format("*{0}_16.pdf", f.Name.Split('_')[0]), SearchOption.AllDirectories).ToArray();
-
-                if (lst.Length > 0)
-                    if (File.Exists(lst[0]))
+                    while (!sw.EndOfStream)
                     {
-                        if (File.Exists(@"D:\PDFSTombamento\filtro\" + f.Name.Split('.')[0] + ".Err"))
-                            File.Delete(@"D:\PDFSTombamento\filtro\" + f.Name.Split('.')[0] + ".Err");
+                        damp = sw.ReadLine().Substring(0, 15);
+                        if (!lstArquiPoint.Any(dmp => dmp.Equals(damp)))
+                        {
+                            lstArquiPoint.Add(damp);
+                            escr.WriteLine(damp);
+                        }
+                        damp = string.Empty;
 
-                        File.Move(lst[0], @"D:\PDFSTombamento\filtro\" + f.Name.Split('.')[0] + ".Err");
                     }
+                }
             }
 
         }

@@ -114,6 +114,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                             .Replace("DESC.AQUISIÇÃO", ":DESCARQUISICAO")
                                             .Replace("Origem de Recursos", ":OriRec")
                                             .Replace("Prestação", ":Prestacao")
+                                            .Replace("Seguro a vista", ":SegVis")
                                             .Trim().Split(':')
                                             .Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
                         break;
@@ -1228,7 +1229,6 @@ namespace ConvetPdfToLayoutAlta.Models
                         }
                         else
                         {
-
                             lstContratosNovos.Add(c.Contrato.Trim());
                             ExceptionError.NovoContratoGT(c.Contrato, _diretorioDestino);
                         }
