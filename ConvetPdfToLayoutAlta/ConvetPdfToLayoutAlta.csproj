@@ -56,6 +56,12 @@
     <Compile Include="frmConvertPdfToLayout.Designer.cs">
       <DependentUpon>frmConvertPdfToLayout.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmDuplicadoFiltro.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmDuplicadoFiltro.Designer.cs">
+      <DependentUpon>FrmDuplicadoFiltro.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmTela16.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -97,6 +103,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="frmConvertPdfToLayout.resx">
       <DependentUpon>frmConvertPdfToLayout.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmDuplicadoFiltro.resx">
+      <DependentUpon>FrmDuplicadoFiltro.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmTela16.resx">
       <DependentUpon>FrmTela16.cs</DependentUpon>

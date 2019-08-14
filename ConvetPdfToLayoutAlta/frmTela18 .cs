@@ -19,7 +19,7 @@ namespace ConvetPdfToLayoutAlta
         Stopwatch stopwatch = new Stopwatch();
         Thread _thread = null;
         UserObject obj = null;
-        int contador = 0, totalArquivo = 0, totalPorPasta = 0, countError = 0, countPercent = 0;
+        int contador = 0, totalArquivo = 0, totalPorPasta = 0, countPercent = 0;
         bool isErro = false;
         IEnumerable<string> listContratoBlockPdf = null;
         IEnumerable<string> listDiretory = null;
@@ -106,8 +106,8 @@ namespace ConvetPdfToLayoutAlta
             {
                 string result = string.Format("Resultado\n\n");
                 result += string.Format("Total de Contratos: {0}\n", totalArquivo);
-                result += string.Format("Total Processados: {0}\n", (totalArquivo - countError));
-                result += string.Format("Total Rejeitados: {0}\n", countError);
+                result += string.Format("Total Processados: {0}\n", (totalArquivo - ExceptionError.countError));
+                result += string.Format("Total Corrompido: {0}\n", ExceptionError.countError);
                 result += string.Format("{0}", lblTempo.Text);
                 MessageBox.Show(result, "Erro de Converção", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 
@@ -157,144 +157,178 @@ namespace ConvetPdfToLayoutAlta
 
                     listContratoBlockPdf.ToList().ForEach(w =>
                     {
-                        ParcelaFgts parcelaFgts = new ParcelaFgts();
-                        arquivoPdf = new FileInfo(w);
-                        using (PdfReader reader = new PdfReader(w))
+                        try
                         {
-                            ITextExtractionStrategy its;
-                            pagina = string.Empty;
-                            tela18 = new Tela18();
-                            isBody = false;
-                            isNotTela18 = false;
-
-                            for (int i = 1; i <= reader.NumberOfPages; i++)
+                            ParcelaFgts parcelaFgts = new ParcelaFgts();
+                            arquivoPdf = new FileInfo(w);
+                            using (PdfReader reader = new PdfReader(w))
                             {
-                                numberPage = i;
+                                ITextExtractionStrategy its;
+                                pagina = string.Empty;
+                                tela18 = new Tela18();
+                                isBody = false;
+                                isNotTela18 = false;
 
-                                its = new LocationTextExtractionStrategy();
-                                pagina = PdfTextExtractor.GetTextFromPage(reader, i, its).Trim();
-                                pagina = Encoding.UTF8.GetString(Encoding.Convert(Encoding.Default, Encoding.UTF8, Encoding.Default.GetBytes(pagina)));
-
-                                using (StringReader strReader = new StringReader(pagina))
+                                for (int i = 1; i <= reader.NumberOfPages; i++)
                                 {
-                                    string line;
-                                    while ((line = strReader.ReadLine()) != null)
+                                    numberPage = i;
+
+                                    its = new LocationTextExtractionStrategy();
+                                    pagina = PdfTextExtractor.GetTextFromPage(reader, i, its).Trim();
+                                    pagina = Encoding.UTF8.GetString(Encoding.Convert(Encoding.Default, Encoding.UTF8, Encoding.Default.GetBytes(pagina)));
+
+                                    using (StringReader strReader = new StringReader(pagina))
                                     {
-                                        try
+                                        string line;
+                                        while ((line = strReader.ReadLine()) != null)
                                         {
-                                            _ArrayLinha = bussinessTela18.GetArrayLine(line);
-
-                                            if (i == 1 && !isBody)
+                                            try
                                             {
-                                                if (_ArrayLinha.Any(ctn => ctn.Trim().Contains("CTFIN")))
+                                                _ArrayLinha = bussinessTela18.GetArrayLine(line);
+
+                                                if (i == 1 && !isBody)
                                                 {
-                                                    if (!_ArrayLinha.Any(ctn => ctn.Trim().Equals("CTFIN/O018A")))
+                                                    if (_ArrayLinha.Any(ctn => ctn.Trim().Contains("CTFIN")))
                                                     {
-                                                        isNotTela18 = true;
-                                                        isErro = true;
-                                                        countError++;
-                                                        ExceptionError.TrataErros(arquivoPdf.Name, "O Arquivo não é do tipo CTFIN/O018A", diretorioDestinoLayout);
-                                                        break;
+                                                        if (!_ArrayLinha.Any(ctn => ctn.Trim().Equals("CTFIN/O018A")))
+                                                        {
+                                                            isNotTela18 = true;
+                                                            isErro = true;
+                                                            ExceptionError.countError++;
+                                                            ExceptionError.TrataErros(arquivoPdf.Name, "O Arquivo não é do tipo CTFIN/O018A", diretorioDestinoLayout);
+                                                            break;
+                                                        }
                                                     }
                                                 }
-                                            }
 
-                                            // Ignora os campos que não devem ser lidos e lê a proxima linha
-                                            if (_ArrayLinha.Any(k => _ignoraCampo.Any(p => k.Equals(p))))
-                                                continue;
-                                            if (_ArrayLinha.Any(x => Regex.IsMatch(x, @"(^\d{1,2}:\d{1,2}$)")))
-                                                continue;
-
-                                            if (_ArrayLinha.Any(k => _campo.Any(p => k.Equals(p))))
-                                            {
-                                                isBody = true;
-
-                                                if (_ArrayLinha.Any(c => Regex.IsMatch(c, @"^(\d{4}.\d{5}.\d{3}-\d{1})$")))
-                                                {
-                                                    var _carteira = _ArrayLinha.FirstOrDefault(ct => Regex.IsMatch(ct, @"(^[A-Z]{2}.\d{4}-\w{1,10}$?)"));
-                                                    var _contrato = _ArrayLinha.FirstOrDefault(c => Regex.IsMatch(c, @"^(\d{4}.\d{5}.\d{3}-\d{1})$"));
-
-                                                    tela18.Carteira = Regex.Replace(_carteira, @"[^0-9$]", "");
-                                                    tela18.Contrato = Regex.Replace(_contrato, @"[^0-9$]", "");
+                                                // Ignora os campos que não devem ser lidos e lê a proxima linha
+                                                if (_ArrayLinha.Any(k => _ignoraCampo.Any(p => k.Equals(p))))
                                                     continue;
-                                                }
-
-                                                if (_ArrayLinha[0].Trim().Equals("UTI"))
-                                                {
-                                                    _ArrayLinha = _ArrayLinha.Where(x => Regex.IsMatch(x, @"[0-9]")).ToArray();
-                                                    damp = new Damp();
-                                                    damp = bussinessTela18.GetDamp(_ArrayLinha);
-                                                    tela18.Damps.Add(damp);
-
+                                                if (_ArrayLinha.Any(x => Regex.IsMatch(x, @"(^\d{1,2}:\d{1,2}$)")))
                                                     continue;
-                                                }
-                                                if (_ArrayLinha.Any(t => _campo.Any(c => t.Equals(c))))
+
+                                                if (_ArrayLinha.Any(k => _campo.Any(p => k.Equals(p))))
                                                 {
-                                                    if (_ArrayLinha[0].Trim().Equals("JAM"))
-                                                        parcelaFgts = bussinessTela18.GetParcelaFgts(_ArrayLinha, parcelaFgts);
-                                                    else
+                                                    isBody = true;
+
+                                                    if (_ArrayLinha.Any(c => Regex.IsMatch(c, @"^(\d{4}.\d{5}.\d{3}-\d{1})$")))
                                                     {
-                                                        parcelaFgts = bussinessTela18.GetParcelaFgts(_ArrayLinha, parcelaFgts);
-                                                        damp.ParcelaFgts.Add(parcelaFgts);
-                                                        parcelaFgts = new ParcelaFgts();
+                                                        var _carteira = _ArrayLinha.FirstOrDefault(ct => Regex.IsMatch(ct, @"(^[A-Z]{2}.\d{4}-\w{1,10}$?)"));
+                                                        var _contrato = _ArrayLinha.FirstOrDefault(c => Regex.IsMatch(c, @"^(\d{4}.\d{5}.\d{3}-\d{1})$"));
+
+                                                        tela18.Carteira = Regex.Replace(_carteira, @"[^0-9$]", "");
+                                                        tela18.Contrato = Regex.Replace(_contrato, @"[^0-9$]", "");
+                                                        continue;
                                                     }
-                                                    continue;
+
+                                                    if (_ArrayLinha[0].Trim().Equals("UTI"))
+                                                    {
+                                                        _ArrayLinha = _ArrayLinha.Where(x => Regex.IsMatch(x, @"[0-9]")).ToArray();
+                                                        damp = new Damp();
+                                                        damp = bussinessTela18.GetDamp(_ArrayLinha);
+                                                        tela18.Damps.Add(damp);
+
+                                                        continue;
+                                                    }
+                                                    if (_ArrayLinha.Any(t => _campo.Any(c => t.Equals(c))))
+                                                    {
+                                                        if (_ArrayLinha[0].Trim().Equals("JAM"))
+                                                            parcelaFgts = bussinessTela18.GetParcelaFgts(_ArrayLinha, parcelaFgts);
+                                                        else
+                                                        {
+                                                            parcelaFgts = bussinessTela18.GetParcelaFgts(_ArrayLinha, parcelaFgts);
+                                                            damp.ParcelaFgts.Add(parcelaFgts);
+                                                            parcelaFgts = new ParcelaFgts();
+                                                        }
+                                                        continue;
+                                                    }
+
                                                 }
+                                            }
 
-                                            }
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            countError++;
-                                            BackgroundWorkerTela18.ReportProgress(countPercent, null);
+                                            catch (Exception ex)
+                                            {
+                                                ExceptionError.countError++;
+                                                BackgroundWorkerTela18.ReportProgress(countPercent, null);
 
-                                            isErro = true;
-                                            if (!File.Exists(diretorioDestinoLayout + @"\LogErroContratos.txt"))
-                                            {
-                                                StreamWriter item = File.CreateText(diretorioDestinoLayout + @"\LogErroContratos.txt");
-                                                item.Dispose();
+                                                isErro = true;
+                                                if (!File.Exists(diretorioDestinoLayout + @"\LogErroContratos.txt"))
+                                                {
+                                                    StreamWriter item = File.CreateText(diretorioDestinoLayout + @"\LogErroContratos.txt");
+                                                    item.Dispose();
+                                                }
+                                                using (StreamWriter sw = new StreamWriter(diretorioDestinoLayout + @"\LogErroContratos.txt", true, Encoding.UTF8))
+                                                {
+                                                    StringBuilder strErro = new StringBuilder();
+                                                    strErro.AppendLine(string.Format("ARQUIVO: {0}", arquivoPdf.Name))
+                                                            .AppendLine(string.Format("PAGINA DO ERRO: {0}", numberPage))
+                                                            .AppendLine(string.Format("DESCRIÇÃO DO ERRO: {0}", ex.Message))
+                                                            .AppendLine(string.Format("DIRETORIO DO ARQUIVO: {0}", arquivoPdf.DirectoryName));
+                                                    sw.Write(strErro);
+                                                    sw.WriteLine("================================================================================================================================================");
+                                                }
                                             }
-                                            using (StreamWriter sw = new StreamWriter(diretorioDestinoLayout + @"\LogErroContratos.txt", true, Encoding.UTF8))
-                                            {
-                                                StringBuilder strErro = new StringBuilder();
-                                                strErro.AppendLine(string.Format("ARQUIVO: {0}", arquivoPdf.Name))
-                                                        .AppendLine(string.Format("PAGINA DO ERRO: {0}", numberPage))
-                                                        .AppendLine(string.Format("DESCRIÇÃO DO ERRO: {0}", ex.Message))
-                                                        .AppendLine(string.Format("DIRETORIO DO ARQUIVO: {0}", arquivoPdf.DirectoryName));
-                                                sw.Write(strErro);
-                                                sw.WriteLine("================================================================================================================================================");
-                                            }
+
                                         }
                                     }
+
+                                    if (isNotTela18)
+                                        return;
                                 }
+                                obj = new UserObject { Contrato = tela18.Contrato, PdfInfo = arquivoPdf, TotalArquivoPorPasta = totalPorPasta };
+                                lstTela18.Add(tela18);
+                                tela18 = null;
+                                contador++;
+                                countPercent++;
 
-                                if (isNotTela18)
-                                    return;
-                            }
-                            obj = new UserObject { Contrato = tela18.Contrato, PdfInfo = arquivoPdf, TotalArquivoPorPasta = totalPorPasta };
-                            lstTela18.Add(tela18);
-                            tela18 = null;
-                            contador++;
-                            countPercent++;
-
-                            if (contador == 1000)
-                            {
-                                BackgroundWorkerTela18.ReportProgress(countPercent, obj);
-
-                                var tab = new
+                                if (contador == 1000)
                                 {
-                                    item1 = lstTela18,
-                                    item2 = diretorioDestinoLayout,
-                                };
+                                    BackgroundWorkerTela18.ReportProgress(countPercent, obj);
 
-                                _thread = new Thread(new ParameterizedThreadStart(bussinessTela18.PopulaTela18));
-                                _thread.Start(tab);
+                                    var tab = new
+                                    {
+                                        item1 = lstTela18,
+                                        item2 = diretorioDestinoLayout,
+                                    };
 
-                                lstTela18 = new List<Tela18>();
-                                contador = 0;
+                                    _thread = new Thread(new ParameterizedThreadStart(bussinessTela18.PopulaTela18));
+                                    _thread.Start(tab);
+
+                                    lstTela18 = new List<Tela18>();
+                                    contador = 0;
+                                }
+                                else
+                                    BackgroundWorkerTela18.ReportProgress(countPercent, obj);
                             }
-                            else
-                                BackgroundWorkerTela18.ReportProgress(countPercent, obj);
+                        }
+                        catch (iTextSharp.text.exceptions.InvalidPdfException pdfExeception)
+                        {
+                            ExceptionError.countError++;
+                            BackgroundWorkerTela18.ReportProgress(countPercent, null);
+
+                            isErro = true;
+                            if (!File.Exists(diretorioDestinoLayout + @"\LogErroContratos.txt"))
+                            {
+                                StreamWriter item = File.CreateText(diretorioDestinoLayout + @"\LogErroContratos.txt");
+                                item.Dispose();
+                            }
+                            using (StreamWriter sw = new StreamWriter(diretorioDestinoLayout + @"\LogErroContratos.txt", true, Encoding.UTF8))
+                            {
+                                string Erro_ = string.Format("{0} - mensagem original: {1}", "Arquivo danificado, não é possivel fazer a leitura ", pdfExeception.Message);
+                                StringBuilder strErro = new StringBuilder();
+                                strErro.AppendLine(string.Format("ARQUIVO: {0}", arquivoPdf.Name))
+                                        .AppendLine(string.Format("PAGINA DO ERRO: {0}", numberPage))
+                                        .AppendLine(string.Format("DESCRIÇÃO DO ERRO: {0}", Erro_))
+                                        .AppendLine(string.Format("DIRETORIO DO ARQUIVO: {0}", arquivoPdf.DirectoryName));
+                                sw.Write(strErro);
+                                sw.WriteLine("================================================================================================================================================");
+                            }
+
+                            if (!Directory.Exists(string.Format(@"{0}\!Erro", diretorioDestinoLayout)))
+                                Directory.CreateDirectory(string.Format(@"{0}\!Erro", diretorioDestinoLayout));
+
+                            if (!File.Exists(string.Format(@"{0}\!Erro\{1}", diretorioDestinoLayout, arquivoPdf.Name)))
+                                File.Move(string.Format(@"{0}\{1}", arquivoPdf.DirectoryName, arquivoPdf.Name), string.Format(@"{0}\!Erro\{1}", diretorioDestinoLayout, arquivoPdf.Name));
                         }
                     });
                 }

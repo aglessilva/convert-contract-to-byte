@@ -21,7 +21,9 @@ namespace ConvetPdfToLayoutAlta
         Thread _thread = null;
         UserObject obj = null;
         List<string> _situacoesAtual = new List<string>();
-        int contador = 0, countLote = 1, totalArquivo = 0, totalPorPasta = 0, countError = 0;
+        List<string> listArquPont = new List<string>();
+
+        int contador = 0, countLote = 1, totalArquivo = 0, totalPorPasta = 0;
         bool isErro = false, isFinal = false;
         IEnumerable<string> listContratoBlockPdf = null;
         IEnumerable<string> listDiretory = null;
@@ -111,8 +113,8 @@ namespace ConvetPdfToLayoutAlta
             {
                 string result = string.Format("Resultado\n\n");
                 result += string.Format("Total de Contratos: {0}\n", totalArquivo);
-                result += string.Format("Total Processados: {0}\n", (totalArquivo - countError));
-                result += string.Format("Total Rejeitados: {0}\n", countError);
+                result += string.Format("Total Processados: {0}\n", (totalArquivo - ExceptionError.countError));
+                result += string.Format("Total Corrompido: {0}\n", ExceptionError.countError);
                 result += string.Format("{0}", lblTempo.Text);
                 MessageBox.Show(result, "Erro de Converção", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -123,11 +125,11 @@ namespace ConvetPdfToLayoutAlta
                 {
                     err = Directory.EnumerateFiles(string.Format(@"{0}\!Erro", diretorioDestinoLayout), "*_16.pdf", SearchOption.TopDirectoryOnly).Count();
                 }
-
+                
                 string result = string.Format("Resultado\n\n");
                 result += string.Format("Total de Contratos: {0}\n", totalArquivo);
                 result += string.Format("Total Processados: {0}\n",( totalArquivo - err));
-                result += string.Format("Total Rejeitados: {0}\n", err );
+                result += string.Format("Total Rejeitado: {0}\n", err );
                 result += string.Format("{0}", lblTempo.Text);
                 MessageBox.Show(result,"Finalizado com Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -198,6 +200,7 @@ namespace ConvetPdfToLayoutAlta
                     try
                     {
                         arquivoPdf = new FileInfo(w);
+
                         objContratoPdf = new ContratoPdf();
                         objCabecalho = new Cabecalho() { Id = (lstCabecalho.Count + 1) };
                         objParcelas = new Parcela() { IdCabecalho = objCabecalho.Id, Id = 0 };
@@ -595,7 +598,7 @@ namespace ConvetPdfToLayoutAlta
                                                     {
                                                         isNotTela16 = true;
                                                         isErro = true;
-                                                        countError++;
+                                                        ExceptionError.countError++;
                                                         ExceptionError.TrataErros(arquivoPdf.Name, "O Arquivo não é do tipo CTFIN/O016A", diretorioDestinoLayout);
                                                         break;
                                                     }
@@ -673,7 +676,11 @@ namespace ConvetPdfToLayoutAlta
                                         {
                                             string[] cab = line.Replace("Agência", "").Replace("Data Garanta", "").Split(' ').Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
                                             objCabecalho.DataGarantia = cab[0];
-                                            objCabecalho.Agencia = cab[1];
+
+                                            if (cab.Contains("Contábil"))
+                                                objCabecalho.CodigoContabil = cab.LastOrDefault();
+                                            else
+                                                objCabecalho.Agencia = cab[1];
                                             continue;
                                         }
 
@@ -839,7 +846,7 @@ namespace ConvetPdfToLayoutAlta
                         userObject = new UserObject { Contrato = arquivoPdf.Name, PdfInfo = arquivoPdf, TotalArquivoPorPasta = totalPorPasta, DescricaoPercentural = "** Arquivo Danificado **" };
                         _countPercent++;
                         backgroundWorker1.ReportProgress(_countPercent, userObject);
-                        countError++;
+                        ExceptionError.countError++;
 
                         isErro = true;
                         if (!File.Exists(diretorioDestinoLayout + @"\LogErroContratos.txt"))
@@ -864,23 +871,6 @@ namespace ConvetPdfToLayoutAlta
                         if (!File.Exists(string.Format(@"{0}\!Erro\{1}", diretorioDestinoLayout, arquivoPdf.Name)))
                             File.Move(string.Format(@"{0}\{1}", arquivoPdf.DirectoryName, arquivoPdf.Name), string.Format(@"{0}\!Erro\{1}", diretorioDestinoLayout, arquivoPdf.Name));
 
-                        // SE HOUVER ALGUM CONTRATO PARA SER FORMATADO PARA ALTA, O PROCESSO FINALIZA A FORMATAÇÃO APÓS A GERAR O LOG DE ERROS 
-                        //if (lstContratosPdf.Count() > 0)
-                        //{
-                        //    var tab = new
-                        //    {
-                        //        item1 = lstContratosPdf,
-                        //        item2 = lstGT,
-                        //        item3 = diretorioDestinoLayout,
-                        //    };
-
-                        //    _thread = new Thread(new ParameterizedThreadStart(businessCabecalho.PopulaContrato));
-                        //    _thread.Start(tab);
-
-                        //    //businessCabecalho.PopulaContrato(tab);
-                        //    lstContratosPdf = new List<ContratoPdf>();
-                        //}
-
                         padrao = 0;
                         contador++;
                     }
@@ -888,7 +878,7 @@ namespace ConvetPdfToLayoutAlta
                     {
                         _countPercent++;
                         backgroundWorker1.ReportProgress(_countPercent, null);
-                        countError++;
+                        ExceptionError.countError++;
 
                         isErro = true;
                         if (!File.Exists(diretorioDestinoLayout + @"\LogErroContratos.txt"))
@@ -912,22 +902,6 @@ namespace ConvetPdfToLayoutAlta
 
                         if (!File.Exists(string.Format(@"{0}\!Erro\{1}", diretorioDestinoLayout, arquivoPdf.Name)))
                             File.Move(string.Format(@"{0}\{1}", arquivoPdf.DirectoryName, arquivoPdf.Name), string.Format(@"{0}\!Erro\{1}", diretorioDestinoLayout, arquivoPdf.Name));
-
-                        // SE HOUVER ALGUM CONTRATO PARA SER FORMATADO PARA ALTA, O PROCESSO FINALIZA A FORMATAÇÃO APÓS A GERAR O LOG DE ERROS 
-                        //if (lstContratosPdf.Count() > 0)
-                        //{
-                        //    var tab = new
-                        //    {
-                        //        item1 = lstContratosPdf,
-                        //        item2 = lstGT,
-                        //        item3 = diretorioDestinoLayout,
-                        //    };
-
-                        //    _thread = new Thread(new ParameterizedThreadStart(businessCabecalho.PopulaContrato));
-                        //    _thread.Start(tab);
-                        //  //  businessCabecalho.PopulaContrato(tab);
-                        //    lstContratosPdf = new List<ContratoPdf>();
-                        //}
 
                         padrao = 0;
                         contador++;

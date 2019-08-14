@@ -9,6 +9,7 @@ namespace ConvetPdfToLayoutAlta.Models
 {
     public static class ExceptionError
     {
+        public static int countError;
         public static void TrataErros(Exception exception, string _contrato, string _detalhes, string _path)
         {
             using (StreamWriter sw = new StreamWriter(_path + @"\LogErroContratos.txt", true, Encoding.UTF8))

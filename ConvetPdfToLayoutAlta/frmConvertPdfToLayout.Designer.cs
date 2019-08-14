@@ -30,25 +30,26 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmSelectFolder));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.button8 = new System.Windows.Forms.Button();
             this.btnSelectDiretorioDestino = new System.Windows.Forms.Button();
             this.btnSelectDiretorioOrigem = new System.Windows.Forms.Button();
+            this.button5 = new System.Windows.Forms.Button();
+            this.button6 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.textDestinoLayout = new System.Windows.Forms.TextBox();
             this.textOrigemContratosPdf = new System.Windows.Forms.TextBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.btnIniciarConvercao = new System.Windows.Forms.Button();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-            this.button1 = new System.Windows.Forms.Button();
             this.comboBoxTela = new System.Windows.Forms.ComboBox();
             this.button2 = new System.Windows.Forms.Button();
             this.panelSpinner = new System.Windows.Forms.Panel();
-            this.button8 = new System.Windows.Forms.Button();
+            this.button9 = new System.Windows.Forms.Button();
+            this.btnDuplicata = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
-            this.button6 = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
-            this.btnDuplicata = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.panelSpinner.SuspendLayout();
             this.SuspendLayout();
@@ -72,6 +73,17 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Seleção de Diretórios ";
             // 
+            // button8
+            // 
+            this.button8.Location = new System.Drawing.Point(411, 11);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(51, 23);
+            this.button8.TabIndex = 10;
+            this.button8.Text = "25 All";
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Visible = false;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
+            // 
             // btnSelectDiretorioDestino
             // 
             this.btnSelectDiretorioDestino.Location = new System.Drawing.Point(502, 83);
@@ -93,6 +105,28 @@
             this.btnSelectDiretorioOrigem.Text = "...";
             this.btnSelectDiretorioOrigem.UseVisualStyleBackColor = true;
             this.btnSelectDiretorioOrigem.Click += new System.EventHandler(this.BtnSelectDiretorioOrigem_Click);
+            // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(354, 11);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(51, 23);
+            this.button5.TabIndex = 7;
+            this.button5.Text = "20 All";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Visible = false;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
+            // 
+            // button6
+            // 
+            this.button6.Location = new System.Drawing.Point(297, 11);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(51, 23);
+            this.button6.TabIndex = 8;
+            this.button6.Text = "18 All";
+            this.button6.UseVisualStyleBackColor = true;
+            this.button6.Visible = false;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
             // label2
             // 
@@ -128,6 +162,17 @@
             this.textOrigemContratosPdf.Size = new System.Drawing.Size(487, 20);
             this.textOrigemContratosPdf.TabIndex = 0;
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(240, 11);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(51, 23);
+            this.button1.TabIndex = 2;
+            this.button1.Text = "16 All";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Visible = false;
+            this.button1.Click += new System.EventHandler(this.Button1_Click);
+            // 
             // btnIniciarConvercao
             // 
             this.btnIniciarConvercao.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
@@ -150,31 +195,22 @@
             this.folderBrowserDialog1.SelectedPath = "C:\\Blocado";
             this.folderBrowserDialog1.ShowNewFolderButton = false;
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(240, 11);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(51, 23);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "16 All";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Visible = false;
-            this.button1.Click += new System.EventHandler(this.Button1_Click);
-            // 
             // comboBoxTela
             // 
             this.comboBoxTela.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxTela.Enabled = false;
             this.comboBoxTela.FormattingEnabled = true;
             this.comboBoxTela.Items.AddRange(new object[] {
             "TELA 16",
             "TELA 18",
             "TELA 20",
             "TELA 25",
-            "Selecione o tipo de arquivo"});
+            "Telas..."});
             this.comboBoxTela.Location = new System.Drawing.Point(12, 13);
             this.comboBoxTela.Name = "comboBoxTela";
             this.comboBoxTela.Size = new System.Drawing.Size(190, 21);
             this.comboBoxTela.TabIndex = 3;
+            this.comboBoxTela.SelectedIndexChanged += new System.EventHandler(this.comboBoxTela_SelectedIndexChanged);
             // 
             // button2
             // 
@@ -189,6 +225,8 @@
             // 
             // panelSpinner
             // 
+            this.panelSpinner.BackColor = System.Drawing.SystemColors.Control;
+            this.panelSpinner.Controls.Add(this.button9);
             this.panelSpinner.Controls.Add(this.btnDuplicata);
             this.panelSpinner.Controls.Add(this.button7);
             this.panelSpinner.Controls.Add(this.button4);
@@ -203,16 +241,31 @@
             this.panelSpinner.Size = new System.Drawing.Size(580, 210);
             this.panelSpinner.TabIndex = 5;
             // 
-            // button8
+            // button9
             // 
-            this.button8.Location = new System.Drawing.Point(411, 11);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(51, 23);
-            this.button8.TabIndex = 10;
-            this.button8.Text = "25 All";
-            this.button8.UseVisualStyleBackColor = true;
-            this.button8.Visible = false;
-            this.button8.Click += new System.EventHandler(this.button8_Click);
+            this.button9.Location = new System.Drawing.Point(27, 165);
+            this.button9.Name = "button9";
+            this.button9.Size = new System.Drawing.Size(75, 23);
+            this.button9.TabIndex = 11;
+            this.button9.Text = "button9";
+            this.button9.UseVisualStyleBackColor = true;
+            this.button9.Visible = false;
+            this.button9.Click += new System.EventHandler(this.button9_Click);
+            // 
+            // btnDuplicata
+            // 
+            this.btnDuplicata.BackColor = System.Drawing.SystemColors.Control;
+            this.btnDuplicata.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.btnDuplicata.Image = global::ConvetPdfToLayoutAlta.Properties.Resources._1490890032_24_82551;
+            this.btnDuplicata.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnDuplicata.Location = new System.Drawing.Point(134, 165);
+            this.btnDuplicata.Name = "btnDuplicata";
+            this.btnDuplicata.Size = new System.Drawing.Size(128, 40);
+            this.btnDuplicata.TabIndex = 10;
+            this.btnDuplicata.Text = "Filtrar Arquivos...";
+            this.btnDuplicata.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.btnDuplicata.UseVisualStyleBackColor = true;
+            this.btnDuplicata.Click += new System.EventHandler(this.BtnDuplicata_Click);
             // 
             // button7
             // 
@@ -224,28 +277,6 @@
             this.button7.UseVisualStyleBackColor = true;
             this.button7.Visible = false;
             this.button7.Click += new System.EventHandler(this.button7_Click);
-            // 
-            // button6
-            // 
-            this.button6.Location = new System.Drawing.Point(297, 11);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(51, 23);
-            this.button6.TabIndex = 8;
-            this.button6.Text = "18 All";
-            this.button6.UseVisualStyleBackColor = true;
-            this.button6.Visible = false;
-            this.button6.Click += new System.EventHandler(this.button6_Click);
-            // 
-            // button5
-            // 
-            this.button5.Location = new System.Drawing.Point(354, 11);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(51, 23);
-            this.button5.TabIndex = 7;
-            this.button5.Text = "20 All";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Visible = false;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // button4
             // 
@@ -268,22 +299,6 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Visible = false;
             this.button3.Click += new System.EventHandler(this.Button3_Click);
-            // 
-            // btnDuplicata
-            // 
-            this.btnDuplicata.BackColor = System.Drawing.SystemColors.Control;
-            this.btnDuplicata.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.btnDuplicata.Enabled = false;
-            this.btnDuplicata.Image = global::ConvetPdfToLayoutAlta.Properties.Resources._1490890032_24_82551;
-            this.btnDuplicata.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnDuplicata.Location = new System.Drawing.Point(134, 165);
-            this.btnDuplicata.Name = "btnDuplicata";
-            this.btnDuplicata.Size = new System.Drawing.Size(128, 40);
-            this.btnDuplicata.TabIndex = 10;
-            this.btnDuplicata.Text = "Rem. Duplicado";
-            this.btnDuplicata.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnDuplicata.UseVisualStyleBackColor = false;
-            this.btnDuplicata.Click += new System.EventHandler(this.BtnDuplicata_Click);
             // 
             // FrmSelectFolder
             // 
@@ -328,6 +343,7 @@
         private System.Windows.Forms.Button button8;
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.Button btnDuplicata;
+        private System.Windows.Forms.Button button9;
     }
 }
 

@@ -70,8 +70,6 @@ namespace ConvetPdfToLayoutAlta.Models
                     obj.IsFinal = true;
                 }
 
-               
-
             }
             catch (Exception exArgument)
             {
@@ -91,22 +89,31 @@ namespace ConvetPdfToLayoutAlta.Models
             {
                 lstContratosPdf.ForEach(t25 => {
 
-                    strAlta = string.Empty;
-                    strAlta += string.Format("{0}{1}", t25.Carteira.Substring(2), t25.Contrato).PadRight(65, ' ');
-                    strAlta += string.Format("{0}{1}", t25.Cpf.Trim(), t25.Agencia.Trim().PadRight(14, '0')).PadRight(142, ' ');
-                    strAlta += string.Format("{0}{1}", t25.CD.Trim().PadLeft(11,'_'), t25.DataMovimentacao.Trim().PadRight(15, '_'));
-                    strAlta += string.Format("{0}{1}", t25.Tp.Trim().PadLeft(5,'0'), t25.ValorDevido.Trim().PadLeft(18, '0'));
-                    strAlta += string.Format("{0}{1}", t25.ValorAcrecimo.Trim().PadLeft(18,'0'), t25.Vencimento.Trim());
-                    strAlta += string.Format("{0}{1}", t25.Prestacao.Trim().PadLeft(3,'0'), t25.Empresa.Trim().PadLeft(2,'0'));
-                    strAlta += string.Format("{0}{1}", t25.Cart.Trim().PadLeft(4,'0'), t25.Contrato.Trim());
-                    strAlta += string.Format("{0}{1}", t25.NCPD.Trim(), t25.ValorSemAcrecimo.Trim().PadLeft(18,'0'));
-                    strAlta += string.Format("{0}{1}", t25.ValorCorrecao.Trim().PadLeft(18, '0'), t25.ValorJuros.Trim().PadLeft(18,'0'));
-                    strAlta += string.Format("{0}{1}", t25.ValorMora.Trim().PadLeft(18, '0'), t25.ValorMulta.Trim().PadLeft(18,'0'));
-                    strAlta += string.Format("{0}", t25.ValorAcrecimo.PadLeft(18, '0'));
+                    try
+                    {
 
-                    //strAlta = strAlta.PadRight(423, ' ');
-                    escreverBoletim.WriteLine(strAlta);
-                    strAlta = string.Empty;
+                        strAlta = string.Empty;
+                        strAlta += string.Format("{0}{1}", t25.Carteira.Substring(2), t25.Contrato).PadRight(65, ' ');
+                        strAlta += string.Format("{0}{1}", t25.Cpf.Trim(), t25.Agencia.Trim().PadRight(14, '0')).PadRight(142, ' ');
+                        strAlta += string.Format("{0}{1}", t25.CD.Trim().PadLeft(11, '_'), t25.DataMovimentacao.Trim().PadRight(15, '_'));
+                        strAlta += string.Format("{0}{1}", t25.Tp.Trim().PadLeft(5, '0'), t25.ValorDevido.Trim().PadLeft(18, '0'));
+                        strAlta += string.Format("{0}{1}", t25.ValorAcrecimo.Trim().PadLeft(18, '0'), t25.Vencimento.Trim());
+                        strAlta += string.Format("{0}{1}", t25.Prestacao.Trim().PadLeft(3, '0'), t25.Empresa.Trim().PadLeft(2, '0'));
+                        strAlta += string.Format("{0}{1}", t25.Cart.Trim().PadLeft(4, '0'), t25.Contrato.Trim());
+                        strAlta += string.Format("{0}{1}", t25.NCPD.Trim(), t25.ValorSemAcrecimo.Trim().PadLeft(18, '0'));
+                        strAlta += string.Format("{0}{1}", t25.ValorCorrecao.Trim().PadLeft(18, '0'), t25.ValorJuros.Trim().PadLeft(18, '0'));
+                        strAlta += string.Format("{0}{1}", t25.ValorMora.Trim().PadLeft(18, '0'), t25.ValorMulta.Trim().PadLeft(18, '0'));
+                        strAlta += string.Format("{0}", t25.ValorAcrecimo.PadLeft(18, '0'));
+
+                        //strAlta = strAlta.PadRight(423, ' ');
+                        escreverBoletim.WriteLine(strAlta);
+                        strAlta = string.Empty;
+                    }
+                    catch (Exception execp25)
+                    {
+                        string _err0 = string.Format("Erro na tentantiva de escrever o arquivo TL25BOLE Arquivo: BusinessTela25 - Metodo: [PopulaTela25] - Detalhes: {0}", execp25.Message);
+                        ExceptionError.TrataErros(execp25, t25.Contrato, _err0, _diretorioDestino);
+                    }
                 });
             }
 
