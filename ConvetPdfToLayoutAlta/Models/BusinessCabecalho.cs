@@ -1545,6 +1545,12 @@ namespace ConvetPdfToLayoutAlta.Models
                                     }
                                 }
 
+                                if (o.CodigoOcorrencia.Equals("012")) // Crescimento tx.Juros
+                                {
+                                    strAlta += string.Format("{0}{1}{2}", "0".PadLeft(54, '0'), o.Amortizacao.Trim().PadLeft(18, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'));
+                                    strAlta += string.Format("{0}", Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd").Trim().PadRight(30, ' '));
+                                }
+
                                 if (o.CodigoOcorrencia.Equals("022")) // Sinistro parcial
                                 {
                                     strAlta += string.Format("{0}{1}{2}", "0".PadLeft(54, '0'), o.Amortizacao.Trim().PadLeft(18, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'));
@@ -1586,6 +1592,13 @@ namespace ConvetPdfToLayoutAlta.Models
                                 {
                                     strAlta += string.Format("{0}{1}{2}", "0".PadLeft(54, '0'), o.Amortizacao.Trim().PadLeft(18, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'));
                                     strAlta += string.Format("{0}", Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd").Trim().PadRight(30, ' '), "".PadRight(90, ' '));
+                                }
+
+                                if (o.CodigoOcorrencia.Equals("046")) // Sinistro Parcial c/mudanca devedor
+                                {
+                                    strAlta += string.Format("{0}{1}{2}", "0".PadLeft(18, '0'), Regex.Replace(o.Juros, "[^0-9$]", "").Trim().PadLeft(18, '0'), "0".PadLeft(18, '0'));
+                                    strAlta += string.Format("{0}{1}", o.Amortizacao.Trim().PadLeft(18, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'));
+                                    strAlta += string.Format("{0}{1}", Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd").Trim().PadRight(30, ' '), "".PadRight(60, ' '));
                                 }
 
                                 if (o.CodigoOcorrencia.Equals("051")) //Liguidaçao rec. Fgts
