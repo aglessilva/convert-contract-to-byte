@@ -159,7 +159,6 @@ namespace ConvetPdfToLayoutAlta.Models
                             break;
                         }
                    
-
                     default:
                         break;
                 }
