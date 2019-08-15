@@ -269,10 +269,10 @@ namespace ConvetPdfToLayoutAlta.Models
             return x.ToArray();
         }
 
-        public Ocorrencia TrataOcorrencia(string[] _linhaOcorrencia, string _diretorioDestino)
+        public Ocorrencia TrataOcorrencia(string[] _linhaOcorrencia, string _diretorioDestino, string _contrato = null)
         {
-
             Ocorrencia _obj = new Ocorrencia();
+            _obj.Contrato = _contrato;
 
             string _case = string.Empty, _codigoOcorrencia = _linhaOcorrencia.Any(u => u.Trim().Equals("DAMP")) ? _linhaOcorrencia[0] :  Regex.Replace(_linhaOcorrencia[2], @"[^0-9$]","").Substring(0, 3);
             try
@@ -304,7 +304,7 @@ namespace ConvetPdfToLayoutAlta.Models
 
                 switch (_codigoOcorrencia)
                 {
-                    case "DAMP":
+                    case "DAMP": // DAMP3
                         {
                             _case = "DAMP0 - Metodo: TrataOcorrencia -  Situação: DAMP";
                             _obj.Damp = Regex.Replace(_linhaOcorrencia[1].Trim(), @"[^0-9$]", "");
@@ -345,6 +345,18 @@ namespace ConvetPdfToLayoutAlta.Models
                             _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[3].Trim(), @"[^0-9$]", "");
                             _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[4].Trim(), @"[^0-9$]", "");
                             _obj.Descricao = "***010Alteração Contratual";
+                            break;
+                        }
+                    case "012": // Crescimento tx.Juros
+                        {
+                            _case = "012 - Metodo: TrataOcorrencia -  Situação: Crescimento tx.Juros";
+
+                            _obj.Vencimento = _linhaOcorrencia[0].Trim();
+                            _obj.Pagamento = _linhaOcorrencia[1].Trim();
+                            _obj.CodigoOcorrencia = _codigoOcorrencia;
+                            _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[3].Trim(), @"[^0-9$]", "");
+                            _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[4].Trim(), @"[^0-9$]", "");
+                            _obj.Descricao = "***012Crescimento tx.Juros";
                             break;
                         }
                     case "020": // Amortização Extra
@@ -446,21 +458,6 @@ namespace ConvetPdfToLayoutAlta.Models
                             _obj.Descricao = "***040Transferência";
                             break;
                         }
-                    case "051": // Liquidação rec Fgts
-                        {
-                            int count = 0;
-                            _obj.Vencimento = _linhaOcorrencia[count++].Trim();
-                            _obj.Pagamento = _linhaOcorrencia[count++].Trim();
-                            _obj.CodigoOcorrencia = _codigoOcorrencia; count++;
-                            if (hasMora)
-                                _obj.Juros = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
-                            else _obj.Juros = "0";
-
-                            _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
-                            _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
-                            _obj.Descricao = "***051Liquidação Fgts";
-                            break;
-                        }
                     case "044": // Transferencia Parte Ideal
                         {
                             int count = 0;
@@ -474,6 +471,36 @@ namespace ConvetPdfToLayoutAlta.Models
                             _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
                             _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
                             _obj.Descricao = "***044Transf.Parte ideal";
+                            break;
+                        }
+                    case "046": // Sinistro Parcial c/mudanca devedor
+                        {
+                            int count = 0;
+                            _obj.Vencimento = _linhaOcorrencia[count++].Trim();
+                            _obj.Pagamento = _linhaOcorrencia[count++].Trim();
+                            _obj.CodigoOcorrencia = _codigoOcorrencia; count++;
+                            if (hasMora)
+                                _obj.Juros = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
+                            else _obj.Juros = "0";
+
+                            _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
+                            _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
+                            _obj.Descricao = "***046Sinistro Parcial Mud. Devedor";
+                            break;
+                        }
+                    case "051": // Liquidação rec Fgts
+                        {
+                            int count = 0;
+                            _obj.Vencimento = _linhaOcorrencia[count++].Trim();
+                            _obj.Pagamento = _linhaOcorrencia[count++].Trim();
+                            _obj.CodigoOcorrencia = _codigoOcorrencia; count++;
+                            if (hasMora)
+                                _obj.Juros = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
+                            else _obj.Juros = "0";
+
+                            _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
+                            _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
+                            _obj.Descricao = "***051Liquidação Fgts";
                             break;
                         }
                     case "050": // 050-Liquidação Antecipada
@@ -563,7 +590,7 @@ namespace ConvetPdfToLayoutAlta.Models
                     default:
                         using (StreamWriter escreverNovaOcorrencia = new StreamWriter(_diretorioDestino + @"\NOVAS_OCORRENCIAS.txt", true, Encoding.Default))
                         {
-                            string _novaOocorrencia = "NOVO CODIGO DE CONTRADO ENCONTRADO: " + _codigoOcorrencia;
+                            string _novaOocorrencia = "NOVO CODIGO DE CONTRADO ENCONTRADO: " + _codigoOcorrencia +" - CONTRATO: " + _obj.Contrato;
                             escreverNovaOcorrencia.WriteLine(_novaOocorrencia);
                         }
                         break;

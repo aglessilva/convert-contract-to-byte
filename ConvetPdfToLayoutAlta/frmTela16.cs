@@ -440,7 +440,7 @@ namespace ConvetPdfToLayoutAlta
                                                             objParcelas = lstParcelas.LastOrDefault();
                                                         }
 
-                                                        objCorrencia = businessParcelas.TrataOcorrencia(arrayLinhaParcela, diretorioDestinoLayout);
+                                                        objCorrencia = businessParcelas.TrataOcorrencia(arrayLinhaParcela, diretorioDestinoLayout, objCabecalho.Contrato);
                                                         objCorrencia.NaoTemParcela = lstParcelas.Count == 0;
                                                         objCorrencia.Contrato = objCabecalho.Contrato;
                                                         objCorrencia.IdParcela = objParcelas.Id;
