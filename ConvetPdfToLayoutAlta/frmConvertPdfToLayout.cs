@@ -14,6 +14,8 @@ namespace ConvetPdfToLayoutAlta
         List<string> lstDamp3 = new List<string>();
         bool[] consistencia = { false, false, false, false };
         bool[] isProcessado = { false, false, false, false };
+        bool[] orderExcute = { false, false, false, false };
+
         public FrmSelectFolder()
         {
             InitializeComponent();
@@ -98,6 +100,16 @@ namespace ConvetPdfToLayoutAlta
                 return;
             }
 
+            for (int i = (comboBoxTela.SelectedIndex - 1); i >= 0; i--)
+            {
+                if (!orderExcute[i])
+                {
+                    MessageBox.Show("A converção deve ser realizada em ordem crescente de tela.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    return;
+                }
+            }
+
+           
             if (!isProcessado[comboBoxTela.SelectedIndex])
             {
                 panelSpinner.Visible = !panelSpinner.Visible;
@@ -115,6 +127,8 @@ namespace ConvetPdfToLayoutAlta
                 if (comboBoxTela.Text.ToUpper().Equals("TELA 25"))
                     f = new FrmTela25(textOrigemContratosPdf.Text, textDestinoLayout.Text, comboBoxTela.Text);
 
+
+                orderExcute[comboBoxTela.SelectedIndex] = true;
                 isProcessado[comboBoxTela.SelectedIndex] = true;
 
                 Text += "-" + comboBoxTela.Text;
@@ -227,22 +241,32 @@ namespace ConvetPdfToLayoutAlta
 
         private void button9_Click(object sender, EventArgs e)
         {
-            List<string> lstArquiPoint = new List<string>();
-            using (StreamReader sw = new StreamReader(@"D:\HomologacaoFerramenta\config\ARQUPONT.TXT", Encoding.UTF8))
+
+            bool[] x = { true, false, false, false };
+
+            for (int i = (comboBoxTela.SelectedIndex-1) ; i > 0 ; i--)
             {
-                while (!sw.EndOfStream)
-                    lstArquiPoint.Add(sw.ReadLine());
+                if (!x[i])
+                {
+                    break;
+                }
             }
+            //List<string> lstArquiPoint = new List<string>();
+            //using (StreamReader sw = new StreamReader(@"D:\HomologacaoFerramenta\config\ARQUPONT.TXT", Encoding.UTF8))
+            //{
+            //    while (!sw.EndOfStream)
+            //        lstArquiPoint.Add(sw.ReadLine());
+            //}
 
-            List<string> lst16 = Directory.GetFiles(@"D:\HomologacaoFerramenta", "*_16.pdf", SearchOption.AllDirectories).ToList();
-                List<string> listaTela16 = new List<string>();
-                lst16.ForEach(h => { listaTela16.Add(new FileInfo(h).Name.Split('_')[0].Trim()); });
+            //List<string> lst16 = Directory.GetFiles(@"D:\HomologacaoFerramenta", "*_16.pdf", SearchOption.AllDirectories).ToList();
+            //    List<string> listaTela16 = new List<string>();
+            //    lst16.ForEach(h => { listaTela16.Add(new FileInfo(h).Name.Split('_')[0].Trim()); });
 
-            //string[] l1 = { "1", "2", "3", "4", "5", "6","7", "9", "10", "11" };
-            //string[] l2 = { "1", "2", "3", "4", "5", "8" };
+            ////string[] l1 = { "1", "2", "3", "4", "5", "6","7", "9", "10", "11" };
+            ////string[] l2 = { "1", "2", "3", "4", "5", "8" };
 
-            //var result = l1.GroupJoin(l2, k => k, y => y, (k, y) => new { t1 = k, t2 = y.FirstOrDefault()}).ToList();
-            var result1 = lstArquiPoint.GroupJoin(listaTela16, k => k, y => y, (k, y) => new { t1 = k, t2 = y.FirstOrDefault()}).Where(g => string.IsNullOrWhiteSpace(g.t1)).ToList();
+            ////var result = l1.GroupJoin(l2, k => k, y => y, (k, y) => new { t1 = k, t2 = y.FirstOrDefault()}).ToList();
+            //var result1 = lstArquiPoint.GroupJoin(listaTela16, k => k, y => y, (k, y) => new { t1 = k, t2 = y.FirstOrDefault()}).Where(g => string.IsNullOrWhiteSpace(g.t1)).ToList();
         }
     }
 }
