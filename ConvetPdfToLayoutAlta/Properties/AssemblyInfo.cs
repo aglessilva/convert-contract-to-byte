@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ConvetPdfToLayoutAlta")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Extratos de Contratos")]
+[assembly: AssemblyDescription("Extrator de contratos imobiliarios da tela 16,18,20,25 [Converte para txt Alta Plataforma]")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ConvetPdfToLayoutAlta")]
+[assembly: AssemblyCompany("Santander - Tecnolgia GD2")]
+[assembly: AssemblyProduct("Extrator PDF")]
 [assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

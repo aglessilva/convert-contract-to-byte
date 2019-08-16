@@ -322,7 +322,6 @@ namespace ConvetPdfToLayoutAlta.Models
 
                             obj.Carteira = Regex.Replace(_arrayLinha[1].Trim(), @"[^0-9$]+", "");
                             obj.Contrato = Regex.Replace(_arrayLinha[2].Trim(), @"[^0-9$]+", "");
-
                             break;
                         }
                     case 9:
@@ -644,7 +643,6 @@ namespace ConvetPdfToLayoutAlta.Models
 
                             break;
                         }
-
                     case 18:
                         {
 
@@ -770,7 +768,6 @@ namespace ConvetPdfToLayoutAlta.Models
 
                             break;
                         }
-
                     case 21:
                         {
                             _case = "21 - Metodo: TrataCabecalho -  campo: TipoOrigem, DataUltimaAlteracao...";

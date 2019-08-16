@@ -241,17 +241,6 @@ namespace ConvetPdfToLayoutAlta
                                         if (Regex.IsMatch(line, @"(^\d{1,2}:\d{1,2}:\d{1,2}$)"))
                                             continue;
 
-                                        //if (!isCabecalhoParcela)
-                                        //{
-                                        //    isCabecalhoParcela = line.Split(' ').Any(h => h.Equals("TAXA"));
-                                        //    if (isCabecalhoParcela)
-                                        //        hasTaxa = true;
-
-                                        //    isCabecalhoParcela = line.Split(' ').Any(h => h.Equals("IOF.SEG"));
-                                        //    if (isCabecalhoParcela)
-                                        //        hasIof = true;
-                                        //}
-
                                         if (arrayIgnorCabecalho.Any(k => line.Contains(k)))
                                             continue;
                                         if (arrayIgnorParcelas.Any(k => line.Split(' ').Any(p => k.Equals(p))))
@@ -818,7 +807,6 @@ namespace ConvetPdfToLayoutAlta
                             {
                                 userObject.DescricaoPercentural = string.Format("Gerando o {0}º Lote.", countLote++);
                                 backgroundWorker1.ReportProgress(_countPercent, userObject);
-                                //  businessCabecalho.PopulaContrato(lstContratosPdf, lstGT, diretorioDestinoLayout, diretorioOrigemPdf);
                                 var tab = new
                                 {
                                     item1 = lstContratosPdf,
@@ -865,11 +853,12 @@ namespace ConvetPdfToLayoutAlta
                             sw.WriteLine("================================================================================================================================================");
                         }
 
-                        if (!Directory.Exists(string.Format(@"{0}\!Erro", diretorioDestinoLayout)))
-                            Directory.CreateDirectory(string.Format(@"{0}\!Erro", diretorioDestinoLayout));
+                        RemoverTela(arquivoPdf);
+                        //if (!Directory.Exists(string.Format(@"{0}\!Erro", diretorioDestinoLayout)))
+                        //    Directory.CreateDirectory(string.Format(@"{0}\!Erro", diretorioDestinoLayout));
 
-                        if (!File.Exists(string.Format(@"{0}\!Erro\{1}", diretorioDestinoLayout, arquivoPdf.Name)))
-                            File.Move(string.Format(@"{0}\{1}", arquivoPdf.DirectoryName, arquivoPdf.Name), string.Format(@"{0}\!Erro\{1}", diretorioDestinoLayout, arquivoPdf.Name));
+                        //if (!File.Exists(string.Format(@"{0}\!Erro\{1}", diretorioDestinoLayout, arquivoPdf.Name)))
+                        //    File.Move(string.Format(@"{0}\{1}", arquivoPdf.DirectoryName, arquivoPdf.Name), string.Format(@"{0}\!Erro\{1}", diretorioDestinoLayout, arquivoPdf.Name));
 
                         padrao = 0;
                         contador++;
@@ -897,11 +886,12 @@ namespace ConvetPdfToLayoutAlta
                             sw.WriteLine("================================================================================================================================================");
                         }
 
-                        if (!Directory.Exists(string.Format(@"{0}\!Erro", diretorioDestinoLayout)))
-                            Directory.CreateDirectory(string.Format(@"{0}\!Erro", diretorioDestinoLayout));
+                        RemoverTela(arquivoPdf);
+                        //if (!Directory.Exists(string.Format(@"{0}\!Erro", diretorioDestinoLayout)))
+                        //    Directory.CreateDirectory(string.Format(@"{0}\!Erro", diretorioDestinoLayout));
 
-                        if (!File.Exists(string.Format(@"{0}\!Erro\{1}", diretorioDestinoLayout, arquivoPdf.Name)))
-                            File.Move(string.Format(@"{0}\{1}", arquivoPdf.DirectoryName, arquivoPdf.Name), string.Format(@"{0}\!Erro\{1}", diretorioDestinoLayout, arquivoPdf.Name));
+                        //if (!File.Exists(string.Format(@"{0}\!Erro\{1}", diretorioDestinoLayout, arquivoPdf.Name)))
+                        //    File.Move(string.Format(@"{0}\{1}", arquivoPdf.DirectoryName, arquivoPdf.Name), string.Format(@"{0}\!Erro\{1}", diretorioDestinoLayout, arquivoPdf.Name));
 
                         padrao = 0;
                         contador++;
@@ -932,7 +922,6 @@ namespace ConvetPdfToLayoutAlta
                     _thread.Join();
 
                 businessCabecalho.PopulaContrato(tab);
-               // businessCabecalho.PopulaContrato(lstContratosPdf, lstGT, diretorioDestinoLayout, diretorioOrigemPdf);
                 lstContratosPdf.Clear();
             }
 
@@ -944,6 +933,35 @@ namespace ConvetPdfToLayoutAlta
                     if (!_situacoesAtual.Contains(f))
                         escrever.WriteLine(f);
                 });
+            }
+
+        }
+
+
+        private void RemoverTela(FileInfo fileInfoPdf)
+        {
+            string _pathContratoError = string.Empty;
+            List<string> tela = null;
+            string[] _arraTelas = { "TELA18", "TELA20", "TELA25" };
+
+            // Renomeia o contrato da tela 16 para extensão .err
+            if (fileInfoPdf.Exists)
+                File.Move(fileInfoPdf.FullName, System.IO.Path.ChangeExtension(fileInfoPdf.FullName, ".err"));
+
+
+            foreach (string itemTela in _arraTelas)
+            {
+                string filtro = string.Format("*_{0}.pdf", Regex.Replace(itemTela, @"[^0-9$]", ""));
+                tela = Directory.EnumerateFiles(diretorioOrigemPdf, filtro, SearchOption.AllDirectories).ToList();
+                string _contratoPedf = string.Format("{0}{1}", fileInfoPdf.Name.Split('_')[0], filtro).Replace("*", string.Empty);
+                _pathContratoError = tela.FirstOrDefault(p => p.Contains(_contratoPedf.ToUpper()));
+
+                if (!string.IsNullOrWhiteSpace(_pathContratoError))
+                {
+                    fileInfoPdf = new FileInfo(_pathContratoError);
+                    if (fileInfoPdf.Exists)
+                        File.Move(fileInfoPdf.FullName, System.IO.Path.ChangeExtension(fileInfoPdf.FullName, ".err"));
+                }
             }
 
         }
