@@ -344,6 +344,9 @@ namespace ConvetPdfToLayoutAlta
                                 sw.Write(strErro);
                                 sw.WriteLine("================================================================================================================================================");
                             }
+
+                            if (arquivoPdf.Exists)
+                                File.Move(arquivoPdf.FullName, System.IO.Path.ChangeExtension(arquivoPdf.FullName, ".err"));
                         }
 
                         catch (iTextSharp.text.exceptions.InvalidPdfException pdfExeception)
@@ -369,11 +372,8 @@ namespace ConvetPdfToLayoutAlta
                                 sw.WriteLine("================================================================================================================================================");
                             }
 
-                            if (!Directory.Exists(string.Format(@"{0}\!Erro", diretorioDestinoLayout)))
-                                Directory.CreateDirectory(string.Format(@"{0}\!Erro", diretorioDestinoLayout));
-
-                            if (!File.Exists(string.Format(@"{0}\!Erro\{1}", diretorioDestinoLayout, arquivoPdf.Name)))
-                                File.Move(string.Format(@"{0}\{1}", arquivoPdf.DirectoryName, arquivoPdf.Name), string.Format(@"{0}\!Erro\{1}", diretorioDestinoLayout, arquivoPdf.Name));
+                            if (arquivoPdf.Exists)
+                                File.Move(arquivoPdf.FullName, System.IO.Path.ChangeExtension(arquivoPdf.FullName, ".err"));
                         }
 
                     });

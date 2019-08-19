@@ -19,7 +19,13 @@ namespace ConvertToByte
         {
             List<string> lstArquiPoint = new List<string>();
 
+            string[] words = { "one", "two", "three", "four", "five", "six","MARTINS" };
+            string[] words1 = { "one1", "MARTINS", "two1", "three2", "four","sic" };
+
+            var result = words.Intersect(words1).ToArray(); ;
+
             //var arr = Directory.GetFiles(@"U:\TOMBAMENTO_PF\Processamento\Processamento Agles\", "*_25.pdf", SearchOption.AllDirectories).ToList();
+
 
             string damp = string.Empty;
             using (StreamReader sw = new StreamReader(@"D:\PDFSTombamento\RELADAMP.txt",  Encoding.UTF8))

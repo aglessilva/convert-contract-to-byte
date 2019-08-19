@@ -183,7 +183,7 @@ namespace ConvetPdfToLayoutAlta
 
         private void button6_Click(object sender, EventArgs e)
         {
-            FrmTela18 f = new FrmTela18(@"D:\PDFSTombamento\", @"D:\PDFSTombamento\txt", "TELA18");
+            FrmTela18 f = new FrmTela18(@"D:\testes\", @"D:\testes\ALTA", "TELA18");
             f.ShowDialog();
         }
 

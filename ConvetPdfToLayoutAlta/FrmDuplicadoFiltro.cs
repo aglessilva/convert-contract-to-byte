@@ -62,10 +62,8 @@ namespace ConvetPdfToLayoutAlta
 
 
                 lblQtd.Text = string.Format("Total: {0}", _arrayDuplicado.Count.ToString());
-                lbltotalDuplicado.Text = string.Format("Duplicados: {0}", lstDuplicado.Count);
+               // lbltotalDuplicado.Text = string.Format("Duplicados: {0}", lstDuplicado.Count);
                 lblTempo.Text = "";
-
-                // progressBarReaderPdf.Maximum = MaximumProgress = lstDuplicado.Count;
 
                 if (lstDuplicado.Count > 0)
                 {
@@ -107,7 +105,7 @@ namespace ConvetPdfToLayoutAlta
                 lblTempo.Text = tmp;
                 lblContrato.Text = string.Format("Contrato: {0}", obj.Contrato);
                 lblDiretorio.Text = string.Format("Diretório: {0}", obj.PdfInfo.FullName);
-                lbltotalDuplicado.Text = obj.DescricaoPercentural;
+                lbltotalDuplicado.Text = "Aguarde...";
 
                 progressBarReaderPdf.Maximum = MaximumProgress;
             }
@@ -116,6 +114,7 @@ namespace ConvetPdfToLayoutAlta
 
         private void BackgroundWorkerDuplicadoFiltro_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            lbltotalDuplicado.Text = "Concluído!";
             // TOTAL DE ARQUIVOS DUPLICADO
             int _totalDup = Directory.GetFiles(diretorioOrigemPdf, string.Format("*_{0}.dup", Regex.Replace(tela, @"[^0-9$]", "")), SearchOption.AllDirectories).Count();
 
@@ -141,7 +140,7 @@ namespace ConvetPdfToLayoutAlta
             if (Regex.Replace(tela, @"[^0-9$]", "").Equals("18"))
             {
                 BackgroundWorkerDuplicadoFiltro.ReportProgress(0, null);
-                List<string> result = lstDamp3.Join(lstArquiPoint, dmp => dmp.Substring(1), pont => pont, (dmp, pont) => pont).ToList();
+                List<string> result = lstDamp3.Join(lstArquiPoint, dmp => dmp.Trim(), pont => pont, (dmp, pont) => pont).ToList();
 
                 List<string> lstTela18 = Directory.GetFiles(diretorioOrigemPdf, string.Format("*_{0}.pdf", Regex.Replace(tela, @"[^0-9$]", "")), SearchOption.AllDirectories).ToList();
                 List<string> lst20 = Directory.GetFiles(diretorioOrigemPdf, "*_20.pdf", SearchOption.AllDirectories).ToList();
@@ -169,7 +168,7 @@ namespace ConvetPdfToLayoutAlta
                         if (!string.IsNullOrWhiteSpace(strTela))
                             File.Move(strTela, System.IO.Path.ChangeExtension(strTela, ".damp"));
 
-                        var o = new UserObject() { Contrato = dmp, PdfInfo = f, DescricaoPercentural = string.Format("Damps: {0}", result.Count) };
+                        var o = new UserObject() { Contrato = dmp, PdfInfo = f };
                         BackgroundWorkerDuplicadoFiltro.ReportProgress(countpercent, o);
                     }
                 });
@@ -207,7 +206,7 @@ namespace ConvetPdfToLayoutAlta
                         File.Move(f.FullName, System.IO.Path.ChangeExtension(f.FullName, ".dup"));
                         _arrayDuplicado.Remove(f.FullName);
                     }
-                    var o = new UserObject() { Contrato = dup.Split('_')[0], PdfInfo = f, DescricaoPercentural = string.Format("Duplicados: {0}", lstDuplicado.Count) };
+                    var o = new UserObject() { Contrato = dup.Split('_')[0], PdfInfo = f };
                     BackgroundWorkerDuplicadoFiltro.ReportProgress(countpercent, o);
                 });
 
@@ -225,7 +224,7 @@ namespace ConvetPdfToLayoutAlta
                     if (!lstArquiPoint.Any(n => n.Contains(f.Name.Split('_')[0])))
                         File.Move(f.FullName, System.IO.Path.ChangeExtension(f.FullName, ".fil"));
 
-                    var o = new UserObject() { Contrato = f.Name.Split('_')[0], PdfInfo = f, DescricaoPercentural = "Aguarde..." };
+                    var o = new UserObject() { Contrato = f.Name.Split('_')[0], PdfInfo = f };
                     BackgroundWorkerDuplicadoFiltro.ReportProgress(countpercent, o);
                 });
 
@@ -269,7 +268,7 @@ namespace ConvetPdfToLayoutAlta
                             if (f.Extension.Equals(".pdf"))
                                 File.Move(arquivo, System.IO.Path.ChangeExtension(arquivo, ".rej"));
 
-                        var o = new UserObject() { Contrato = f.Name.Split('_')[0], PdfInfo = f, DescricaoPercentural = string.Format("Rejeitado: {0}", q.Count) };
+                        var o = new UserObject() { Contrato = f.Name.Split('_')[0], PdfInfo = f };
                         BackgroundWorkerDuplicadoFiltro.ReportProgress(countpercent, o);
                     });
                 }

@@ -832,7 +832,6 @@ namespace ConvetPdfToLayoutAlta.Models
 
                             break;
                         }
-
                     case 25:
                         {
                             _case = "24 - Metodo: TrataCabecalho -  campo: Apolice, Data Inclusao, Taxa Juros...";
@@ -1396,16 +1395,6 @@ namespace ConvetPdfToLayoutAlta.Models
                                             escreverOcorrencia.WriteLine(strAlta);
                                             strAlta = string.Empty;
                                         }
-                                        //else
-                                        //{
-                                        //    strAlta += string.Format("{0}{1}", "0".PadLeft(72, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'));
-                                        //    strAlta += string.Format("{0}", Convert.ToDateTime((_parcela == null ? _cabecalho.DataGarantia : _parcela.Vencimento)).ToString("yyyyMMdd").Trim().PadRight(30, ' '));
-                                        //    strAlta += string.Format("{0}", _cabecalho.DataPrimeiroVencimento.PadRight(30, ' '));
-                                        //    strAlta += string.Format("{0}", _cabecalhoAnterior.DataPrimeiroVencimento.Trim().PadRight(60, ' '));
-                                        //    strAlta = strAlta.PadRight(281, ' ');
-                                        //    escreverOcorrencia.WriteLine(strAlta);
-                                        //    strAlta = string.Empty;
-                                        //}
 
                                         if (!_cabecalhoAnterior.Apolice.Equals(_cabecalho.Apolice)) // APOLICE
                                         {
@@ -1568,9 +1557,6 @@ namespace ConvetPdfToLayoutAlta.Models
 
                                 if (o.CodigoOcorrencia.Equals("032")) // Incorporação juros
                                 {
-                                    //_cabecalho = q.Cabecalhos[0];
-                                    //_cabecalho.DataPrimeiroVencimento = ValidaData(_cabecalho.DataPrimeiroVencimento);
-
                                     strAlta += string.Format("{0}{1}{2}", "0".PadLeft(54, '0'), o.Amortizacao.Trim().PadLeft(18, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'));
                                     strAlta += string.Format("{0}", Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd").Trim().PadRight(30, ' '), "".PadRight(90, ' '));
                                 }
