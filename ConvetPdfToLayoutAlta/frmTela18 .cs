@@ -172,7 +172,6 @@ namespace ConvetPdfToLayoutAlta
                                 for (int i = 1; i <= reader.NumberOfPages; i++)
                                 {
                                     numberPage = i;
-
                                     its = new LocationTextExtractionStrategy();
                                     pagina = PdfTextExtractor.GetTextFromPage(reader, i, its).Trim();
                                     pagina = Encoding.UTF8.GetString(Encoding.Convert(Encoding.Default, Encoding.UTF8, Encoding.Default.GetBytes(pagina)));
@@ -248,6 +247,7 @@ namespace ConvetPdfToLayoutAlta
 
                                             catch (Exception ex)
                                             {
+                                                reader.Dispose();
                                                 ExceptionError.countError++;
                                                 BackgroundWorkerTela18.ReportProgress(countPercent, null);
 
@@ -267,6 +267,8 @@ namespace ConvetPdfToLayoutAlta
                                                     sw.Write(strErro);
                                                     sw.WriteLine("================================================================================================================================================");
                                                 }
+
+                                                ExceptionError.RemoverTela(arquivoPdf, diretorioOrigemPdf);
                                             }
 
                                         }
@@ -324,11 +326,7 @@ namespace ConvetPdfToLayoutAlta
                                 sw.WriteLine("================================================================================================================================================");
                             }
 
-                            if (!Directory.Exists(string.Format(@"{0}\!Erro", diretorioDestinoLayout)))
-                                Directory.CreateDirectory(string.Format(@"{0}\!Erro", diretorioDestinoLayout));
-
-                            if (!File.Exists(string.Format(@"{0}\!Erro\{1}", diretorioDestinoLayout, arquivoPdf.Name)))
-                                File.Move(string.Format(@"{0}\{1}", arquivoPdf.DirectoryName, arquivoPdf.Name), string.Format(@"{0}\!Erro\{1}", diretorioDestinoLayout, arquivoPdf.Name));
+                            ExceptionError.RemoverTela(arquivoPdf, diretorioOrigemPdf);
                         }
                     });
                 }

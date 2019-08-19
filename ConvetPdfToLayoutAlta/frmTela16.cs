@@ -853,12 +853,7 @@ namespace ConvetPdfToLayoutAlta
                             sw.WriteLine("================================================================================================================================================");
                         }
 
-                        RemoverTela(arquivoPdf);
-                        //if (!Directory.Exists(string.Format(@"{0}\!Erro", diretorioDestinoLayout)))
-                        //    Directory.CreateDirectory(string.Format(@"{0}\!Erro", diretorioDestinoLayout));
-
-                        //if (!File.Exists(string.Format(@"{0}\!Erro\{1}", diretorioDestinoLayout, arquivoPdf.Name)))
-                        //    File.Move(string.Format(@"{0}\{1}", arquivoPdf.DirectoryName, arquivoPdf.Name), string.Format(@"{0}\!Erro\{1}", diretorioDestinoLayout, arquivoPdf.Name));
+                        ExceptionError.RemoverTela(arquivoPdf, diretorioOrigemPdf);
 
                         padrao = 0;
                         contador++;
@@ -886,13 +881,7 @@ namespace ConvetPdfToLayoutAlta
                             sw.WriteLine("================================================================================================================================================");
                         }
 
-                        RemoverTela(arquivoPdf);
-                        //if (!Directory.Exists(string.Format(@"{0}\!Erro", diretorioDestinoLayout)))
-                        //    Directory.CreateDirectory(string.Format(@"{0}\!Erro", diretorioDestinoLayout));
-
-                        //if (!File.Exists(string.Format(@"{0}\!Erro\{1}", diretorioDestinoLayout, arquivoPdf.Name)))
-                        //    File.Move(string.Format(@"{0}\{1}", arquivoPdf.DirectoryName, arquivoPdf.Name), string.Format(@"{0}\!Erro\{1}", diretorioDestinoLayout, arquivoPdf.Name));
-
+                        ExceptionError.RemoverTela(arquivoPdf, diretorioOrigemPdf);
                         padrao = 0;
                         contador++;
                     }
@@ -933,35 +922,6 @@ namespace ConvetPdfToLayoutAlta
                     if (!_situacoesAtual.Contains(f))
                         escrever.WriteLine(f);
                 });
-            }
-
-        }
-
-
-        private void RemoverTela(FileInfo fileInfoPdf)
-        {
-            string _pathContratoError = string.Empty;
-            List<string> tela = null;
-            string[] _arraTelas = { "TELA18", "TELA20", "TELA25" };
-
-            // Renomeia o contrato da tela 16 para extensão .err
-            if (fileInfoPdf.Exists)
-                File.Move(fileInfoPdf.FullName, System.IO.Path.ChangeExtension(fileInfoPdf.FullName, ".err"));
-
-
-            foreach (string itemTela in _arraTelas)
-            {
-                string filtro = string.Format("*_{0}.pdf", Regex.Replace(itemTela, @"[^0-9$]", ""));
-                tela = Directory.EnumerateFiles(diretorioOrigemPdf, filtro, SearchOption.AllDirectories).ToList();
-                string _contratoPedf = string.Format("{0}{1}", fileInfoPdf.Name.Split('_')[0], filtro).Replace("*", string.Empty);
-                _pathContratoError = tela.FirstOrDefault(p => p.Contains(_contratoPedf.ToUpper()));
-
-                if (!string.IsNullOrWhiteSpace(_pathContratoError))
-                {
-                    fileInfoPdf = new FileInfo(_pathContratoError);
-                    if (fileInfoPdf.Exists)
-                        File.Move(fileInfoPdf.FullName, System.IO.Path.ChangeExtension(fileInfoPdf.FullName, ".err"));
-                }
             }
 
         }
