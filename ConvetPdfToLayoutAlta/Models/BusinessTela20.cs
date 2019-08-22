@@ -69,7 +69,7 @@ namespace ConvetPdfToLayoutAlta.Models
             string _diretorioDestino = (string)parametro.GetType().GetProperty("item2").GetValue(parametro, null);
 
             string strAlta = string.Empty;
-            using (StreamWriter escreverPendencia = new StreamWriter(_diretorioDestino + @"\TL20PEND.txt", true, Encoding.UTF8))
+            using (StreamWriter escreverPendencia = new StreamWriter(_diretorioDestino + @"\TL20PEND.txt", true, Encoding.Default))
             {
                 string _valorAtualizado = string.Empty;
                 lstContratosPdf.ForEach(t20 =>

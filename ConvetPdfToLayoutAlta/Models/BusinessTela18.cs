@@ -67,7 +67,7 @@ namespace ConvetPdfToLayoutAlta.Models
             string strAlta, strAltaFgts;
             strAlta = strAltaFgts = string.Empty;
 
-            using (StreamWriter escreverTela18 = new StreamWriter(_diretorioDestino + @"\TL18FGTS.txt", true, Encoding.UTF8))
+            using (StreamWriter escreverTela18 = new StreamWriter(_diretorioDestino + @"\TL18FGTS.txt", true, Encoding.Default))
             {
                 string _contract = "";
                 lstTela18.ForEach(t18 =>

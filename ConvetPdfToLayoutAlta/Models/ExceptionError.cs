@@ -49,7 +49,6 @@ namespace ConvetPdfToLayoutAlta.Models
                 if (_contrato != "0")
                     sw.WriteLine(_contrato);
             }
-
         }
 
 

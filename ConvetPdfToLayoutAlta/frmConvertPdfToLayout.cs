@@ -163,11 +163,11 @@ namespace ConvetPdfToLayoutAlta
             ToolTip toolTip = new ToolTip();
             toolTip.SetToolTip(btnDuplicata, "Filtra os arquivos com base no PONTEIRO e remove duplicidade de pdfs das VM's.");
 #if DEBUG
-            button1.Visible = button9.Visible = button2.Visible = button3.Visible = button4.Visible = button5.Visible = button6.Visible = button7.Visible = button8.Visible = true;
+            button1.Visible = button10.Visible = button9.Visible = button2.Visible = button3.Visible = button4.Visible = button5.Visible = button6.Visible = button7.Visible = button8.Visible = true;
 #endif
 
             string _pathDamp = string.Format("{0}{1}", Directory.GetCurrentDirectory(), @"\config\DAMP03.TXT");
-            using (StreamReader sw = new StreamReader(_pathDamp, Encoding.UTF8))
+            using (StreamReader sw = new StreamReader(_pathDamp, Encoding.Default))
             {
                 while (!sw.EndOfStream)
                     lstDamp3.Add(sw.ReadLine());
@@ -195,7 +195,7 @@ namespace ConvetPdfToLayoutAlta
 
         private void button5_Click(object sender, EventArgs e)
         {
-            FrmTela20 f = new FrmTela20(@"D:\PDFSTombamento\", @"D:\PDFSTombamento\txt", "TELA20");
+            FrmTela20 f = new FrmTela20(@"D:\testes\", @"D:\testes\ALTA", "TELA20");
             f.ShowDialog();
         }
 
@@ -267,6 +267,12 @@ namespace ConvetPdfToLayoutAlta
 
             ////var result = l1.GroupJoin(l2, k => k, y => y, (k, y) => new { t1 = k, t2 = y.FirstOrDefault()}).ToList();
             //var result1 = lstArquiPoint.GroupJoin(listaTela16, k => k, y => y, (k, y) => new { t1 = k, t2 = y.FirstOrDefault()}).Where(g => string.IsNullOrWhiteSpace(g.t1)).ToList();
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            FrmConsolidacaoAlta f = new FrmConsolidacaoAlta(@"D:\testes\Alta", @"D:\testes\");
+            f.ShowDialog();
         }
     }
 }

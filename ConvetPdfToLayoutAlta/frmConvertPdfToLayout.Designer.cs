@@ -50,6 +50,7 @@
             this.button7 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
+            this.button10 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.panelSpinner.SuspendLayout();
             this.SuspendLayout();
@@ -226,6 +227,7 @@
             // panelSpinner
             // 
             this.panelSpinner.BackColor = System.Drawing.SystemColors.Control;
+            this.panelSpinner.Controls.Add(this.button10);
             this.panelSpinner.Controls.Add(this.button9);
             this.panelSpinner.Controls.Add(this.btnDuplicata);
             this.panelSpinner.Controls.Add(this.button7);
@@ -300,6 +302,17 @@
             this.button3.Visible = false;
             this.button3.Click += new System.EventHandler(this.Button3_Click);
             // 
+            // button10
+            // 
+            this.button10.Location = new System.Drawing.Point(479, 174);
+            this.button10.Name = "button10";
+            this.button10.Size = new System.Drawing.Size(75, 23);
+            this.button10.TabIndex = 12;
+            this.button10.Text = "Consolidado";
+            this.button10.UseVisualStyleBackColor = true;
+            this.button10.Visible = false;
+            this.button10.Click += new System.EventHandler(this.button10_Click);
+            // 
             // FrmSelectFolder
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -344,6 +357,7 @@
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.Button btnDuplicata;
         private System.Windows.Forms.Button button9;
+        private System.Windows.Forms.Button button10;
     }
 }
 

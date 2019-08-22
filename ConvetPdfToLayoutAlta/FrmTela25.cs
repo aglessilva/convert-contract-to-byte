@@ -127,7 +127,12 @@ namespace ConvetPdfToLayoutAlta
                 MessageBox.Show(result, "Finalizado com Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
-            this.Close();
+            Close();
+            if (Directory.EnumerateFiles(diretorioOrigemPdf, "*.err", SearchOption.AllDirectories).Count() > 0)
+            {
+                FrmConsolidacaoAlta f = new FrmConsolidacaoAlta(diretorioDestinoLayout, diretorioOrigemPdf);
+                f.ShowDialog();
+            }
         }
 
         private void BackgroundWorkerTela25_DoWork(object sender, DoWorkEventArgs e)
@@ -173,7 +178,7 @@ namespace ConvetPdfToLayoutAlta
 
                                     its = new LocationTextExtractionStrategy();
                                     pagina = PdfTextExtractor.GetTextFromPage(reader, i, its).Trim();
-                                    pagina = Encoding.UTF8.GetString(Encoding.Convert(Encoding.Default, Encoding.UTF8, Encoding.Default.GetBytes(pagina)));
+                                    pagina = Encoding.Default.GetString(Encoding.Convert(Encoding.Default, Encoding.Default, Encoding.Default.GetBytes(pagina)));
 
                                     using (StringReader strReader = new StringReader(pagina))
                                     {
@@ -341,8 +346,7 @@ namespace ConvetPdfToLayoutAlta
                         sw.WriteLine("================================================================================================================================================");
                     }
 
-                    if (arquivoPdf.Exists)
-                        File.Move(arquivoPdf.FullName, System.IO.Path.ChangeExtension(arquivoPdf.FullName, ".err"));
+                    ExceptionError.RemoverTela(arquivoPdf, diretorioOrigemPdf);
                 }
 
 
@@ -368,8 +372,7 @@ namespace ConvetPdfToLayoutAlta
                         sw.WriteLine("================================================================================================================================================");
                     }
 
-                    if (arquivoPdf.Exists)
-                        File.Move(arquivoPdf.FullName, System.IO.Path.ChangeExtension(arquivoPdf.FullName, ".err"));
+                    ExceptionError.RemoverTela(arquivoPdf, diretorioOrigemPdf);
                 }
             });
 
