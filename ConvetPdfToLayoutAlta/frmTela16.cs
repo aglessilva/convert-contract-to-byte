@@ -673,7 +673,6 @@ namespace ConvetPdfToLayoutAlta
                                             continue;
                                         }
 
-
                                         if (line.Contains("Reajuste"))
                                         {
                                             objCabecalho.Reajuste = line.Replace("Reajuste", "").Trim();

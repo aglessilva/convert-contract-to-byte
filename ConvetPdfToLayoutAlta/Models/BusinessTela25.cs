@@ -85,7 +85,7 @@ namespace ConvetPdfToLayoutAlta.Models
             List<Tela25> lstContratosPdf = (List<Tela25>)paramentro.GetType().GetProperty("item1").GetValue(paramentro, null);
             string _diretorioDestino = (string)paramentro.GetType().GetProperty("item2").GetValue(paramentro, null);
 
-            using (StreamWriter escreverBoletim = new StreamWriter(_diretorioDestino + @"\TL25BOLE.txt", true, Encoding.UTF8))
+            using (StreamWriter escreverBoletim = new StreamWriter(_diretorioDestino + @"\TL25BOLE.txt", true, Encoding.Default))
             {
                 lstContratosPdf.ForEach(t25 => {
 

@@ -75,6 +75,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FrmConsolidacaoAlta.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmConsolidacaoAlta.Designer.cs">
+      <DependentUpon>FrmConsolidacaoAlta.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmConvertPdfToLayout.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -126,6 +132,9 @@
     <Compile Include="Models\Tela25.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="FrmConsolidacaoAlta.resx">
+      <DependentUpon>FrmConsolidacaoAlta.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmConvertPdfToLayout.resx">
       <DependentUpon>frmConvertPdfToLayout.cs</DependentUpon>
     </EmbeddedResource>

@@ -345,8 +345,7 @@ namespace ConvetPdfToLayoutAlta
                                 sw.WriteLine("================================================================================================================================================");
                             }
 
-                            if (arquivoPdf.Exists)
-                                File.Move(arquivoPdf.FullName, System.IO.Path.ChangeExtension(arquivoPdf.FullName, ".err"));
+                            ExceptionError.RemoverTela(arquivoPdf, diretorioOrigemPdf);
                         }
 
                         catch (iTextSharp.text.exceptions.InvalidPdfException pdfExeception)
@@ -372,8 +371,7 @@ namespace ConvetPdfToLayoutAlta
                                 sw.WriteLine("================================================================================================================================================");
                             }
 
-                            if (arquivoPdf.Exists)
-                                File.Move(arquivoPdf.FullName, System.IO.Path.ChangeExtension(arquivoPdf.FullName, ".err"));
+                            ExceptionError.RemoverTela(arquivoPdf, diretorioOrigemPdf);
                         }
 
                     });

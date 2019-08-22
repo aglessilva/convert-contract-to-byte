@@ -1155,7 +1155,7 @@ namespace ConvetPdfToLayoutAlta.Models
 
             #region BLOCO QUE GERA O ARQUIVO DE CONTRATO
             //======================= BLOCO QUE GERA O ARQUIVO DE CONTRATO================================================
-            using (StreamWriter escreverContrato = new StreamWriter(_diretorioDestino + @"\TL16CONT.txt", true, Encoding.UTF8))
+            using (StreamWriter escreverContrato = new StreamWriter(_diretorioDestino + @"\TL16CONT.txt", true, Encoding.Default))
             {
                 Cabecalho c = null;
                 foreach (ContratoPdf item in lstContratosPdf)
@@ -1243,7 +1243,7 @@ namespace ConvetPdfToLayoutAlta.Models
             #region BLOCO QUE GERA O ARQUIVO DE OCORRENCIA E PARCELAS
             //======================= BLOCO QUE GERA O ARQUIVO DE OCORRENCIA================================================
 
-            using (StreamWriter escreverOcorrencia = new StreamWriter(_diretorioDestino + @"\TL16OCOR.txt", true, Encoding.UTF8))
+            using (StreamWriter escreverOcorrencia = new StreamWriter(_diretorioDestino + @"\TL16OCOR.txt", true, Encoding.Default))
             {
                 string _novaOcorrencia = string.Empty;
                 strAlta = string.Empty;
@@ -1646,7 +1646,7 @@ namespace ConvetPdfToLayoutAlta.Models
                 #region BLOCO QUE GERA O ARQUIVO DE PARCELAS
                 //======================= BLOCO QUE GERA O ARQUIVO DE PARCELAS ==================================================
                 strAlta = string.Empty;
-                using (StreamWriter escreverParcelas = new StreamWriter(_diretorioDestino + @"\TL16PARC.txt", true, Encoding.UTF8))
+                using (StreamWriter escreverParcelas = new StreamWriter(_diretorioDestino + @"\TL16PARC.txt", true, Encoding.Default))
                 {
                     lstContratosPdf.ForEach(q =>
                     {
@@ -1695,7 +1695,7 @@ namespace ConvetPdfToLayoutAlta.Models
             strAlta = string.Empty;
             #region BLOCO QUE GERA O ARQUIVO DE PONTEIRO
             //======================= BLOCO QUE GERA O ARQUIVO DE PONTEIRO ===================================================
-            using (StreamWriter escreveArquiPont = new StreamWriter(_diretorioDestino + @"\ARQUPONT.txt", true, Encoding.UTF8))
+            using (StreamWriter escreveArquiPont = new StreamWriter(_diretorioDestino + @"\ARQUPONT.txt", true, Encoding.Default))
             {
                
                 lstContratosPdf.ForEach(p =>
@@ -1708,7 +1708,7 @@ namespace ConvetPdfToLayoutAlta.Models
         
             #region BLOCO QUE GERA O ARQUIVO DE CRONOGRAMA
             //======================= BLOCO QUE GERA O ARQUIVO DE CRONOGRAMA ===================================================
-            using (StreamWriter escreveCronograma = new StreamWriter(_diretorioDestino + @"\TL16CRON.txt", true, Encoding.UTF8))
+            using (StreamWriter escreveCronograma = new StreamWriter(_diretorioDestino + @"\TL16CRON.txt", true, Encoding.Default))
             {
                 lstContratosPdf.ForEach(p =>
                 {
