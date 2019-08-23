@@ -11,6 +11,7 @@ namespace ConvetPdfToLayoutAlta.Models
     {
         public Parcela TrataLinhaParcelas(Parcela _obj, string[] _linha, int sequencia, /*bool _hasTaxa, bool _hasIof,*/ Cabecalho cabecalho)
         {
+           
             string _case = "VAZIO";
             try
             {
@@ -73,7 +74,9 @@ namespace ConvetPdfToLayoutAlta.Models
                             int count = 0;
                             List<string> item = _linha.ToList();
 
-                            if (!item.Any(i => i.Equals("033") || i.Equals("999")))
+
+                            // if (!item.Any(i => i.Equals("033") || i.Equals("999")))
+                            if(item[0].Length > 3)
                                 item.Insert(0, "999");
 
                             _obj.Banco = item[count].Length == 3 ? Regex.Replace(item[count++], @"[^0-9\/$]", "") : "0";
@@ -109,6 +112,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                     }
                                     else
                                     {
+                                        
                                         // Se a data de pagamento for igual a INCORP, então usar a data do proximo pagamento da propriedade "Proc_Emi_Pag"
                                         if (Convert.ToDateTime(_obj.Vencimento) == (_obj.Pagamento.Equals("INCORP") ? Convert.ToDateTime(_obj.Proc_Emi_Pag.Substring(10)) : Convert.ToDateTime(_obj.Pagamento)))
                                         {
@@ -655,10 +659,18 @@ namespace ConvetPdfToLayoutAlta.Models
                     //if ((arrayPagina[(i + 1)].Trim().Split(' ').Length < 5) && (!arrayPagina[(i + 1)].Trim().Contains("ANT") || !arrayPagina[(i + 1)].Trim().Contains("COR")))
                     if (arrayPagina[(i + 1)].Split(' ').Any(t => Regex.IsMatch(t, @"(^\d{6}.\d{1}$)")) || arrayPagina[(i + 1)].Split(' ').Any(t => Regex.IsMatch(t, @"(^\d{1},\d{6}$)")))
                         y = arrayPagina[(i + 1)].Split(' ').Where(j => !string.IsNullOrWhiteSpace(j)).ToList();
-                    else
+                   else
+                    {
                         y = arrayPagina[(i - 1)].Split(' ').Where(j => !string.IsNullOrWhiteSpace(j)).ToList();
+                    }
 
                     x = _linhaAtual.Split(' ').ToList();
+
+                    if (y.Any(h => h.Contains("*")))
+                        return x.ToArray();
+
+                    if(y.Any(h => Regex.IsMatch(h, @"(^\d{1,2}:\d{1,2}:\d{1,2}$)")))
+                        return x.ToArray();
 
                     if (string.Join(" ", y).Contains("00/00/0000"))
                         return x.ToArray();
@@ -671,23 +683,26 @@ namespace ConvetPdfToLayoutAlta.Models
 
                     string _ordenValor = y.Find(r => Regex.IsMatch(r.Trim(), @"(^\d{1},\d{6}$)"));
 
-                    int sequencia = x.FindIndex(u => Regex.IsMatch(u, @"(^\d{3}\/\d{3}$)"));
-
-                    x.Insert((sequencia+1), _ordenValor);
-                    y.Remove(_ordenValor);
-                    _ordenValor = y.Find(r => Regex.IsMatch(r.Trim(), @"(^\d{2}\/\d{2}\/\d{4}$)"));
-
-                    if (string.IsNullOrWhiteSpace(_ordenValor))
+                    if (!string.IsNullOrWhiteSpace(_ordenValor))
                     {
-                        x.Insert(1, "INCORP");
-                        y.RemoveAll(r => r.Contains("INCORP"));
-                    }
-                    else
-                    {
-                        x.Insert(1, _ordenValor);
+                        int sequencia = x.FindIndex(u => Regex.IsMatch(u, @"(^\d{3}\/\d{3}$)"));
+
+                        x.Insert((sequencia + 1), _ordenValor);
                         y.Remove(_ordenValor);
+                        _ordenValor = y.Find(r => Regex.IsMatch(r.Trim(), @"(^\d{2}\/\d{2}\/\d{4}$)"));
+
+                        if (string.IsNullOrWhiteSpace(_ordenValor))
+                        {
+                            x.Insert(1, "INCORP");
+                            y.RemoveAll(r => r.Contains("INCORP"));
+                        }
+                        else
+                        {
+                            x.Insert(1, _ordenValor);
+                            y.Remove(_ordenValor);
+                        }
+                        x.Insert(5, y[0]);
                     }
-                    x.Insert(5, y[0]);
 
                     break;
                 }

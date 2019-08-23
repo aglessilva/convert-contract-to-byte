@@ -145,7 +145,7 @@ namespace ConvetPdfToLayoutAlta
 
         private void Button1_Click(object sender, EventArgs e)
         {
-            FrmTela16 f = new FrmTela16(@"D:\PDFSTombamento", @"D:\PDFSTombamento\txt", "TELA 16");
+            FrmTela16 f = new FrmTela16(@"D:\Testes", @"D:\Testes\txt", "TELA 16");
             f.ShowDialog();
             this.Show();
         }
