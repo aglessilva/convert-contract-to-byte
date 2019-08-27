@@ -40,13 +40,13 @@
             this.textBoxLogin = new System.Windows.Forms.TextBox();
             this.btnPesquisar = new System.Windows.Forms.Button();
             this.dataGridViewUsuario = new System.Windows.Forms.DataGridView();
+            this.textBoxPesquisa = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
             this.Login = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Usuario = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Email = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.IsGestorApp = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.textBoxPesquisa = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.pnlUser.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewUsuario)).BeginInit();
@@ -60,7 +60,7 @@
             this.groupBox1.Controls.Add(this.btnPesquisar);
             this.groupBox1.Location = new System.Drawing.Point(12, 11);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(456, 103);
+            this.groupBox1.Size = new System.Drawing.Size(456, 111);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Adicionar novo usuário";
@@ -74,9 +74,9 @@
             this.pnlUser.Controls.Add(this.lblEmail);
             this.pnlUser.Controls.Add(this.lblNome);
             this.pnlUser.Enabled = false;
-            this.pnlUser.Location = new System.Drawing.Point(186, 11);
+            this.pnlUser.Location = new System.Drawing.Point(140, 11);
             this.pnlUser.Name = "pnlUser";
-            this.pnlUser.Size = new System.Drawing.Size(265, 86);
+            this.pnlUser.Size = new System.Drawing.Size(311, 92);
             this.pnlUser.TabIndex = 7;
             // 
             // label2
@@ -101,7 +101,7 @@
             // 
             this.btnAdd.Image = ((System.Drawing.Image)(resources.GetObject("btnAdd.Image")));
             this.btnAdd.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnAdd.Location = new System.Drawing.Point(11, 56);
+            this.btnAdd.Location = new System.Drawing.Point(11, 55);
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(84, 25);
             this.btnAdd.TabIndex = 9;
@@ -164,20 +164,51 @@
             // 
             this.dataGridViewUsuario.AllowUserToAddRows = false;
             this.dataGridViewUsuario.AllowUserToDeleteRows = false;
+            this.dataGridViewUsuario.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.dataGridViewUsuario.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewUsuario.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Login,
             this.Usuario,
             this.Email,
             this.IsGestorApp});
-            this.dataGridViewUsuario.Location = new System.Drawing.Point(12, 165);
+            this.dataGridViewUsuario.Location = new System.Drawing.Point(12, 167);
             this.dataGridViewUsuario.Name = "dataGridViewUsuario";
             this.dataGridViewUsuario.ReadOnly = true;
             this.dataGridViewUsuario.RowHeadersVisible = false;
             this.dataGridViewUsuario.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridViewUsuario.Size = new System.Drawing.Size(456, 183);
+            this.dataGridViewUsuario.Size = new System.Drawing.Size(456, 360);
             this.dataGridViewUsuario.TabIndex = 3;
             this.dataGridViewUsuario.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewUsuario_CellContentClick);
+            // 
+            // textBoxPesquisa
+            // 
+            this.textBoxPesquisa.Location = new System.Drawing.Point(12, 141);
+            this.textBoxPesquisa.Name = "textBoxPesquisa";
+            this.textBoxPesquisa.Size = new System.Drawing.Size(391, 20);
+            this.textBoxPesquisa.TabIndex = 4;
+            this.textBoxPesquisa.TextChanged += new System.EventHandler(this.textBoxPesquisa_TextChanged);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(18, 125);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(200, 13);
+            this.label4.TabIndex = 5;
+            this.label4.Text = "Pesquisa de usuários  por ( Login, Nome)";
+            // 
+            // button1
+            // 
+            this.button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.button1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.button1.Location = new System.Drawing.Point(409, 141);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(59, 20);
+            this.button1.TabIndex = 6;
+            this.button1.Text = "Limpar";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // Login
             // 
@@ -207,59 +238,30 @@
             // 
             // IsGestorApp
             // 
-            this.IsGestorApp.DataPropertyName = "IsGestorApp";
-            this.IsGestorApp.HeaderText = "Dwd";
+            this.IsGestorApp.DataPropertyName = "IsAtivo";
+            this.IsGestorApp.HeaderText = "A";
             this.IsGestorApp.Name = "IsGestorApp";
             this.IsGestorApp.ReadOnly = true;
             this.IsGestorApp.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.IsGestorApp.ToolTipText = "Permissão para download de contratos";
+            this.IsGestorApp.ToolTipText = "Ativar / Desativar Usuarios";
             this.IsGestorApp.Width = 30;
-            // 
-            // textBoxPesquisa
-            // 
-            this.textBoxPesquisa.Location = new System.Drawing.Point(12, 138);
-            this.textBoxPesquisa.Name = "textBoxPesquisa";
-            this.textBoxPesquisa.Size = new System.Drawing.Size(391, 20);
-            this.textBoxPesquisa.TabIndex = 4;
-            this.textBoxPesquisa.TextChanged += new System.EventHandler(this.textBoxPesquisa_TextChanged);
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(18, 122);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(200, 13);
-            this.label4.TabIndex = 5;
-            this.label4.Text = "Pesquisa de usuários  por ( Login, Nome)";
-            // 
-            // button1
-            // 
-            this.button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.button1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button1.Location = new System.Drawing.Point(409, 138);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(59, 20);
-            this.button1.TabIndex = 6;
-            this.button1.Text = "Limpar";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // FrmAddUsuariosAD
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(480, 357);
+            this.ClientSize = new System.Drawing.Size(480, 539);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.textBoxPesquisa);
             this.Controls.Add(this.dataGridViewUsuario);
             this.Controls.Add(this.groupBox1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FrmAddUsuariosAD";
             this.ShowIcon = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = " Usuários - Adicionar / Ativar / Desativar";
             this.Load += new System.EventHandler(this.FrmAddUsuariosAD_Load);
             this.groupBox1.ResumeLayout(false);
@@ -286,11 +288,11 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox textBoxPesquisa;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.DataGridView dataGridViewUsuario;
+        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.DataGridViewTextBoxColumn Login;
         private System.Windows.Forms.DataGridViewTextBoxColumn Usuario;
         private System.Windows.Forms.DataGridViewTextBoxColumn Email;
         private System.Windows.Forms.DataGridViewCheckBoxColumn IsGestorApp;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.DataGridView dataGridViewUsuario;
     }
 }

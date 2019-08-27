@@ -121,7 +121,7 @@
   <data name="btnAdd.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wwAADsMBx2+oZAAAApJJREFUOE9tUt1LU2EcPrv1P9jNbrzxZoEenc3NzbmP49xcm9O0CAzpxv+gm24k
+        wgAADsIBFShKgAAAApJJREFUOE9tUt1LU2EcPrv1P9jNbrzxZoEenc3NzbmP49xcm9O0CAzpxv+gm24k
         iIJZZimHEyik0ocUJZEUGYMSxfJi6j6OmyuMcuYHQTdjnvfXed7pMOsHD/x4vs55z3mFU2Oou2YWz32S
         5PObHWpPPlgEsEdWJLlu0CzCU7aeGmPQWBVa9ird2WCpOxfQejY7WO9miAM7OGihzz4F3qNYeUCEk1I8
         uuHXurLtMLOBr5fp+cETmtl/RP1fegkcNHgiKSl+ssQQWHQpEVXSdJFFc37qyrXT5O44lViJY6QQI/Ac
@@ -138,7 +138,7 @@
   <data name="btnPesquisar.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wwAADsMBx2+oZAAAAodJREFUOE+VkG1IU2EYhtf8sUjLEVEiBGZqs9yw2UrBhJWmYNo/w0CRmGAmK4Q+
+        wgAADsIBFShKgAAAAodJREFUOE+VkG1IU2EYhtf8sUjLEVEiBGZqs9yw2UrBhJWmYNo/w0CRmGAmK4Q+
         /GJ9iDpzZxaCCy3Rmf5p06kzKpcLp2a2zaNNJwaViKbmFyWUqXfvsQNDy8ALLjjvc577Oc95ORvRNTcH
         9TocBX3Dw402p1PfMzBwq7619SD7enMUCgW3x+GgGkyWlWKtAYX1xLpGqGsbYDR3LFloOodt/TddNF1Y
         rjfjcp0V950LqJn6ierJH1D1zyK9qgO1LSaYbbYrbPt6FEql98u39NIZZSdSjNPIGVxE6fwvUDNLuEF/
@@ -152,18 +152,6 @@
         b+UrPsTqhO4PAAAAAElFTkSuQmCC
 </value>
   </data>
-  <metadata name="Login.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="Usuario.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="Email.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="IsGestorApp.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
   <metadata name="Login.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>

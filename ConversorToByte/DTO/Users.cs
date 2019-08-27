@@ -12,5 +12,6 @@ namespace ConversorToByte.DTO
         public string UserName { get; set; }
         public string UserEmail { get; set; }
         public bool IsGestorApp { get; set; }
+        public bool IsAtivo { get; set; }
     }
 }

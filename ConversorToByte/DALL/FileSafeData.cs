@@ -37,9 +37,7 @@ namespace ConversorToByte.DALL
                     {
                         Id = Convert.ToInt32(dr[0].ToString()),
                         NameContract = dr[1].ToString(),
-                        NameCpf = dr[2].ToString(),
-                        FileEncryption = (dr[3] == DBNull.Value) ? default(byte[]) : (byte[])dr[3]  ,
-                        FileEncryptionPdf = (dr[4] == DBNull.Value) ? default(byte[]) : (byte[])dr[4] 
+                        FileEncryption = (dr[2] == DBNull.Value) ? default(byte[]) : (byte[])dr[2] 
                     };
 
                     lst.Add(obj);
@@ -66,7 +64,7 @@ namespace ConversorToByte.DALL
             {
                 command = cnx.Parametriza(Procedures.SP_GET_USERS);
                 command.Connection = command.Connection;
-                command.Parameters.Add(new SqlParameter("@USERNAME", string.IsNullOrWhiteSpace(_userLogin) ? null : _userLogin));
+                command.Parameters.Add(new SqlParameter("@Usuario", string.IsNullOrWhiteSpace(_userLogin) ? null : _userLogin));
                 command.Connection.Open();
                 
                 SqlDataReader dr = command.ExecuteReader();
@@ -76,10 +74,10 @@ namespace ConversorToByte.DALL
                 {
                     obj = new Users()
                     {
-                        UserLogin = dr[0].ToString(),
-                        UserName = dr[1].ToString(),
-                        UserEmail = dr[2].ToString(),
-                        IsGestorApp = Convert.ToBoolean(dr[3])
+                        UserLogin = dr[2].ToString(),
+                        UserName = dr[4].ToString(),
+                        UserEmail = dr[3].ToString(),
+                        IsAtivo = Convert.ToBoolean(dr[1])
                     };
 
                     lst.Add(obj);
@@ -98,7 +96,7 @@ namespace ConversorToByte.DALL
         public void UdtUser(string _login)
         {
             command = cnx.Parametriza(Procedures.SP_UDT_USERS);
-            command.Parameters.Add(new SqlParameter("@USERLOGIN", string.IsNullOrWhiteSpace(_login) ? null : _login));
+            command.Parameters.Add(new SqlParameter("@LOGIN", string.IsNullOrWhiteSpace(_login) ? null : _login));
             command.Connection = command.Connection;
             command.Connection.Open();
             command.ExecuteNonQuery();
@@ -149,7 +147,7 @@ namespace ConversorToByte.DALL
             command = cnx.Parametriza(Procedures.SP_CHK_PERMICAO);
             command.Connection = command.Connection;
             command.Connection.Open();
-            command.Parameters.Add(new SqlParameter("@USERLOGIN", _login));
+            command.Parameters.Add(new SqlParameter("@LOGIN", _login));
             
             SqlDataReader dr = command.ExecuteReader();
 
@@ -157,6 +155,7 @@ namespace ConversorToByte.DALL
             while (dr.Read())
             {
                 obj.IsGestorApp = Convert.ToBoolean(dr[0]);
+                obj.IsAtivo = Convert.ToBoolean(dr[1]);
             }
 
             return obj;

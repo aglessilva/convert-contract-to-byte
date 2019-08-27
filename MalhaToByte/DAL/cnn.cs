@@ -12,7 +12,7 @@ namespace MalhaToByte.DAL
     public class Cnn
     {
 
-       public static string strConn = "Password=#$01Sucesso;Persist Security Info=True;User ID=sa;Initial Catalog=DBFileSafe;Data Source=HUISPVWDV2939";
+       public static string strConn = @"Password=#$Sucesso01;Persist Security Info=True;User ID=sa;Initial Catalog=DB_FileSafe;Data Source=HAGLESPW701\SQLEXPRESS";
             
 
         static SqlCommand command = new SqlCommand();
@@ -73,10 +73,8 @@ namespace MalhaToByte.DAL
 
         public static int FileStores(List<FileCompress> ByteFile)
         {
-
             using (SqlConnection connection = new SqlConnection(strConn))
             {
-
                 int ret = 0;
                 try
                 {
@@ -86,12 +84,8 @@ namespace MalhaToByte.DAL
 
                     ByteFile.ForEach(x =>
                     {
-                        command.Parameters.Add(new SqlParameter("@IdCompany", x.IdCompany));
                         command.Parameters.Add(new SqlParameter("@ContractName", x.ContractName));
-                        command.Parameters.Add(new SqlParameter("@CpfName", x.CpfName));
                         command.Parameters.Add(new SqlParameter("@FileEncryption", x.FileEncryption));
-                        command.Parameters.Add(new SqlParameter("@FileEncryptionPdf", x.FileEncryptionPdf));
-                        command.Parameters.Add(new SqlParameter("@DateInput", x.DateInput));
                         ret += command.ExecuteNonQuery();
                         command.Parameters.Clear();
                         Thread.Sleep(300);
@@ -114,23 +108,6 @@ namespace MalhaToByte.DAL
         }
 
 
-        public static List<PathFiles> GetPathFileCompany()
-        {
-            List<PathFiles> lst = new List<PathFiles>();
-            using (SqlConnection connection = new SqlConnection(strConn))
-            {
-                Parametriza("SP_GET_PATH_COMPANY");
-                command.Connection = connection;
-                connection.Open();
-                SqlDataReader dr = command.ExecuteReader();
-
-                while (dr.Read())
-                {
-                    lst.Add(new PathFiles() { IdCompany = Convert.ToInt32(dr[0].ToString()), PathFileCompany = dr[1].ToString() });
-                }
-            }
-
-            return lst;
-        }
+       
     }
 }

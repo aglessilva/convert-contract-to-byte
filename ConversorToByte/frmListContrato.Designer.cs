@@ -32,17 +32,18 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmListContrato));
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.btnLimpar = new System.Windows.Forms.Button();
             this.textBoxContratocpf = new System.Windows.Forms.TextBox();
             this.dataGridViewContract = new System.Windows.Forms.DataGridView();
-            this.ID = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.NameContract = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.NameCpf = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Download = new System.Windows.Forms.DataGridViewImageColumn();
-            this.Vizualizar = new System.Windows.Forms.DataGridViewImageColumn();
-            this.addUsuarioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.imageListItem = new System.Windows.Forms.ImageList(this.components);
+            this.dataGridViewImageColumn1 = new System.Windows.Forms.DataGridViewImageColumn();
+            this.dataGridViewImageColumn2 = new System.Windows.Forms.DataGridViewImageColumn();
+            this.btnLimpar = new System.Windows.Forms.Button();
+            this.addUsuarioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ID = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.NameContract = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Download = new System.Windows.Forms.DataGridViewImageColumn();
+            this.Vizualizar = new System.Windows.Forms.DataGridViewImageColumn();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewContract)).BeginInit();
             this.menuStrip1.SuspendLayout();
@@ -56,30 +57,21 @@
             // 
             this.groupBox1.Controls.Add(this.btnLimpar);
             this.groupBox1.Controls.Add(this.textBoxContratocpf);
-            this.groupBox1.Location = new System.Drawing.Point(12, 28);
+            this.groupBox1.Location = new System.Drawing.Point(12, 24);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(443, 51);
+            this.groupBox1.Size = new System.Drawing.Size(443, 67);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Filtro por Contrato ou CPF";
-            // 
-            // btnLimpar
-            // 
-            this.btnLimpar.Location = new System.Drawing.Point(345, 18);
-            this.btnLimpar.Name = "btnLimpar";
-            this.btnLimpar.Size = new System.Drawing.Size(92, 21);
-            this.btnLimpar.TabIndex = 3;
-            this.btnLimpar.Text = "Limpar";
-            this.btnLimpar.UseVisualStyleBackColor = true;
-            this.btnLimpar.Click += new System.EventHandler(this.btnLimpar_Click);
+            this.groupBox1.Text = "Filtro por Contrato";
             // 
             // textBoxContratocpf
             // 
             this.textBoxContratocpf.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBoxContratocpf.Location = new System.Drawing.Point(6, 19);
+            this.textBoxContratocpf.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBoxContratocpf.Location = new System.Drawing.Point(6, 22);
             this.textBoxContratocpf.MaxLength = 20;
             this.textBoxContratocpf.Name = "textBoxContratocpf";
-            this.textBoxContratocpf.Size = new System.Drawing.Size(333, 20);
+            this.textBoxContratocpf.Size = new System.Drawing.Size(385, 35);
             this.textBoxContratocpf.TabIndex = 2;
             this.textBoxContratocpf.TextChanged += new System.EventHandler(this.textBoxContratocpf_TextChanged);
             // 
@@ -93,19 +85,76 @@
             this.dataGridViewContract.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.ID,
             this.NameContract,
-            this.NameCpf,
             this.Download,
             this.Vizualizar});
-            this.dataGridViewContract.Location = new System.Drawing.Point(12, 85);
+            this.dataGridViewContract.Location = new System.Drawing.Point(12, 101);
             this.dataGridViewContract.MultiSelect = false;
             this.dataGridViewContract.Name = "dataGridViewContract";
             this.dataGridViewContract.ReadOnly = true;
             this.dataGridViewContract.RowHeadersVisible = false;
             this.dataGridViewContract.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridViewContract.Size = new System.Drawing.Size(443, 342);
+            this.dataGridViewContract.Size = new System.Drawing.Size(443, 396);
             this.dataGridViewContract.TabIndex = 3;
             this.dataGridViewContract.TabStop = false;
             this.dataGridViewContract.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewContract_CellContentClick);
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addUsuarioToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(467, 24);
+            this.menuStrip1.TabIndex = 4;
+            this.menuStrip1.Text = "menuStrip1";
+            this.menuStrip1.Visible = false;
+            // 
+            // imageListItem
+            // 
+            this.imageListItem.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListItem.ImageStream")));
+            this.imageListItem.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageListItem.Images.SetKeyName(0, "ic_cloud_download_128_28299.ico");
+            // 
+            // dataGridViewImageColumn1
+            // 
+            this.dataGridViewImageColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.dataGridViewImageColumn1.HeaderText = "";
+            this.dataGridViewImageColumn1.Image = global::ConversorToByte.Properties.Resources.ic_cloud_download_128_28299;
+            this.dataGridViewImageColumn1.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
+            this.dataGridViewImageColumn1.Name = "dataGridViewImageColumn1";
+            this.dataGridViewImageColumn1.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridViewImageColumn1.ToolTipText = "Baixar Arquivo compactado";
+            this.dataGridViewImageColumn1.Width = 30;
+            // 
+            // dataGridViewImageColumn2
+            // 
+            this.dataGridViewImageColumn2.HeaderText = "";
+            this.dataGridViewImageColumn2.Image = ((System.Drawing.Image)(resources.GetObject("dataGridViewImageColumn2.Image")));
+            this.dataGridViewImageColumn2.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
+            this.dataGridViewImageColumn2.Name = "dataGridViewImageColumn2";
+            this.dataGridViewImageColumn2.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridViewImageColumn2.ToolTipText = "Vizualizar Arquivo";
+            this.dataGridViewImageColumn2.Width = 30;
+            // 
+            // btnLimpar
+            // 
+            this.btnLimpar.Image = global::ConversorToByte.Properties.Resources.clear_filters_48_45590__1_;
+            this.btnLimpar.Location = new System.Drawing.Point(397, 18);
+            this.btnLimpar.Name = "btnLimpar";
+            this.btnLimpar.Size = new System.Drawing.Size(40, 39);
+            this.btnLimpar.TabIndex = 3;
+            this.btnLimpar.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.btnLimpar.UseVisualStyleBackColor = true;
+            this.btnLimpar.Click += new System.EventHandler(this.btnLimpar_Click);
+            // 
+            // addUsuarioToolStripMenuItem
+            // 
+            this.addUsuarioToolStripMenuItem.Image = global::ConversorToByte.Properties.Resources.business_application_addmale_useradd_insert_add_user_client_2312;
+            this.addUsuarioToolStripMenuItem.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.addUsuarioToolStripMenuItem.Name = "addUsuarioToolStripMenuItem";
+            this.addUsuarioToolStripMenuItem.Size = new System.Drawing.Size(100, 20);
+            this.addUsuarioToolStripMenuItem.Text = "Add Usuário";
+            this.addUsuarioToolStripMenuItem.Click += new System.EventHandler(this.addUsuarioToolStripMenuItem_Click);
             // 
             // ID
             // 
@@ -124,18 +173,10 @@
             this.NameContract.ReadOnly = true;
             this.NameContract.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             // 
-            // NameCpf
-            // 
-            this.NameCpf.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.NameCpf.DataPropertyName = "NameCpf";
-            this.NameCpf.HeaderText = "Cliente";
-            this.NameCpf.Name = "NameCpf";
-            this.NameCpf.ReadOnly = true;
-            this.NameCpf.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            // 
             // Download
             // 
             this.Download.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.Download.Description = "Baixar Arquivo";
             this.Download.HeaderText = "";
             this.Download.Image = global::ConversorToByte.Properties.Resources.ic_cloud_download_128_28299;
             this.Download.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
@@ -156,46 +197,20 @@
             this.Vizualizar.ToolTipText = "Vizualizar Arquivo";
             this.Vizualizar.Width = 30;
             // 
-            // addUsuarioToolStripMenuItem
-            // 
-            this.addUsuarioToolStripMenuItem.Image = global::ConversorToByte.Properties.Resources.business_application_addmale_useradd_insert_add_user_client_2312;
-            this.addUsuarioToolStripMenuItem.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.addUsuarioToolStripMenuItem.Name = "addUsuarioToolStripMenuItem";
-            this.addUsuarioToolStripMenuItem.Size = new System.Drawing.Size(100, 20);
-            this.addUsuarioToolStripMenuItem.Text = "Add Usuário";
-            this.addUsuarioToolStripMenuItem.Click += new System.EventHandler(this.addUsuarioToolStripMenuItem_Click);
-            // 
-            // menuStrip1
-            // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.addUsuarioToolStripMenuItem});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(467, 24);
-            this.menuStrip1.TabIndex = 4;
-            this.menuStrip1.Text = "menuStrip1";
-            this.menuStrip1.Visible = false;
-            // 
-            // imageListItem
-            // 
-            this.imageListItem.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListItem.ImageStream")));
-            this.imageListItem.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageListItem.Images.SetKeyName(0, "ic_cloud_download_128_28299.ico");
-            // 
             // frmListContrato
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(467, 439);
+            this.ClientSize = new System.Drawing.Size(467, 509);
             this.Controls.Add(this.dataGridViewContract);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.menuStrip1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "frmListContrato";
-            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Lista de Contratos";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -219,9 +234,10 @@
         private System.Windows.Forms.ToolStripMenuItem addUsuarioToolStripMenuItem;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ImageList imageListItem;
+        private System.Windows.Forms.DataGridViewImageColumn dataGridViewImageColumn1;
+        private System.Windows.Forms.DataGridViewImageColumn dataGridViewImageColumn2;
         private System.Windows.Forms.DataGridViewTextBoxColumn ID;
         private System.Windows.Forms.DataGridViewTextBoxColumn NameContract;
-        private System.Windows.Forms.DataGridViewTextBoxColumn NameCpf;
         private System.Windows.Forms.DataGridViewImageColumn Download;
         private System.Windows.Forms.DataGridViewImageColumn Vizualizar;
     }

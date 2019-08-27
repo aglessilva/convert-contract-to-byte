@@ -240,7 +240,7 @@ namespace ConvetPdfToLayoutAlta.Models
                     {
                         _linha = Regex.Replace(_linha, @"[^0-9a-zà-úA-Z\/.,\-]+", " ");
                         _arrayLinha = _linha
-                                            .Replace("Repactuação", ":Repac").Replace("REP", "01")
+                                            .Replace("Repactuação", ":Repac").Replace("REP", "00")
                                             .Replace("Empreendimento", ":Emp")
                                             .Replace("Valor Garanta", ":VlrGarantia")
                                             .Replace("Agência", ":Agencia")
@@ -1149,9 +1149,9 @@ namespace ConvetPdfToLayoutAlta.Models
 
             string strAlta = string.Empty;
             string _contratoGT = string.Empty;
-            string  _dataPrimeiroVencimento, _taxaJurosContrato, _valorgarantia, _reajuste, _apolice;
+            string  _dataPrimeiroVencimento, _taxaJurosContrato, _valorgarantia, _reajuste, _apolice, _repactuacao;
 
-            _dataPrimeiroVencimento = _taxaJurosContrato = _valorgarantia = _reajuste = _apolice = string.Empty;
+            _dataPrimeiroVencimento = _taxaJurosContrato = _valorgarantia = _reajuste = _apolice = _repactuacao = string.Empty;
 
             #region BLOCO QUE GERA O ARQUIVO DE CONTRATO
             //======================= BLOCO QUE GERA O ARQUIVO DE CONTRATO================================================
@@ -1167,6 +1167,7 @@ namespace ConvetPdfToLayoutAlta.Models
                         item.Cabecalhos.ForEach(l =>
                         {
                             _apolice = l.Apolice;
+                            _repactuacao = l.Repactuacao;
 
                             if (!l.TaxaJuros.Trim().Equals(_taxaJurosContrato))
                                 _taxaJurosContrato = l.TaxaJuros.Trim();
@@ -1395,6 +1396,28 @@ namespace ConvetPdfToLayoutAlta.Models
                                             escreverOcorrencia.WriteLine(strAlta);
                                             strAlta = string.Empty;
                                         }
+
+
+
+                                        if (!string.IsNullOrWhiteSpace(_repactuacao) && !_repactuacao.Equals("0")) // REPACTUAÇÃO")
+                                        {
+                                            strAlta += string.Format("{0}{1}{2}", "0".PadLeft(72, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'), "REPACTUACAO".PadRight(30, ' '));
+                                            strAlta += string.Format("{0}{1}", _repactuacao.Split('/')[1].Trim().PadRight(30, ' '), "".PadRight(30, ' '));
+
+                                            if (!_cabecalhoAnterior.Reajuste.Equals(_cabecalho.Reajuste))
+                                                strAlta += string.Format("{0}", _cabecalho.TaxaJuros.Trim().PadRight(30, ' '));
+                                            else
+                                                // Adicionado o valor '00010101' se houver uma ocorrencia de REPACTUAÇÃO sem parcelas
+                                                // Data: 30/07/2019 as 17:5
+                                                strAlta += string.Format("{0}", (o.NaoTemParcela ? "00010101" : Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd")).Trim().PadRight(30, ' '));
+
+                                            strAlta = strAlta.PadRight(281, ' ');
+                                            escreverOcorrencia.WriteLine(strAlta);
+                                            strAlta = string.Empty;
+                                        }
+
+
+
 
                                         if (!_cabecalhoAnterior.Apolice.Equals(_cabecalho.Apolice)) // APOLICE
                                         {

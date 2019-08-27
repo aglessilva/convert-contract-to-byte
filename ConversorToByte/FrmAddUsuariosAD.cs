@@ -9,7 +9,7 @@ namespace ConversorToByte
 {
     public partial class FrmAddUsuariosAD : Form
     {
-        private FileSafeOperations objFileOperation = null;
+        
         private List<Users> lst = null;
         FileSafeOperations fso = null;
         public FrmAddUsuariosAD()
@@ -20,6 +20,8 @@ namespace ConversorToByte
 
         private void FrmAddUsuariosAD_Load(object sender, EventArgs e)
         {
+            dataGridViewUsuario.AutoGenerateColumns = false;
+            Height = (Screen.PrimaryScreen.Bounds.Height - 30);
             BindGrid();
         }
 
@@ -89,7 +91,7 @@ namespace ConversorToByte
             {
                 Users obj = (Users)dataGridViewUsuario.Rows[e.RowIndex].DataBoundItem;
                 fso.UdtUser(obj.UserLogin);
-                lst = fso.GetUsers();
+                lst = fso.GetUsers(string.IsNullOrWhiteSpace(textBoxPesquisa.Text) ? null : textBoxPesquisa.Text);
                 dataGridViewUsuario.DataSource = lst;
             }
         }
