@@ -71,6 +71,7 @@ namespace ConvetPdfToLayoutAlta.Models
         public string Situacao { get; set; }
         public string TaxaServico { get; set; }
         public string Lastro { get; set; }
-        
+        public string Custas { get; set; }
+
     }
 }

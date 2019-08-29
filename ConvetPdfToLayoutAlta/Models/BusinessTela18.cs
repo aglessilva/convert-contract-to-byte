@@ -33,12 +33,15 @@ namespace ConvetPdfToLayoutAlta.Models
         {
             try
             {
+
                 if (_ArrayLine[0].Trim().Equals("JAM"))
                 {
                     int count = 1;
+                    parcelaFgts.TipoLinha = _ArrayLine[0].Trim();
                     parcelaFgts.DataVencimento = Regex.Replace(_ArrayLine[count++].Trim(), @"[^0-9\/$]", "");
                     parcelaFgts.QuotaNominal = Regex.Replace(_ArrayLine[count++].Trim(), @"[^0-9\/$]", "");
                     parcelaFgts.SaldoFgtsJAM = Regex.Replace(_ArrayLine[count++].Trim(), @"[^0-9\/$]", "");
+                    parcelaFgts.SobraAcumuladaJAM = Regex.Replace(_ArrayLine[(_ArrayLine.Length > 5 ? (count+1) : count)].Trim(), @"[^0-9$]", "");
                 }
                 else
                 {
@@ -69,7 +72,8 @@ namespace ConvetPdfToLayoutAlta.Models
 
             using (StreamWriter escreverTela18 = new StreamWriter(_diretorioDestino + @"\TL18FGTS.txt", true, Encoding.Default))
             {
-                string _contract = "";
+                string _contract ="", _sobraAcumulada = "";
+
                 lstTela18.ForEach(t18 =>
                 {
                     _contract = t18.Contrato;
@@ -77,19 +81,22 @@ namespace ConvetPdfToLayoutAlta.Models
                     {
                         t18.Damps.ForEach(dmp => {
 
+
                             strAlta = string.Format("{0}{1}", t18.Carteira.Substring(2), t18.Contrato);
                             strAlta += string.Format("{0}{1}", dmp.NumeroDamp, dmp.ValorDamp.PadLeft(12, '0')).PadRight(39, ' ');
-                            strAlta += string.Format("{0}{1}", dmp.Inicio, dmp.Quantidade.PadLeft(3,'0')).PadRight(22, ' ');
 
                             dmp.ParcelaFgts.ForEach(fgts => {
                                 strAltaFgts = strAlta;
-                               
-                                strAltaFgts += string.Format("{0}{1}", fgts.SobraMes.Replace("-","").PadLeft(11, '0') , fgts.SobraMes.Contains("-") ? "-" : "+");
+
+                                _sobraAcumulada = string.Format("{0}{1}", fgts.SobraAcumuladaJAM, (Convert.ToInt32(fgts.SobraAcumuladaJAM) >= 0 ? "+": "-"));
+
+                                strAltaFgts += string.Format("{0}{1}{2}", dmp.Inicio,dmp.Quantidade.PadLeft(3,'0'), _sobraAcumulada.PadLeft(12, '0')).PadRight(22, ' ');
+                                strAltaFgts += string.Format("{0}{1}", fgts.SobraMes.Replace("-", "").PadLeft(11, '0'), fgts.SobraMes.Contains("-") ? "-" : "+");
                                 strAltaFgts += string.Format("{0}{1}", fgts.DataVencimento.Trim(), fgts.QuotaNominal.PadLeft(12, '0'));
                                 strAltaFgts += string.Format("{0}{1}", fgts.SaldoFgtsJAM.Trim().PadLeft(12,'0'),fgts.ParcelaQuota.Trim().PadLeft(5,'0'));
                                 strAltaFgts += string.Format("{0}{1}+", fgts.SaldoFgtsQUO.Trim().PadLeft(12, '0'), fgts.SobraAcumulada.Trim().PadLeft(11,'0'));
                                 escreverTela18.WriteLine(strAltaFgts);
-                                strAltaFgts = string.Empty;
+                                strAltaFgts = _sobraAcumulada = string.Empty;
                             });
 
                         });

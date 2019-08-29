@@ -734,6 +734,12 @@ namespace ConvetPdfToLayoutAlta
                                             objCabecalho = businessCabecalho.TrataCabecalho(objCabecalho, cabecalho, 26);
                                             continue;
                                         }
+                                        if (line.Contains("Agência"))
+                                        {
+                                            objCabecalho.Agencia = Regex.Replace(line, @"[^0-9$]", string.Empty);
+                                            continue;
+                                        }
+                                        
                                         if (line.Contains("Situações"))
                                         {
                                             if (line.Split(' ').Length == 1)

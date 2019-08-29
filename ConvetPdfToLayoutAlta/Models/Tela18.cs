@@ -48,6 +48,7 @@ namespace ConvetPdfToLayoutAlta.Models
     {
         public ParcelaFgts()
         {
+            TipoLinha = "";
             ParcelaQuota = "";
             QuotaNominal = "";
             SaldoFgtsJAM = "";
@@ -58,6 +59,7 @@ namespace ConvetPdfToLayoutAlta.Models
             ValorUtilizado = "";
             PercentualAbatimento = "";
         }
+        public string TipoLinha { get; set; }
         public string ParcelaQuota { get; set; }
         public string DataVencimento { get; set; }
         public string QuotaNominal { get; set; }
@@ -65,6 +67,7 @@ namespace ConvetPdfToLayoutAlta.Models
         public string SaldoFgtsQUO { get; set; }
         public string SobraMes { get; set; }
         public string SobraAcumulada { get; set; }
+        public string SobraAcumuladaJAM { get; set; }
         public string DataPagamento { get; set; }
         public string ValorUtilizado { get; set; }
         public string PercentualAbatimento { get; set; }

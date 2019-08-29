@@ -115,6 +115,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                             .Replace("Origem de Recursos", ":OriRec")
                                             .Replace("Prestação", ":Prestacao")
                                             .Replace("Seguro a vista", ":SegVis")
+                                            .Replace("CUSTAS",":Custas")
                                             .Trim().Split(':')
                                             .Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
                         break;
@@ -148,6 +149,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                             .Replace("REMUN.DIF.JUROS", ":RemunDifJuros")
                                             .Replace("Seguro DFI", ":SeguroDFi")
                                             .Replace("Origem de Recursos", ":OrigRec")
+                                             .Replace("FGTS.UTILIZADO", ":FgtsUtil")
                                             .Trim().Split(':')
                                             .Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
                         break;
@@ -189,6 +191,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                            .Replace("Data Inclusao", ":DtInc").Trim()
                                            .Replace("Agência", ":Agencia").Trim()
                                            .Replace("Origem de Recursos", ":OrigRecur")
+                                           .Replace("Carência", ":Carencia")
                                            .Trim().Split(':')
                                            .Where(x => !string.IsNullOrWhiteSpace(x.Trim())).ToArray();
                         break;
@@ -468,6 +471,11 @@ namespace ConvetPdfToLayoutAlta.Models
                                 obj.Prestacao = (obj.Prestacao == "" || obj.Prestacao == "0") ? Regex.Replace(_arrayLinha[_id].Replace("Prestacao", "").Trim(), @"[^0-9$]+", "") : "0";
                             }
 
+                            if (_arrayLinha.Any(n => n.Contains("Custas")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("Custas"));
+                                obj.Custas = Regex.Replace(_arrayLinha[_id].Trim(), @"[^0-9\/$]+", "");
+                            }
                             break;
                         }
                     case 15:
@@ -574,6 +582,11 @@ namespace ConvetPdfToLayoutAlta.Models
                             {
                                 _id = _arrayLinha.ToList().FindIndex(f => f.Contains("OrigRec"));
                                 obj.OrigemRecurso = Regex.Replace(_arrayLinha[_id].Replace("OrigRec", "").Trim(), @"[^0-9\/$]+", "");
+                            }
+                            if (_arrayLinha.Any(n => n.Contains("FgtsUtil")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("FgtsUtil"));
+                                obj.FgtsUtilizado = Regex.Replace(_arrayLinha[_id].Replace("FgtsUtil", "").Trim(), @"[^0-9\/$]+", "");
                             }
 
                             break;
@@ -726,6 +739,11 @@ namespace ConvetPdfToLayoutAlta.Models
                                 obj.OrigemRecurso = _arrayLinha[_id].Replace("OrigRecur", "").Trim();
                             }
 
+                            if (_arrayLinha.Any(n => n.Contains("Carencia")))
+                            {
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("Carencia"));
+                                obj.Carencia = Regex.Replace(_arrayLinha[_id].Replace("Carencia", "").Trim(), @"[^0-9\/$]+", "");
+                            }
                             break;
                         }
                     case 19:
@@ -1169,7 +1187,8 @@ namespace ConvetPdfToLayoutAlta.Models
                 DescontoAquisicao = string.IsNullOrWhiteSpace(obj.DescontoAquisicao) ? "0" : obj.DescontoAquisicao,
                 RemunDifJuros = string.IsNullOrWhiteSpace(obj.RemunDifJuros) ? "0" : obj.RemunDifJuros,
                 Remuneracao = string.IsNullOrWhiteSpace(obj.Remuneracao) ? "0" : obj.Remuneracao,
-                           
+                Custas = string.IsNullOrWhiteSpace(obj.Custas) ? "0" : obj.Custas,
+                Lastro = string.IsNullOrWhiteSpace(obj.Lastro) ? "0" : obj.Lastro,
             };
         }
 
@@ -1236,7 +1255,10 @@ namespace ConvetPdfToLayoutAlta.Models
 
                         if (!string.IsNullOrWhiteSpace(_contratoGT))
                         {
-                            strAlta = string.Format("{0}{1}{2}", c.Carteira.Trim().Substring(2), c.Contrato.Trim(), (string.IsNullOrWhiteSpace(_dataPrimeiroVencimento) ? c.DataPrimeiroVencimento.Trim() : _dataPrimeiroVencimento).Substring(0, 2)).PadRight(24, ' ');
+                            // Ajuste com orientação do Luis, 
+                            // Alteração: Adicionamos o campo Agencia na posição(18,4)
+                            // DATA: 29/08/2019 as 11:30
+                            strAlta = string.Format("{0}{1}{2}{3}", c.Carteira.Trim().Substring(2), c.Contrato.Trim(), (string.IsNullOrWhiteSpace(_dataPrimeiroVencimento) ? c.DataPrimeiroVencimento.Trim() : _dataPrimeiroVencimento).Substring(0, 2), c.Agencia.Substring(2,4)).PadRight(24, ' ');
                             strAlta += string.Format("{0}{1}{2}{3}", (c.Nome.Trim().Length > 40 ? c.Nome.Trim().Substring(0, 40) : c.Nome.Trim()).PadRight(40, ' '), c.DataNascimento.Trim().PadRight(10, ' '), "".PadRight(14, ' '), c.EnderecoImovel.Trim().PadRight(80, ' '));
                             strAlta += string.Format("{0}{1}{2}{3}", c.Cpf.Trim().PadRight(14, ' '), "".PadRight(3, ' '), _contratoGT.Trim().PadRight(20, ' '), "".PadRight(20, ' '));
                             strAlta += string.Format("{0}{1}", c.Modalidade.Trim().PadRight(40, ' '), (c.CidadeImovel.Trim().Length <= 31 ? c.CidadeImovel.Trim() : c.CidadeImovel.Trim().Substring(0, 31)).PadRight(31, ' '));
@@ -1251,7 +1273,7 @@ namespace ConvetPdfToLayoutAlta.Models
 
                             // O Luis disse que na construção do contrato, "PRAZO e VALOR GARANTIA"  é sempre o original
                             // strAlta += string.Format("{0}{1}{2}", (string.IsNullOrWhiteSpace(_prazo) ? c.Prazo.Trim() : _prazo).PadLeft(5, '0'), _valorgarantia.Trim().PadLeft(18, '0'), "".PadRight(8, ' '));
-                            strAlta += string.Format("{0}{1}{2}",c.Prazo.Trim().PadLeft(5, '0'), _valorgarantia.Trim().PadLeft(18, '0'), "".PadRight(8, ' '));
+                            strAlta += string.Format("{0}{1}",c.Prazo.Trim().PadLeft(5, '0'), _valorgarantia.Trim().PadLeft(18, '0')).PadRight(31, ' ');
 
 
                             // O Luis disse que na construção do contrato, "TAXA DE JUROS"  é sempre o original, Mas o Luis Falou que tem que percorrer os cabeçaos
