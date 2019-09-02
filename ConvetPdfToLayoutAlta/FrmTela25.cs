@@ -102,27 +102,23 @@ namespace ConvetPdfToLayoutAlta
 
         private void BackgroundWorkerTela25_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            int err = Directory.EnumerateFiles(string.Format(@"{0}\", diretorioOrigemPdf), "*_25.err", SearchOption.TopDirectoryOnly).Count();
             if (isErro)
             {
                 string result = string.Format("Resultado\n\n");
                 result += string.Format("Total de Contratos: {0}\n", totalArquivo);
                 result += string.Format("Total Processados: {0}\n", (totalArquivo - ExceptionError.countError));
-                result += string.Format("Total Corrompido: {0}\n", ExceptionError.countError);
+                result += string.Format("Total Erros: {0}\n", ExceptionError.countError);
+                result += string.Format("Total Arq. Rejeitado: {0}\n", err);
                 result += string.Format("{0}", lblTempo.Text);
                 MessageBox.Show(result, "Erro de Converção", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else
             {
-                int err = 0;
-                if (Directory.Exists(string.Format(@"{0}\!Erro", diretorioOrigemPdf)))
-                {
-                    err = Directory.EnumerateFiles(string.Format(@"{0}\!Erro", diretorioOrigemPdf), "*_25.pdf", SearchOption.TopDirectoryOnly).Count();
-                }
-
                 string result = string.Format("Resultado\n\n");
                 result += string.Format("Total de Contratos: {0}\n", totalArquivo);
-                result += string.Format("Total Processados: {0}\n", (totalArquivo - err));
-                result += string.Format("Total Rejeitados: {0}\n", err);
+                result += string.Format("Total Processados: {0}\n", totalArquivo - err);
+                result += string.Format("Total Arq. Rejeitado: {0}\n", err);
                 result += string.Format("{0}", lblTempo.Text);
                 MessageBox.Show(result, "Finalizado com Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -260,11 +256,7 @@ namespace ConvetPdfToLayoutAlta
                                                     sw.WriteLine("================================================================================================================================================");
                                                 }
 
-                                                if (!Directory.Exists(string.Format(@"{0}\!Erro", diretorioDestinoLayout)))
-                                                    Directory.CreateDirectory(string.Format(@"{0}\!Erro", diretorioDestinoLayout));
-
-                                                if (!File.Exists(string.Format(@"{0}\!Erro\{1}", diretorioDestinoLayout, arquivoPdf.Name)))
-                                                    File.Move(string.Format(@"{0}\{1}", arquivoPdf.DirectoryName, arquivoPdf.Name), string.Format(@"{0}\!Erro\{1}", diretorioDestinoLayout, arquivoPdf.Name));
+                                                ExceptionError.RemoverTela(arquivoPdf, diretorioOrigemPdf);
                                             }
 
                                             catch (ArgumentOutOfRangeException ex)
@@ -288,6 +280,8 @@ namespace ConvetPdfToLayoutAlta
                                                     sw.Write(strErro);
                                                     sw.WriteLine("================================================================================================================================================");
                                                 }
+
+                                                ExceptionError.RemoverTela(arquivoPdf, diretorioOrigemPdf);
                                             }
                                         }
                                     }

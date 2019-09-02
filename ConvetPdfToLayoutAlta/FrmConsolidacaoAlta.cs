@@ -22,7 +22,6 @@ namespace ConvetPdfToLayoutAlta
 
        
         DataTable tbl16Cont = new DataTable("TL16CONT");
-        DataTable tbl16Ocor = new DataTable("TL16OCOR");
 
         string diretorioDestinoLayout, _diretorioOrigemPdf;
 
@@ -37,26 +36,23 @@ namespace ConvetPdfToLayoutAlta
         private void FrmConsolidacaoAlta_Load(object sender, EventArgs e)
         {
             tbl16Cont.Columns.Add("Contrato");
-            tbl16Cont.Columns.Add("Registro");
-            tbl16Ocor.Columns.Add("Contrato");
-            tbl16Ocor.Columns.Add("Registro");
         }
 
         private void backgroundWorkerConsolida_DoWork(object sender, DoWorkEventArgs e)
         {
-            string lineValue = string.Empty;
-            StreamWriter streamWriterArquPont = new StreamWriter(string.Format(@"{0}\NEW_ARQUPONT.txt", diretorioDestinoLayout), true, Encoding.Default);
-            using (StreamWriter escreverContrato = new StreamWriter(string.Format(@"{0}\NEW_TL16CONT.txt", diretorioDestinoLayout), true, Encoding.Default))
+            string arq = $@"{diretorioDestinoLayout}\ARQUPONT.txt";
+            if (File.Exists(arq))
+                File.Delete(arq);
+
+            using (StreamWriter streamWriterArquPont = new StreamWriter($@"{diretorioDestinoLayout}\ARQUPONT.txt", true, Encoding.Default))
             {
                 MaximumProgress = tbl16Cont.Rows.Count;
 
                 foreach (DataRow item in tbl16Cont.Rows)
                 {
                     countpercent++;
-                    obj = new UserObject() { DescricaoPercentural = "Atualizando arquivos de Ponteiro e Tela 16...", TotalArquivoPorPasta = MaximumProgress };
+                    obj = new UserObject() { DescricaoPercentural = "Atualizando arquivos de Ponteiro...", TotalArquivoPorPasta = MaximumProgress };
                     backgroundWorkerConsolida.ReportProgress(countpercent, obj);
-                    lineValue = string.Format("{0}", item[1].ToString());
-                    escreverContrato.WriteLine(lineValue);
                     streamWriterArquPont.WriteLine(item[0].ToString());
                     Thread.Sleep(1);
                 }
@@ -95,7 +91,7 @@ namespace ConvetPdfToLayoutAlta
                 while (!sw.EndOfStream)
                 {
                     linha = sw.ReadLine();
-                    tbl16Cont.Rows.Add(linha.Substring(0, 15), linha);
+                    tbl16Cont.Rows.Add(string.Format("01{0}1", linha.Substring(0, 15)));
                 }
             }
             #endregion

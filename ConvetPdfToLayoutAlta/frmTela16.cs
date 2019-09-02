@@ -21,7 +21,7 @@ namespace ConvetPdfToLayoutAlta
         Thread _thread = null;
         UserObject obj = null;
         List<string> _situacoesAtual = new List<string>();
-        List<string> listArquPont = new List<string>();
+        
 
         int contador = 0, countLote = 1, totalArquivo = 0, totalPorPasta = 0;
         bool isErro = false, isFinal = false;
@@ -109,27 +109,23 @@ namespace ConvetPdfToLayoutAlta
 
         private void BackgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            int err = Directory.EnumerateFiles(string.Format(@"{0}\", diretorioOrigemPdf), "*_16.err", SearchOption.TopDirectoryOnly).Count();
             if (isErro)
             {
                 string result = string.Format("Resultado\n\n");
                 result += string.Format("Total de Contratos: {0}\n", totalArquivo);
                 result += string.Format("Total Processados: {0}\n", (totalArquivo - ExceptionError.countError));
-                result += string.Format("Total Corrompido: {0}\n", ExceptionError.countError);
+                result += string.Format("Total Erros: {0}\n", ExceptionError.countError);
+                result += string.Format("Total Arq. Rejeitado: {0}\n", err);
                 result += string.Format("{0}", lblTempo.Text);
                 MessageBox.Show(result, "Erro de Converção", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else
             {
-                int err = 0;
-                if (Directory.Exists(string.Format(@"{0}\!Erro", diretorioDestinoLayout)))
-                {
-                    err = Directory.EnumerateFiles(string.Format(@"{0}\!Erro", diretorioDestinoLayout), "*_16.pdf", SearchOption.TopDirectoryOnly).Count();
-                }
-                
                 string result = string.Format("Resultado\n\n");
                 result += string.Format("Total de Contratos: {0}\n", totalArquivo);
-                result += string.Format("Total Processados: {0}\n",( totalArquivo - err));
-                result += string.Format("Total Rejeitado: {0}\n", err );
+                result += string.Format("Total Processados: {0}\n", totalArquivo - err);
+                result += string.Format("Total Arq. Rejeitado: {0}\n", err);
                 result += string.Format("{0}", lblTempo.Text);
                 MessageBox.Show(result,"Finalizado com Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -167,6 +163,7 @@ namespace ConvetPdfToLayoutAlta
             string[] arrayIgnorCabecalho = { "End.Correspondência", "Demonstrativo", "Telefone", "Modalidade", "Nome" };
             string[] arrayIgonorCampo = { "Nº", "CTFIN", "Emissão", "PRO","ANT", "SANTANDER", "Carteira", "Data","CTFIN","Carteira","Contrato","Seguro","TAXA", };
             string[] arrayFinalParcela = { "TOTAL","Aberto", "SEGURO", "CONTRATO LIQUIDADO", "FGTS/Prestação", "QTD" };
+            string[] arrayGetCampos = { "Plano", "Sistema", "DFI", "Data Garanta", "Reajuste", "Prazo", "Razão", "Empreendimento", "1º", "Repactuação", "Ult.", "Re-", "Repactuação", "Correção", "Origem", "Carência", "Apólice", "Seguro", "Taxa Juros", "Data Inclusao", "Agência", "Garanta" };
             string pagina = string.Empty, readerContrato = string.Empty;
             string[] cabecalho = null;
             string[] arrayLinhaParcela = null;
@@ -267,7 +264,6 @@ namespace ConvetPdfToLayoutAlta
 
                                             objCabecalho = businessCabecalho.PreencheCabecalho(objCabecalho);
                                         }
-
                                         if (isParcelas)
                                         {
                                             if (line.Split('-').Length == 2)
@@ -480,7 +476,6 @@ namespace ConvetPdfToLayoutAlta
                                             }
                                             continue;
                                         }
-
                                         if (padrao == 1)
                                         {
 
@@ -541,12 +536,7 @@ namespace ConvetPdfToLayoutAlta
                                                 objCabecalho.ContaDeposito = cabecalho[2];
                                                 continue;
                                             }
-                                            if (line.Contains("Plano"))
-                                            {
-                                                cabecalho = businessCabecalho.TrataLinhaPDF(line, 14);
-                                                objCabecalho = businessCabecalho.TrataCabecalho(objCabecalho, cabecalho, 14);
-                                                continue;
-                                            }
+                                           
 
                                             if (line.Contains("CADOC"))
                                             {
@@ -608,7 +598,6 @@ namespace ConvetPdfToLayoutAlta
                                             objCabecalho = businessCabecalho.TrataCabecalho(objCabecalho, cabecalho, 9);
                                             continue;
                                         }
-
                                         if (line.Contains("End.Imóvel"))
                                         {
                                             cabecalho = businessCabecalho.TrataLinhaPDF(line, 10);
@@ -642,104 +631,14 @@ namespace ConvetPdfToLayoutAlta
                                             objCabecalho = businessCabecalho.TrataCabecalho(objCabecalho, cabecalho, 13, line);
                                             continue;
                                         }
-                                        if (line.Contains("Plano"))
-                                        {
-                                            cabecalho = businessCabecalho.TrataLinhaPDF(line, 14);
-                                            objCabecalho = businessCabecalho.TrataCabecalho(objCabecalho, cabecalho, 14);
-                                            continue;
-                                        }
-                                        if (line.Contains("Sistema"))
-                                        {
-                                            cabecalho = businessCabecalho.TrataLinhaPDF(line, 15);
-                                            objCabecalho = businessCabecalho.TrataCabecalho(objCabecalho, cabecalho, 15);
-                                            continue;
-                                        }
-                                        if (line.Contains("DFI"))
-                                        {
-                                            cabecalho = businessCabecalho.TrataLinhaPDF(line, 16);
-                                            objCabecalho = businessCabecalho.TrataCabecalho(objCabecalho, cabecalho, 16);
-                                            continue;
-                                        }
 
-                                        if (line.Contains("Data Garanta"))
+                                        if (arrayGetCampos.Any(y => line.Split(' ').Contains(y)))
                                         {
-                                            string[] cab = line.Replace("Agência", "").Replace("Data Garanta", "").Split(' ').Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
-                                            objCabecalho.DataGarantia = cab[0];
-
-                                            if (cab.Contains("Contábil"))
-                                                objCabecalho.CodigoContabil = cab.LastOrDefault();
-                                            else
-                                                objCabecalho.Agencia = cab[1];
+                                            cabecalho = businessCabecalho.TrataLinhaPDF(line,100);
+                                            objCabecalho = businessCabecalho.TrataCabecalho(objCabecalho, cabecalho, 100);
                                             continue;
                                         }
-
-                                        if (line.Contains("Reajuste"))
-                                        {
-                                            objCabecalho.Reajuste = line.Replace("Reajuste", "").Trim();
-                                            continue;
-                                        }
-                                        if (line.Contains("Prazo"))
-                                        {
-                                            cabecalho = businessCabecalho.TrataLinhaPDF(line, 17);
-                                            objCabecalho = businessCabecalho.TrataCabecalho(objCabecalho, cabecalho, 17);
-                                            continue;
-                                        }
-                                        if ((line.Contains("Razão") || line.Contains("Empreendimento") || line.Contains("1º")) && !line.Contains("Repactuação"))
-                                        {
-                                            cabecalho = businessCabecalho.TrataLinhaPDF(line, 18);
-                                            objCabecalho = businessCabecalho.TrataCabecalho(objCabecalho, cabecalho, 18);
-                                            continue;
-                                        }
-                                        if (line.Contains("Correção"))
-                                        {
-                                            cabecalho = businessCabecalho.TrataLinhaPDF(line, 19);
-                                            objCabecalho = businessCabecalho.TrataCabecalho(objCabecalho, cabecalho, 19);
-                                            continue;
-                                        }
-                                        if ((line.Contains("Ult.") || line.Contains("Re-")) && !line.Contains("Origem"))
-                                        {
-                                            cabecalho = businessCabecalho.TrataLinhaPDF(line, 20);
-                                            objCabecalho = businessCabecalho.TrataCabecalho(objCabecalho, cabecalho, 20);
-                                            continue;
-                                        }
-
-                                        if (line.Contains("Origem"))
-                                        {
-                                            cabecalho = businessCabecalho.TrataLinhaPDF(line, 21);
-                                            objCabecalho = businessCabecalho.TrataCabecalho(objCabecalho, cabecalho, 21);
-                                            continue;
-                                        }
-                                        if (line.Contains("Repactuação"))
-                                        {
-                                            cabecalho = businessCabecalho.TrataLinhaPDF(line, 23);
-                                            objCabecalho = businessCabecalho.TrataCabecalho(objCabecalho, cabecalho, 23);
-                                            continue;
-                                        }
-                                        if (line.Contains("Carência"))
-                                        {
-                                            cabecalho = businessCabecalho.TrataLinhaPDF(line, 24);
-                                            objCabecalho = businessCabecalho.TrataCabecalho(objCabecalho, cabecalho, 24);
-                                            continue;
-                                        }
-
-                                        if (line.Contains("Apólice") && !line.Contains("Seguro"))
-                                        {
-                                            cabecalho = businessCabecalho.TrataLinhaPDF(line, 25);
-                                            objCabecalho = businessCabecalho.TrataCabecalho(objCabecalho, cabecalho, 25);
-                                            continue;
-                                        }
-                                        if (line.Contains("Taxa Juros") && line.Contains("Data Inclusao"))
-                                        {
-                                            cabecalho = businessCabecalho.TrataLinhaPDF(line, 26);
-                                            objCabecalho = businessCabecalho.TrataCabecalho(objCabecalho, cabecalho, 26);
-                                            continue;
-                                        }
-                                        if (line.Contains("Agência"))
-                                        {
-                                            objCabecalho.Agencia = Regex.Replace(line, @"[^0-9$]", string.Empty);
-                                            continue;
-                                        }
-                                        
+                                       
                                         if (line.Contains("Situações"))
                                         {
                                             if (line.Split(' ').Length == 1)
@@ -817,6 +716,7 @@ namespace ConvetPdfToLayoutAlta
                                     item1 = lstContratosPdf,
                                     item2 = lstGT,
                                     item3 = diretorioDestinoLayout,
+                                    item4 = diretorioOrigemPdf
                                 };
 
                                 _thread = new Thread(new ParameterizedThreadStart(businessCabecalho.PopulaContrato));
@@ -857,11 +757,12 @@ namespace ConvetPdfToLayoutAlta
                             sw.Write(strErro);
                             sw.WriteLine("================================================================================================================================================");
                         }
-
+                       
                         ExceptionError.RemoverTela(arquivoPdf, diretorioOrigemPdf);
 
                         padrao = 0;
                         contador++;
+                        
                     }
                     catch (ArgumentOutOfRangeException ex)
                     {
@@ -889,6 +790,7 @@ namespace ConvetPdfToLayoutAlta
                         ExceptionError.RemoverTela(arquivoPdf, diretorioOrigemPdf);
                         padrao = 0;
                         contador++;
+                        
                     }
                 });
 
@@ -909,6 +811,7 @@ namespace ConvetPdfToLayoutAlta
                     item1 = lstContratosPdf,
                     item2 = lstGT,
                     item3 = diretorioDestinoLayout,
+                    item4 = diretorioOrigemPdf
                 };
 
                 if(_thread != null)
