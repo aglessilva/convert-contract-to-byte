@@ -27,11 +27,9 @@ namespace ConversorToByte
 
         private void frmpdf_Load(object sender, EventArgs e)
         {
-            this.Text = "Cliente: " +  Convert.ToUInt64(_file.NameCpf).ToString(@"000\.000\.000\-00") + " - Contrato: " + _file.NameContract;
-         
-            
+            this.Text =  "Contrato: " + _file.NameContract;
             _pathFilePdf = Path.ChangeExtension(Path.GetTempFileName(), "pdf");
-            File.WriteAllBytes(_pathFilePdf, _file.FileEncryptionPdf);
+            File.WriteAllBytes(_pathFilePdf, _file.FileEncryption);
             webBrowser1.Navigate(_pathFilePdf);
         }
 

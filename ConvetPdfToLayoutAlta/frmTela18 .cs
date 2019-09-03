@@ -102,28 +102,23 @@ namespace ConvetPdfToLayoutAlta
 
         private void BackgroundWorkerTela18_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            int err = Directory.EnumerateFiles(string.Format(@"{0}\", diretorioOrigemPdf), "*_18.err", SearchOption.TopDirectoryOnly).Count();
             if (isErro)
             {
                 string result = string.Format("Resultado\n\n");
                 result += string.Format("Total de Contratos: {0}\n", totalArquivo);
                 result += string.Format("Total Processados: {0}\n", (totalArquivo - ExceptionError.countError));
-                result += string.Format("Total Corrompido: {0}\n", ExceptionError.countError);
+                result += string.Format("Total Erros: {0}\n", ExceptionError.countError);
+                result += string.Format("Total Arq. Rejeitado: {0}\n", err);
                 result += string.Format("{0}", lblTempo.Text);
                 MessageBox.Show(result, "Erro de Converção", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                
             }
             else
             {
-                int err = 0;
-                if (Directory.Exists(string.Format(@"{0}\!Erro", diretorioOrigemPdf)))
-                {
-                    err = Directory.EnumerateFiles(string.Format(@"{0}\!Erro", diretorioOrigemPdf), "*_18.pdf", SearchOption.TopDirectoryOnly).Count();
-                }
-
                 string result = string.Format("Resultado\n\n");
                 result += string.Format("Total de Contratos: {0}\n", totalArquivo);
-                result += string.Format("Total Processados: {0}\n", (totalArquivo - err));
-                result += string.Format("Total Rejeitados: {0}\n", err);
+                result += string.Format("Total Processados: {0}\n", totalArquivo - err);
+                result += string.Format("Total Arq. Rejeitado: {0}\n", err);
                 result += string.Format("{0}", lblTempo.Text);
                 MessageBox.Show(result, "Finalizado com Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -194,7 +189,7 @@ namespace ConvetPdfToLayoutAlta
                                                             isNotTela18 = true;
                                                             isErro = true;
                                                             ExceptionError.countError++;
-                                                            ExceptionError.TrataErros(arquivoPdf.Name, "O Arquivo não é do tipo CTFIN/O018A", diretorioDestinoLayout);
+                                                            ExceptionError.TrataErros(null, arquivoPdf.Name, "O Arquivo não é do tipo CTFIN/O018A", diretorioDestinoLayout);
                                                             break;
                                                         }
                                                     }

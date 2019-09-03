@@ -15,72 +15,28 @@ namespace MalhaToByte
     {
         static void Main(string[] args)
         {
-
-
-
-
-                    try
+            string PathFileCompany = @"D:\PDFSTombamento\Massa_de_Desenvolvimento\2019-06-03\T004Z20\TELA16";
+            try
             {
-              
-                if (!Directory.Exists("ZipFiles"))
-                    Directory.CreateDirectory("ZipFiles");
-
-                List<PathFiles> _path = Cnn.GetPathFileCompany();
+                string newNameContract = string.Empty;
                 List<FileCompress> lstFile = new List<FileCompress>();
 
-                string newNameContract = string.Empty;
-                string _cpf = string.Empty;
-                string pagina = string.Empty;
-                ;
-                   
-                _path.ForEach(x =>
-               {
-                   IEnumerable<string> fileContract = Directory.GetFiles(x.PathFileCompany).AsEnumerable();
+                IEnumerable<string> fileContract = Directory.EnumerateFiles(PathFileCompany);
 
-                   
                    fileContract.ToList().ForEach(w =>
                    {
                        FileInfo _contract = new FileInfo(w);
-                       ITextExtractionStrategy its = new iTextSharp.text.pdf.parser.LocationTextExtractionStrategy();
-                       using (PdfReader reader = new PdfReader(w))
-                       {
-                            pagina  = PdfTextExtractor.GetTextFromPage(reader, 1, its);
 
-                           IEnumerable<string> strArray = pagina.Split('\n').Take(15).Where(g => g.Contains("C.P.F"));
-                            _cpf = Regex.Replace(strArray.First().Trim(), @"[^0-9$]+", "").Substring(0, 11);
-                       }
-
-                       newNameContract = _contract.Name.Split('_')[0].Trim();
-
-                       if (Directory.Exists(@"ZipFiles\" + newNameContract))
-                           Directory.Delete(@"ZipFiles\" + newNameContract, true);
-                       
-                       Directory.CreateDirectory(@"ZipFiles\" + newNameContract);
-
-                       File.Copy(_contract.FullName, @"ZipFiles\" + newNameContract + "\\" +_contract.Name);
-
-                       byte[] ArqPdf = File.ReadAllBytes( @"ZipFiles\" + newNameContract + "\\" +_contract.Name);
-
-                       ZipFile.CreateFromDirectory( @"ZipFiles\" + newNameContract, @"ZipFiles\" + newNameContract + ".zip");
-                       byte[] arq = File.ReadAllBytes(@"ZipFiles\" + newNameContract + ".zip");
-                       Directory.Delete(@"ZipFiles\" + newNameContract, true);
-                       File.Delete(@"ZipFiles\" + newNameContract + ".zip");
-
-                       lstFile.Add(new FileCompress() { FileEncryption = arq, FileEncryptionPdf = ArqPdf, IdCompany = x.IdCompany, ContractName = newNameContract, CpfName = _cpf, DateInput = DateTime.Now.Date });
+                       byte[] ArqPdf = File.ReadAllBytes(_contract.FullName);
+                       newNameContract = _contract.Name.Split('_')[0];
+                       lstFile.Add(new FileCompress() { FileEncryption =  ArqPdf, ContractName = newNameContract });
 
                        _contract = null;
-                       its = null;
-                       
-                       pagina = _cpf = string.Empty;
+
                    });
 
-                    int total = Cnn.FileStores(lstFile);
-                    //Console.WriteLine("Total de registros {0}", total.ToString());
-                    lstFile.Clear();
-               });
+                   int total = Cnn.FileStores(lstFile);
 
-
-                Directory.Delete("ZipFiles", true);
 
             }
             catch (Exception ex)
@@ -88,7 +44,7 @@ namespace MalhaToByte
                 throw ex;
             }
 
- 
+
 
         }
 

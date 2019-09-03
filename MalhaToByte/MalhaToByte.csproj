@@ -47,7 +47,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>ConvertToByte.Class1</StartupObject>
+    <StartupObject>ConvertToByte.GeraPonteiro</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
     <SignManifests>true</SignManifests>
@@ -79,6 +79,7 @@
     <Compile Include="Class1.cs" />
     <Compile Include="DAL\cnn.cs" />
     <Compile Include="DAL\FileCompress.cs" />
+    <Compile Include="GeraPonteiro.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

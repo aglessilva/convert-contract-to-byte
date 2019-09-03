@@ -304,9 +304,10 @@ namespace ConvetPdfToLayoutAlta.Models
                     _linhaOcorrencia = x.ToArray();
 
                 }
-
+ 
                 switch (_codigoOcorrencia)
                 {
+                    
                     case "DAMP": // DAMP3
                         {
                             _case = "DAMP0 - Metodo: TrataOcorrencia -  Situação: DAMP";
@@ -315,6 +316,7 @@ namespace ConvetPdfToLayoutAlta.Models
                         }
                     case "004": // Mudança de Vencimento
                         {
+                           
                             _case = "004 - Metodo: TrataOcorrencia -  Situação: Mudança dia vencimento";
                             _obj.Vencimento = _linhaOcorrencia[0].Trim();
                             _obj.Pagamento = _linhaOcorrencia[1].Trim();
@@ -413,6 +415,23 @@ namespace ConvetPdfToLayoutAlta.Models
                             _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[(_linhaOcorrencia.Length - 2)].Trim(), @"[^0-9$]", "");
                             _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[_linhaOcorrencia.Length - 1].Trim(), @"[^0-9$]", "");
                             _obj.Descricao = "***022Sinistro parcial";
+                            break;
+                        }
+                    case "028": // Amortização s/recalculo 
+                        {
+
+                            int count = 0;
+                            _obj.Vencimento = _linhaOcorrencia[count++].Trim();
+                            _obj.Pagamento = Regex.IsMatch(_linhaOcorrencia[count].Trim(), @"[0-9]{2}/[0-9]{2}/[0-9]{4}") ? _linhaOcorrencia[count++].Trim() : "01/01/0001".PadLeft(10, ' ');
+                            _obj.CodigoOcorrencia = _codigoOcorrencia; count++;
+                            if (hasMora)
+                                _obj.Juros = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
+                            else
+                                _obj.Juros = "0";
+
+                            _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[(_linhaOcorrencia.Length - 2)].Trim(), @"[^0-9$]", "");
+                            _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[_linhaOcorrencia.Length - 1].Trim(), @"[^0-9$]", "");
+                            _obj.Descricao = "***028Amortização s/recalculo";
                             break;
                         }
                     case "030": // Incorporação no Saldo

@@ -16,6 +16,17 @@ namespace ConvertToByte
     {
         static void Main(string[] args)
         {
+
+            using (StreamWriter sw = new StreamWriter(@"D:\!ALTA\ARQ_GARANTIA.err", true, Encoding.UTF8))
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    sw.WriteLine($"{i * 100} --> 5 x {i} = {(i * 5)}");
+                }
+            }
+
+
+
             List<string> lstErr = Directory.EnumerateFiles(@"D:\Testes\", "*.err", SearchOption.AllDirectories).ToList();
             DataRow[] _dataRows = null;
             DataTable tbl16Cont = new DataTable("TL16CONT");

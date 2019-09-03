@@ -45,12 +45,12 @@
             this.comboBoxTela = new System.Windows.Forms.ComboBox();
             this.button2 = new System.Windows.Forms.Button();
             this.panelSpinner = new System.Windows.Forms.Panel();
+            this.button10 = new System.Windows.Forms.Button();
             this.button9 = new System.Windows.Forms.Button();
             this.btnDuplicata = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
-            this.button10 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.panelSpinner.SuspendLayout();
             this.SuspendLayout();
@@ -243,6 +243,17 @@
             this.panelSpinner.Size = new System.Drawing.Size(580, 210);
             this.panelSpinner.TabIndex = 5;
             // 
+            // button10
+            // 
+            this.button10.Location = new System.Drawing.Point(479, 174);
+            this.button10.Name = "button10";
+            this.button10.Size = new System.Drawing.Size(75, 23);
+            this.button10.TabIndex = 12;
+            this.button10.Text = "Consolidado";
+            this.button10.UseVisualStyleBackColor = true;
+            this.button10.Visible = false;
+            this.button10.Click += new System.EventHandler(this.button10_Click);
+            // 
             // button9
             // 
             this.button9.Location = new System.Drawing.Point(27, 165);
@@ -301,17 +312,6 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Visible = false;
             this.button3.Click += new System.EventHandler(this.Button3_Click);
-            // 
-            // button10
-            // 
-            this.button10.Location = new System.Drawing.Point(479, 174);
-            this.button10.Name = "button10";
-            this.button10.Size = new System.Drawing.Size(75, 23);
-            this.button10.TabIndex = 12;
-            this.button10.Text = "Consolidado";
-            this.button10.UseVisualStyleBackColor = true;
-            this.button10.Visible = false;
-            this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
             // FrmSelectFolder
             // 
