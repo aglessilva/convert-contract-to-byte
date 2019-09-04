@@ -32,18 +32,18 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmListContrato));
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnLimpar = new System.Windows.Forms.Button();
             this.textBoxContratocpf = new System.Windows.Forms.TextBox();
             this.dataGridViewContract = new System.Windows.Forms.DataGridView();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.imageListItem = new System.Windows.Forms.ImageList(this.components);
-            this.dataGridViewImageColumn1 = new System.Windows.Forms.DataGridViewImageColumn();
-            this.dataGridViewImageColumn2 = new System.Windows.Forms.DataGridViewImageColumn();
-            this.btnLimpar = new System.Windows.Forms.Button();
-            this.addUsuarioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ID = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.NameContract = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Download = new System.Windows.Forms.DataGridViewImageColumn();
             this.Vizualizar = new System.Windows.Forms.DataGridViewImageColumn();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.addUsuarioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.imageListItem = new System.Windows.Forms.ImageList(this.components);
+            this.dataGridViewImageColumn1 = new System.Windows.Forms.DataGridViewImageColumn();
+            this.dataGridViewImageColumn2 = new System.Windows.Forms.DataGridViewImageColumn();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewContract)).BeginInit();
             this.menuStrip1.SuspendLayout();
@@ -63,6 +63,17 @@
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Filtro por Contrato";
+            // 
+            // btnLimpar
+            // 
+            this.btnLimpar.Image = global::ConversorToByte.Properties.Resources.clear_filters_48_45590__1_;
+            this.btnLimpar.Location = new System.Drawing.Point(397, 20);
+            this.btnLimpar.Name = "btnLimpar";
+            this.btnLimpar.Size = new System.Drawing.Size(40, 38);
+            this.btnLimpar.TabIndex = 3;
+            this.btnLimpar.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.btnLimpar.UseVisualStyleBackColor = true;
+            this.btnLimpar.Click += new System.EventHandler(this.btnLimpar_Click);
             // 
             // textBoxContratocpf
             // 
@@ -97,64 +108,6 @@
             this.dataGridViewContract.TabIndex = 3;
             this.dataGridViewContract.TabStop = false;
             this.dataGridViewContract.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewContract_CellContentClick);
-            // 
-            // menuStrip1
-            // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.addUsuarioToolStripMenuItem});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(467, 24);
-            this.menuStrip1.TabIndex = 4;
-            this.menuStrip1.Text = "menuStrip1";
-            this.menuStrip1.Visible = false;
-            // 
-            // imageListItem
-            // 
-            this.imageListItem.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListItem.ImageStream")));
-            this.imageListItem.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageListItem.Images.SetKeyName(0, "ic_cloud_download_128_28299.ico");
-            // 
-            // dataGridViewImageColumn1
-            // 
-            this.dataGridViewImageColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.dataGridViewImageColumn1.HeaderText = "";
-            this.dataGridViewImageColumn1.Image = global::ConversorToByte.Properties.Resources.ic_cloud_download_128_28299;
-            this.dataGridViewImageColumn1.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
-            this.dataGridViewImageColumn1.Name = "dataGridViewImageColumn1";
-            this.dataGridViewImageColumn1.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridViewImageColumn1.ToolTipText = "Baixar Arquivo compactado";
-            this.dataGridViewImageColumn1.Width = 30;
-            // 
-            // dataGridViewImageColumn2
-            // 
-            this.dataGridViewImageColumn2.HeaderText = "";
-            this.dataGridViewImageColumn2.Image = ((System.Drawing.Image)(resources.GetObject("dataGridViewImageColumn2.Image")));
-            this.dataGridViewImageColumn2.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
-            this.dataGridViewImageColumn2.Name = "dataGridViewImageColumn2";
-            this.dataGridViewImageColumn2.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridViewImageColumn2.ToolTipText = "Vizualizar Arquivo";
-            this.dataGridViewImageColumn2.Width = 30;
-            // 
-            // btnLimpar
-            // 
-            this.btnLimpar.Image = global::ConversorToByte.Properties.Resources.clear_filters_48_45590__1_;
-            this.btnLimpar.Location = new System.Drawing.Point(397, 18);
-            this.btnLimpar.Name = "btnLimpar";
-            this.btnLimpar.Size = new System.Drawing.Size(40, 39);
-            this.btnLimpar.TabIndex = 3;
-            this.btnLimpar.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
-            this.btnLimpar.UseVisualStyleBackColor = true;
-            this.btnLimpar.Click += new System.EventHandler(this.btnLimpar_Click);
-            // 
-            // addUsuarioToolStripMenuItem
-            // 
-            this.addUsuarioToolStripMenuItem.Image = global::ConversorToByte.Properties.Resources.business_application_addmale_useradd_insert_add_user_client_2312;
-            this.addUsuarioToolStripMenuItem.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.addUsuarioToolStripMenuItem.Name = "addUsuarioToolStripMenuItem";
-            this.addUsuarioToolStripMenuItem.Size = new System.Drawing.Size(100, 20);
-            this.addUsuarioToolStripMenuItem.Text = "Add Usuário";
-            this.addUsuarioToolStripMenuItem.Click += new System.EventHandler(this.addUsuarioToolStripMenuItem_Click);
             // 
             // ID
             // 
@@ -196,6 +149,53 @@
             this.Vizualizar.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.Vizualizar.ToolTipText = "Vizualizar Arquivo";
             this.Vizualizar.Width = 30;
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addUsuarioToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(467, 24);
+            this.menuStrip1.TabIndex = 4;
+            this.menuStrip1.Text = "menuStrip1";
+            this.menuStrip1.Visible = false;
+            // 
+            // addUsuarioToolStripMenuItem
+            // 
+            this.addUsuarioToolStripMenuItem.Image = global::ConversorToByte.Properties.Resources.business_application_addmale_useradd_insert_add_user_client_2312;
+            this.addUsuarioToolStripMenuItem.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.addUsuarioToolStripMenuItem.Name = "addUsuarioToolStripMenuItem";
+            this.addUsuarioToolStripMenuItem.Size = new System.Drawing.Size(100, 20);
+            this.addUsuarioToolStripMenuItem.Text = "Add Usuário";
+            this.addUsuarioToolStripMenuItem.Click += new System.EventHandler(this.addUsuarioToolStripMenuItem_Click);
+            // 
+            // imageListItem
+            // 
+            this.imageListItem.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListItem.ImageStream")));
+            this.imageListItem.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageListItem.Images.SetKeyName(0, "ic_cloud_download_128_28299.ico");
+            // 
+            // dataGridViewImageColumn1
+            // 
+            this.dataGridViewImageColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.dataGridViewImageColumn1.HeaderText = "";
+            this.dataGridViewImageColumn1.Image = global::ConversorToByte.Properties.Resources.ic_cloud_download_128_28299;
+            this.dataGridViewImageColumn1.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
+            this.dataGridViewImageColumn1.Name = "dataGridViewImageColumn1";
+            this.dataGridViewImageColumn1.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridViewImageColumn1.ToolTipText = "Baixar Arquivo compactado";
+            this.dataGridViewImageColumn1.Width = 30;
+            // 
+            // dataGridViewImageColumn2
+            // 
+            this.dataGridViewImageColumn2.HeaderText = "";
+            this.dataGridViewImageColumn2.Image = ((System.Drawing.Image)(resources.GetObject("dataGridViewImageColumn2.Image")));
+            this.dataGridViewImageColumn2.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
+            this.dataGridViewImageColumn2.Name = "dataGridViewImageColumn2";
+            this.dataGridViewImageColumn2.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridViewImageColumn2.ToolTipText = "Vizualizar Arquivo";
+            this.dataGridViewImageColumn2.Width = 30;
             // 
             // frmListContrato
             // 

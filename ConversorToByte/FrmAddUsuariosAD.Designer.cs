@@ -172,12 +172,12 @@
             this.Usuario,
             this.Email,
             this.IsGestorApp});
-            this.dataGridViewUsuario.Location = new System.Drawing.Point(12, 180);
+            this.dataGridViewUsuario.Location = new System.Drawing.Point(12, 191);
             this.dataGridViewUsuario.Name = "dataGridViewUsuario";
             this.dataGridViewUsuario.ReadOnly = true;
             this.dataGridViewUsuario.RowHeadersVisible = false;
             this.dataGridViewUsuario.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridViewUsuario.Size = new System.Drawing.Size(451, 369);
+            this.dataGridViewUsuario.Size = new System.Drawing.Size(451, 312);
             this.dataGridViewUsuario.TabIndex = 3;
             this.dataGridViewUsuario.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewUsuario_CellContentClick);
             // 
@@ -239,9 +239,9 @@
             // 
             this.button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.button1.Image = global::ConversorToByte.Properties.Resources.clear_filters_48_45590__1_;
-            this.button1.Location = new System.Drawing.Point(422, 137);
+            this.button1.Location = new System.Drawing.Point(421, 140);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(40, 39);
+            this.button1.Size = new System.Drawing.Size(40, 38);
             this.button1.TabIndex = 6;
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -250,7 +250,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(467, 561);
+            this.ClientSize = new System.Drawing.Size(467, 509);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.textBoxPesquisa);
