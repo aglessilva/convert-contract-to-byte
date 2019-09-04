@@ -11,13 +11,39 @@ namespace ConvetPdfToLayoutAlta.Models
         public int Id { get; set; }
         public string Numero { get; set; }
         public string DataBase { get; set; }
+        /// <summary>
+        /// Posicionamento: 000,2
+        /// </summary>
         public string Carteira { get; set; }
         public string DataEmicao { get; set; }
+        /// <summary>
+        /// Carteira + Contrato
+        /// Posicionamento: 001,15
+        /// </summary>
         public string Contrato { get; set; }
+        /// <summary>
+        /// Nome
+        /// Posicionamento: 025,40  - Complementar com espaço a direita
+        /// </summary>
         public string Nome { get; set; }
+
+        /// <summary>
+        /// Cpf
+        /// Posicionamento: 169,17  - Complementar com espaço a direita
+        /// </summary>
         public string Cpf { get; set; }
+        /// <summary>
+        /// DataNascimento
+        /// Posicionamento: 065,24  - Complementar com espaço a direita
+        /// </summary>
         public string DataNascimento { get; set; }
+
+        /// <summary>
+        /// EnderecoImovel
+        /// Posicionamento: 089,80  - Complementar com espaço a direita
+        /// </summary>                                                        
         public string EnderecoImovel { get; set; }
+
         public string BairroImovel { get; set; }
         public string CepImovel { get; set; }
         public string CidadeImovel { get; set; }
@@ -46,6 +72,10 @@ namespace ConvetPdfToLayoutAlta.Models
         public string Sistema { get; set; }
         public string ValorFinanciamento { get; set; }
         public string ValorGarantia { get; set; }
+        /// <summary>
+        /// Agencia
+        /// Posicionamento: 018,07  - Complementar com espaço a direita
+        /// </summary>
         public string Agencia { get; set; }
         public string CodigoContabil { get; set; }
         public string SeguroMIP { get; set; }
@@ -56,6 +86,10 @@ namespace ConvetPdfToLayoutAlta.Models
         public string Empreendimento { get; set; }
         public string Taxa { get; set; }
         public string TaxaJuros { get; set; }
+        /// <summary>
+        /// DataPrimeiroVencimento
+        /// Posicionamento: 016,02
+        /// </summary>
         public string DataPrimeiroVencimento { get; set; }
         public string Apolice { get; set; }
         public string Razao { get; set; }
@@ -75,5 +109,11 @@ namespace ConvetPdfToLayoutAlta.Models
         public string Agio { get; set; }
         public string Prorrogacao { get; set; }
         public string SeguroVista { get; set; }
+
+
+
+
+
+
     }
 }

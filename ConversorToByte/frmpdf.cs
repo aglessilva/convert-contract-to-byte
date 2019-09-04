@@ -39,6 +39,9 @@ namespace ConversorToByte
             webBrowser1.Stop();
             webBrowser1.Dispose();
             webBrowser1 = null;
+
+            if (File.Exists(_pathFilePdf))
+                File.Delete(_pathFilePdf);
         }
     }
 }
