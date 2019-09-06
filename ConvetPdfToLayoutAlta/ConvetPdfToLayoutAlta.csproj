@@ -173,6 +173,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Resources\Map-Posicionamento_Contratos-.xlsx" />
+    <None Include="Resources\Map-Posicionamento_Ocorrências.xlsm" />
+    <None Include="Resources\Map-Posicionamento_Parcelas.xlsx" />
+    <None Include="Resources\Map-Posicionamento_Tela20.xlsm" />
+    <None Include="Resources\Map-Posicionamento_Tela25.xlsm" />
+    <None Include="Resources\Mpa-Posicionamento_Tela18.xlsm" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
