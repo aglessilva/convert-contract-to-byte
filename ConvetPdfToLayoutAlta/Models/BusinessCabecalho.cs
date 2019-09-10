@@ -1382,6 +1382,7 @@ namespace ConvetPdfToLayoutAlta.Models
                 strAlta = string.Empty;
                 using (StreamWriter escreverParcelas = new StreamWriter(_diretorioDestino + @"\TL16PARC.txt", true, Encoding.Default))
                 {
+                    string _sinal = string.Empty;
                     lstContratosPdf.ForEach(q =>
                     {
                         strAlta = string.Empty;
@@ -1394,6 +1395,8 @@ namespace ConvetPdfToLayoutAlta.Models
                                 {
                                     strAlta = string.Empty;
 
+                                    _sinal = Convert.ToInt32(p.Amortizacao) < 0 ? "-" : "+";
+
                                     bool hasOcorrencia = q.Ocorrencias.Any(x => x.IdParcela == p.Id);
                                     strAlta = string.Format("{0}", (q.Carteira.Substring(2, 2) + q.Contrato).PadRight(15, '0'));
                                     strAlta += string.Format("{0}{1}", p.Vencimento.Trim().PadLeft(10, '0'), (p.Indice.Trim().Equals("") ? p.IndiceCorrecao.Trim() : p.Indice.Trim()).PadRight(7, '0'));
@@ -1403,7 +1406,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                     strAlta += string.Format("{0}{1}", p.AmortizacaoCorrecao.Trim().PadLeft(17, '0'), "+" + p.SaldoDevedorCorrecao.Trim().PadLeft(18, '0'));
                                     strAlta += string.Format("{0}{1}", Regex.Replace(p.Encargo.Trim(), @"[^0-9$]+", "").PadLeft(18, '0'), p.Pago.Trim().PadLeft(18, '0'));
                                     strAlta += string.Format("{0}{1}", p.Juros.Trim().PadLeft(18, '0'), p.Mora.Trim().PadLeft(18, '0'));
-                                    strAlta += string.Format("{0}{1}", p.Amortizacao.Trim().PadLeft(17, '0'), "+" + p.SaldoDevedor.Trim().PadLeft(18, '0'));
+                                    strAlta += string.Format("{0}{1}", Regex.Replace(p.Amortizacao, @"[^0-9$]+", "").PadLeft(17, '0')+ _sinal,  p.SaldoDevedor.Trim().PadLeft(18, '0'));
                                     strAlta += string.Format("{0}{1}", "0".PadLeft(4, '0'), "0".PadLeft(10, '0'));
                                     strAlta += string.Format("{0}{1}{2}", p.Proc_Emi_Pag.Trim().PadLeft(20, '0'), (hasOcorrencia ? p.NumeroPrazo.Substring(0, 3) : "0".PadLeft(3, '0')), "0".PadLeft(12, '0'));
 

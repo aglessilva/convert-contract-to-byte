@@ -53,17 +53,10 @@ namespace ConvetPdfToLayoutAlta.Models
                             _obj.Prestacao = Regex.Replace(_linha[count++], @"[^0-9$]", "");
                             _obj.Seguro = Regex.Replace(_linha[count++], @"[^0-9$]", "");
                             _obj.Taxa = _obj.Taxa != "0" ? _obj.Taxa :  _linha.Length > 11 ? Regex.Replace(_linha[count++], @"[^0-9$]", "") :  _linha.Length > 10 && cabecalho.Iof == "0" ? Regex.Replace(_linha[count++], @"[^0-9$]", "") : "0";
-
-                            //if (_hasTaxa && _linha.Length < 11)
-                            //{
-                            //    count--;
-                            //    _obj.Taxa = "0";
-                            //}
-
                             _obj.Iof = Convert.ToInt32(cabecalho.Iof) != 0 ? Regex.Replace(_linha[count++], @"[^0-9$]", "") : "0";
                             _obj.Encargo = Regex.Replace(_linha[count++], @"[^0-9.,$]", "");
                             _obj.Juros = Regex.Replace(_linha[count++], @"[^0-9$]", "");
-                            _obj.Amortizacao = Regex.Replace(_linha[count++], @"[^0-9$]", "");
+                            _obj.Amortizacao = Regex.Replace(_linha[count++], @"[^0-9$\-]", "");
                             _obj.SaldoDevedor = Regex.Replace(_linha[count++], @"[^0-9$]", "");
 
                             break;
@@ -177,7 +170,7 @@ namespace ConvetPdfToLayoutAlta.Models
 
         public string[] TrataArray(string _linha)
         {
-            _linha = Regex.Replace(_linha, @"[^A-Za-zÀ-ú0-9\/,.$]", " ");
+            _linha = Regex.Replace(_linha, @"[^A-Za-zÀ-ú0-9\/,.\-$]", " ");
             return _linha.Split(' ').Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
         }
 
