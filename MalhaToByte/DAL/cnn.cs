@@ -12,7 +12,7 @@ namespace MalhaToByte.DAL
     public class Cnn
     {
 
-       public static string strConn = @"Password=#$Sucesso01;Persist Security Info=True;User ID=sa;Initial Catalog=DB_FileSafe;Data Source=HAGLESPW701\SQLEXPRESS";
+       public static string strConn = @"Password=01#$Sucesso;Persist Security Info=True;User ID=sa;Initial Catalog=DB_FileSafe;Data Source=NP2110929\SQLEXPRESS";
             
 
         static SqlCommand command = new SqlCommand();
@@ -85,10 +85,11 @@ namespace MalhaToByte.DAL
                     ByteFile.ForEach(x =>
                     {
                         command.Parameters.Add(new SqlParameter("@ContractName", x.ContractName));
+                        command.Parameters.Add(new SqlParameter("@DocumentCpf", x.DocumentCpf));
                         command.Parameters.Add(new SqlParameter("@FileEncryption", x.FileEncryption));
                         ret += command.ExecuteNonQuery();
                         command.Parameters.Clear();
-                        Thread.Sleep(300);
+                       // Thread.Sleep(100);
                     });
 
 

@@ -10,6 +10,7 @@ namespace ConversorToByte.DTO
     {
         public int Id { get; set; }
         public string NameContract { get; set; }
+        public string DocumentCpf { get; set; }
         public byte[] FileEncryption { get; set; }
     }
 }

@@ -325,7 +325,7 @@
             this.MinimizeBox = false;
             this.Name = "FrmSelectFolder";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Converter contratos para formato sequencial   (v1.0) ";
+            this.Text = "Converter contratos para formato sequencial  -";
             this.Load += new System.EventHandler(this.FrmSelectFolder_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

@@ -37,7 +37,8 @@ namespace ConversorToByte.DALL
                     {
                         Id = Convert.ToInt32(dr[0].ToString()),
                         NameContract = dr[1].ToString(),
-                        FileEncryption = (dr[2] == DBNull.Value) ? default(byte[]) : (byte[])dr[2] 
+                        DocumentCpf  = dr[2].ToString(),
+                        FileEncryption = (dr[3] == DBNull.Value) ? default(byte[]) : (byte[])dr[3] 
                     };
 
                     lst.Add(obj);
@@ -122,9 +123,9 @@ namespace ConversorToByte.DALL
                     command = cnx.Parametriza(Procedures.SP_POST_USERS);
                     command.Connection = command.Connection;
                     command.Connection.Open();
-                    command.Parameters.Add(new SqlParameter("@USERLOGIN", _user.UserLogin));
-                    command.Parameters.Add(new SqlParameter("@USERNAME", _user.UserName));
-                    command.Parameters.Add(new SqlParameter("@USEREMAIL", _user.UserEmail));
+                    command.Parameters.Add(new SqlParameter("@USERLOGIN", _user.UserLogin.Trim()));
+                    command.Parameters.Add(new SqlParameter("@USEREMAIL", _user.UserEmail.Trim()));
+                    command.Parameters.Add(new SqlParameter("@USERNAME", _user.UserName.Trim()));
                     command.Parameters.Add(new SqlParameter("@ISGESTORAPP", false));
                     ret = command.ExecuteNonQuery();
                     cnx.FecharConexao(command);

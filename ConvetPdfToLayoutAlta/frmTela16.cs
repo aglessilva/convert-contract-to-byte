@@ -243,7 +243,10 @@ namespace ConvetPdfToLayoutAlta
                                         if (arrayIgnorParcelas.Any(k => line.Split(' ').Any(p => k.Equals(p))))
                                             continue;
 
-                                        if (line.Contains("Cronograma"))
+                                        if (Regex.IsMatch(line, @"(^\d{4}\-[\s\w\-]+$)"))
+                                            isFinal = true;
+
+                                            if (line.Contains("Cronograma"))
                                             lstCronograma.Add(objCabecalho.Contrato);
 
                                         if (i > 1 && line.Contains("C.P.F."))
@@ -266,7 +269,7 @@ namespace ConvetPdfToLayoutAlta
                                         }
                                         if (isParcelas)
                                         {
-                                            if (line.Split('-').Length == 2)
+                                            if (Regex.IsMatch(line, @"(^\d{4}\-[\s\w\-]+$)"))
                                             {
                                                 string[] _arraySituacao = line.Split('-');
                                                 if (_arraySituacao[0].Length == 4)
@@ -456,10 +459,10 @@ namespace ConvetPdfToLayoutAlta
                                                     string statusContrato = string.Empty;
                                                     string[] _arraySituacao = null;
 
-                                                    while ((line = strReader.ReadLine()) != null)
+                                                    do
                                                     {
                                                         if (line.IndexOf(':') > 1) break;
-                                                        if (line.Split('-').Length == 2)
+                                                        if (line.Split('-')[0].Length == 4)
                                                         {
                                                             _arraySituacao = line.Split('-');
                                                             if (_arraySituacao[0].Length == 4)
@@ -470,7 +473,7 @@ namespace ConvetPdfToLayoutAlta
                                                                 continue;
                                                             }
                                                         }
-                                                    }
+                                                    } while ((line = strReader.ReadLine()) != null);
                                                     continue;
                                                 }
                                             }

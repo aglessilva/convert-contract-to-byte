@@ -74,9 +74,9 @@
             this.pnlUser.Controls.Add(this.lblEmail);
             this.pnlUser.Controls.Add(this.lblNome);
             this.pnlUser.Enabled = false;
-            this.pnlUser.Location = new System.Drawing.Point(134, 12);
+            this.pnlUser.Location = new System.Drawing.Point(171, 12);
             this.pnlUser.Name = "pnlUser";
-            this.pnlUser.Size = new System.Drawing.Size(311, 92);
+            this.pnlUser.Size = new System.Drawing.Size(274, 92);
             this.pnlUser.TabIndex = 7;
             // 
             // label2
@@ -139,23 +139,23 @@
             // 
             // textBoxLogin
             // 
-            this.textBoxLogin.Location = new System.Drawing.Point(9, 43);
+            this.textBoxLogin.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBoxLogin.Location = new System.Drawing.Point(9, 44);
             this.textBoxLogin.MaxLength = 15;
             this.textBoxLogin.Name = "textBoxLogin";
-            this.textBoxLogin.Size = new System.Drawing.Size(94, 20);
+            this.textBoxLogin.Size = new System.Drawing.Size(125, 29);
             this.textBoxLogin.TabIndex = 0;
             this.textBoxLogin.TextChanged += new System.EventHandler(this.textBoxLogin_TextChanged);
             // 
             // btnPesquisar
             // 
             this.btnPesquisar.Enabled = false;
+            this.btnPesquisar.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnPesquisar.Image = ((System.Drawing.Image)(resources.GetObject("btnPesquisar.Image")));
-            this.btnPesquisar.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnPesquisar.Location = new System.Drawing.Point(9, 68);
+            this.btnPesquisar.Location = new System.Drawing.Point(133, 43);
             this.btnPesquisar.Name = "btnPesquisar";
-            this.btnPesquisar.Size = new System.Drawing.Size(94, 24);
+            this.btnPesquisar.Size = new System.Drawing.Size(32, 31);
             this.btnPesquisar.TabIndex = 1;
-            this.btnPesquisar.Text = "Pesquisar...";
             this.btnPesquisar.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btnPesquisar.UseVisualStyleBackColor = true;
             this.btnPesquisar.Click += new System.EventHandler(this.btnPesquisar_Click);

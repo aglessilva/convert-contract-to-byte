@@ -145,7 +145,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                             .Replace("Data 1 Vencimento", ":Data1v").Trim()
                                             .Replace("Código Contábil", ":Contabil").Trim()
                                             .Replace("Empreendimento", ":Emp").Trim()
-                                            .Replace("Apólice", ":apolice").Trim()
+                                            .Replace("Apólice", ":aplc").Trim()
                                             .Replace("Data Inclusao", ":DtInc").Trim()
                                             .Replace("Prorrogação", "Prorrogacao").Trim()
                                             .Replace("Prazo", ":Prazo").Trim()
@@ -430,10 +430,10 @@ namespace ConvetPdfToLayoutAlta.Models
                                 obj.Iof = Regex.Replace(_arrayLinha[_id].Replace("SEG", "").Trim(), @"[^0-9\/$]+", "");
                             }
 
-                            if (_arrayLinha.Any(n => n.Contains("apolice")))
+                            if (_arrayLinha.Any(n => n.Contains("aplc")))
                             {
-                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("apolice"));
-                                obj.Apolice =  string.IsNullOrWhiteSpace(obj.Apolice) ? Regex.Replace(_arrayLinha[_id].Replace("apolice", "").Trim(), @"[^0-9$]+", "") : obj.Apolice;
+                                _id = _arrayLinha.ToList().FindIndex(f => Regex.IsMatch(f, @"(^[\w]{4}\s\d{6}$)"));
+                                obj.Apolice =  string.IsNullOrWhiteSpace(obj.Apolice) ? Regex.Replace(_arrayLinha[_id].Replace("aplc", "").Trim(), @"[^0-9$]+", "") : obj.Apolice;
                             }
 
                             if (_arrayLinha.Any(n => n.Contains("TaxaJuros")))

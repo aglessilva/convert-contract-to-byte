@@ -1,16 +1,7 @@
 ﻿
 using ConversorToByte.DTO;
-using Microsoft.Win32.SafeHandles;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ConversorToByte
@@ -27,21 +18,31 @@ namespace ConversorToByte
 
         private void frmpdf_Load(object sender, EventArgs e)
         {
-            this.Text =  "Contrato: " + _file.NameContract;
+
+#if !DEBUG
+            _pathFilePdf = Directory.GetCurrentDirectory();
+
+            if (!Directory.Exists($@"{_pathFilePdf}\tmp"))
+                Directory.CreateDirectory($@"{_pathFilePdf}\tmp");
+            _pathFilePdf = $@"{_pathFilePdf}\tmp";
+#else
+            _pathFilePdf = @"C:\Lixo\tmp";
+#endif
+
+           Text = "Contrato: " + _file.NameContract;
             _pathFilePdf = Path.ChangeExtension(Path.GetTempFileName(), "pdf");
             File.WriteAllBytes(_pathFilePdf, _file.FileEncryption);
             webBrowser1.Navigate(_pathFilePdf);
+
+        
+
         }
 
-        private void frmpdf_FormClosing(object sender, FormClosingEventArgs e)
+        private void Frmpdf_FormClosing(object sender, FormClosingEventArgs e)
         {
-
             webBrowser1.Stop();
             webBrowser1.Dispose();
             webBrowser1 = null;
-
-            if (File.Exists(_pathFilePdf))
-                File.Delete(_pathFilePdf);
         }
     }
 }

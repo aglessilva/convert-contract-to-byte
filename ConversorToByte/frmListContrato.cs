@@ -51,14 +51,14 @@ namespace ConversorToByte
 
 
 
-        private void dataGridViewContract_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void DataGridViewContract_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
-            if (e.ColumnIndex != 2 && e.ColumnIndex != 3)
+            if (e.ColumnIndex < 3)
                 return;
 
             var senderGrid = (DataGridView)sender;
-            if (senderGrid.Columns[e.ColumnIndex] is DataGridViewImageColumn && e.RowIndex >= 0 && e.ColumnIndex == 2)
+            if (senderGrid.Columns[e.ColumnIndex] is DataGridViewImageColumn && e.RowIndex >= 0 && e.ColumnIndex ==3)
             {
                 FileSafe obj = (FileSafe)dataGridViewContract.Rows[e.RowIndex].DataBoundItem;
                 SaveFileDialog saveFile = new SaveFileDialog();
@@ -84,13 +84,14 @@ namespace ConversorToByte
                 }
             }
 
-            if (senderGrid.Columns[e.ColumnIndex] is DataGridViewImageColumn && e.RowIndex >= 0 && e.ColumnIndex == 3)
+            if (senderGrid.Columns[e.ColumnIndex] is DataGridViewImageColumn && e.RowIndex >= 0 && e.ColumnIndex == 4)
              {
                  string _idContract = senderGrid[0, e.RowIndex].Value.ToString();
                  fsf = new FileSafeOperations();
                  FileSafe _file = fsf.GetFilesSafe(_idContract);
                  frmpdf _frmPdf = new frmpdf(_file);
                  _frmPdf.ShowDialog();
+                
              }
         }
 

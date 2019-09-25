@@ -35,15 +35,16 @@
             this.btnLimpar = new System.Windows.Forms.Button();
             this.textBoxContratocpf = new System.Windows.Forms.TextBox();
             this.dataGridViewContract = new System.Windows.Forms.DataGridView();
-            this.ID = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.NameContract = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Download = new System.Windows.Forms.DataGridViewImageColumn();
-            this.Vizualizar = new System.Windows.Forms.DataGridViewImageColumn();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.addUsuarioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageListItem = new System.Windows.Forms.ImageList(this.components);
             this.dataGridViewImageColumn1 = new System.Windows.Forms.DataGridViewImageColumn();
             this.dataGridViewImageColumn2 = new System.Windows.Forms.DataGridViewImageColumn();
+            this.ID = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.NameContract = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.DocumentCpf = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Download = new System.Windows.Forms.DataGridViewImageColumn();
+            this.Vizualizar = new System.Windows.Forms.DataGridViewImageColumn();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewContract)).BeginInit();
             this.menuStrip1.SuspendLayout();
@@ -96,6 +97,7 @@
             this.dataGridViewContract.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.ID,
             this.NameContract,
+            this.DocumentCpf,
             this.Download,
             this.Vizualizar});
             this.dataGridViewContract.Location = new System.Drawing.Point(12, 101);
@@ -107,48 +109,7 @@
             this.dataGridViewContract.Size = new System.Drawing.Size(443, 396);
             this.dataGridViewContract.TabIndex = 3;
             this.dataGridViewContract.TabStop = false;
-            this.dataGridViewContract.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewContract_CellContentClick);
-            // 
-            // ID
-            // 
-            this.ID.DataPropertyName = "Id";
-            this.ID.HeaderText = "";
-            this.ID.Name = "ID";
-            this.ID.ReadOnly = true;
-            this.ID.Visible = false;
-            // 
-            // NameContract
-            // 
-            this.NameContract.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.NameContract.DataPropertyName = "NameContract";
-            this.NameContract.HeaderText = "Contrato";
-            this.NameContract.Name = "NameContract";
-            this.NameContract.ReadOnly = true;
-            this.NameContract.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            // 
-            // Download
-            // 
-            this.Download.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.Download.Description = "Baixar Arquivo";
-            this.Download.HeaderText = "";
-            this.Download.Image = global::ConversorToByte.Properties.Resources.ic_cloud_download_128_28299;
-            this.Download.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
-            this.Download.Name = "Download";
-            this.Download.ReadOnly = true;
-            this.Download.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.Download.ToolTipText = "Baixar Arquivo compactado";
-            this.Download.Width = 30;
-            // 
-            // Vizualizar
-            // 
-            this.Vizualizar.HeaderText = "";
-            this.Vizualizar.Image = ((System.Drawing.Image)(resources.GetObject("Vizualizar.Image")));
-            this.Vizualizar.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
-            this.Vizualizar.Name = "Vizualizar";
-            this.Vizualizar.ReadOnly = true;
-            this.Vizualizar.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.Vizualizar.ToolTipText = "Vizualizar Arquivo";
-            this.Vizualizar.Width = 30;
+            this.dataGridViewContract.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridViewContract_CellContentClick);
             // 
             // menuStrip1
             // 
@@ -197,6 +158,55 @@
             this.dataGridViewImageColumn2.ToolTipText = "Vizualizar Arquivo";
             this.dataGridViewImageColumn2.Width = 30;
             // 
+            // ID
+            // 
+            this.ID.DataPropertyName = "Id";
+            this.ID.HeaderText = "";
+            this.ID.Name = "ID";
+            this.ID.ReadOnly = true;
+            this.ID.Visible = false;
+            // 
+            // NameContract
+            // 
+            this.NameContract.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.NameContract.DataPropertyName = "NameContract";
+            this.NameContract.HeaderText = "Contrato";
+            this.NameContract.Name = "NameContract";
+            this.NameContract.ReadOnly = true;
+            this.NameContract.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            // 
+            // DocumentCpf
+            // 
+            this.DocumentCpf.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.DocumentCpf.DataPropertyName = "DocumentCpf";
+            this.DocumentCpf.HeaderText = "Documento";
+            this.DocumentCpf.Name = "DocumentCpf";
+            this.DocumentCpf.ReadOnly = true;
+            // 
+            // Download
+            // 
+            this.Download.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.Download.Description = "Baixar Arquivo";
+            this.Download.HeaderText = "";
+            this.Download.Image = global::ConversorToByte.Properties.Resources.ic_cloud_download_128_28299;
+            this.Download.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
+            this.Download.Name = "Download";
+            this.Download.ReadOnly = true;
+            this.Download.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.Download.ToolTipText = "Baixar Arquivo compactado";
+            this.Download.Width = 30;
+            // 
+            // Vizualizar
+            // 
+            this.Vizualizar.HeaderText = "";
+            this.Vizualizar.Image = ((System.Drawing.Image)(resources.GetObject("Vizualizar.Image")));
+            this.Vizualizar.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
+            this.Vizualizar.Name = "Vizualizar";
+            this.Vizualizar.ReadOnly = true;
+            this.Vizualizar.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.Vizualizar.ToolTipText = "Vizualizar Arquivo";
+            this.Vizualizar.Width = 30;
+            // 
             // frmListContrato
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -238,6 +248,7 @@
         private System.Windows.Forms.DataGridViewImageColumn dataGridViewImageColumn2;
         private System.Windows.Forms.DataGridViewTextBoxColumn ID;
         private System.Windows.Forms.DataGridViewTextBoxColumn NameContract;
+        private System.Windows.Forms.DataGridViewTextBoxColumn DocumentCpf;
         private System.Windows.Forms.DataGridViewImageColumn Download;
         private System.Windows.Forms.DataGridViewImageColumn Vizualizar;
     }

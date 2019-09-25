@@ -89,6 +89,9 @@ namespace ConversorToByte
         private void textBoxLogin_TextChanged(object sender, EventArgs e)
         {
             btnPesquisar.Enabled = (textBoxLogin.Text.Length >= 6);
+
+            if (pnlUser.Enabled)
+                btnAdd.Enabled = false;
         }
 
         private void dataGridViewUsuario_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -137,7 +140,13 @@ namespace ConversorToByte
                 return;
             }
 
+            lblEmail.Text = lblNome.Text = "-";
+            pnlUser.Enabled = btnPesquisar.Enabled = false;
+            textBoxLogin.Text = string.Empty;
+            textBoxLogin.Focus();
             BindGrid();
+
+            
         }
 
 

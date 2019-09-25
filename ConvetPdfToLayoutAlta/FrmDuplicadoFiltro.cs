@@ -78,7 +78,8 @@ namespace ConvetPdfToLayoutAlta
             }
             catch (Exception ex)
             {
-                throw new Exception("Erro ao tentar iniciar o processo de leitura de contrato: " + ex.Message);
+                Close();
+                MessageBox.Show("Erro ao tentar iniciar o processo de leitura de contrato,\n Descrição: " + ex.Message,"Erro", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
 
         }

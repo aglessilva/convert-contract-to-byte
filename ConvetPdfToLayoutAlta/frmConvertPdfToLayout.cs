@@ -147,18 +147,47 @@ namespace ConvetPdfToLayoutAlta
         {
             FrmTela16 f = new FrmTela16(@"D:\Testes", @"D:\Testes\txt", "TELA 16");
             f.ShowDialog();
-            this.Show();
+           
         }
 
         private void Button2_Click(object sender, EventArgs e)
         {
-            FrmTela16 f = new FrmTela16(@"D:\PDFSTombamento\Exceptions", @"D:\PDFSTombamento\txt", "TELA16");
+            FrmTela16 f = new FrmTela16(@"C:\TombTesteUnitarios", @"C:\TombTesteUnitarios\ALTA", "TELA16");
             f.ShowDialog();
-            this.Show();
+           
+        }
+
+        private void UpdateApp()
+        {
+
+            Text += $" (V{Application.ProductVersion})";
+            try
+            {
+                var updateManager = NAppUpdate.Framework.UpdateManager.Instance;
+                updateManager.UpdateSource = new NAppUpdate.Framework.Sources.SimpleWebSource($@"\\bsbrsp1010\apps\MI\RELATORIOS\ClickOnceExtratorPdf\NAppUpdate.xml");
+                updateManager.ReinstateIfRestarted();
+
+                if (updateManager.State == NAppUpdate.Framework.UpdateManager.UpdateProcessState.NotChecked)
+                {
+                    updateManager.CheckForUpdates();
+                    if (updateManager.UpdatesAvailable > 0)
+                    {
+                        updateManager.PrepareUpdates();
+                        updateManager.ApplyUpdates(true);
+                    }
+                }
+
+            }
+            catch (Exception exc)
+            {
+                MessageBox.Show($"Ocorreu um erro ao tentar atualizar a ferramenta\nDescrição: {exc.Message}", "Erro de atualização", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void FrmSelectFolder_Load(object sender, EventArgs e)
         {
+            UpdateApp();
+
             comboBoxTela.SelectedIndex = 4;
             ToolTip toolTip = new ToolTip();
             toolTip.SetToolTip(btnDuplicata, "Filtra os arquivos com base no PONTEIRO e remove duplicidade de pdfs das VM's.");
