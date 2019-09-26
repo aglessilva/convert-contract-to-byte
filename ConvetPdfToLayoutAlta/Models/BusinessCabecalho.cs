@@ -160,7 +160,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                             .Replace("Reajuste",":Reaj")
 
                                             .Trim().Split(':')
-                                            .Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
+                                            .Where(x => !string.IsNullOrWhiteSpace(x.Trim())).ToArray();
 
                         break;
                     }
@@ -432,8 +432,9 @@ namespace ConvetPdfToLayoutAlta.Models
 
                             if (_arrayLinha.Any(n => n.Contains("aplc")))
                             {
-                                _id = _arrayLinha.ToList().FindIndex(f => Regex.IsMatch(f, @"(^[\w]{4}\s\d{6}$)"));
-                                obj.Apolice =  string.IsNullOrWhiteSpace(obj.Apolice) ? Regex.Replace(_arrayLinha[_id].Replace("aplc", "").Trim(), @"[^0-9$]+", "") : obj.Apolice;
+                                _id = _arrayLinha.ToList().FindIndex(f => Regex.IsMatch(f.Trim(), @"(^[\w]{4}\s\d{6}$)"));
+                                if (_id >= 0)
+                                    obj.Apolice = string.IsNullOrWhiteSpace(obj.Apolice) ? Regex.Replace(_arrayLinha[_id].Replace("aplc", "").Trim(), @"[^0-9$]+", "") : obj.Apolice;
                             }
 
                             if (_arrayLinha.Any(n => n.Contains("TaxaJuros")))
@@ -535,7 +536,7 @@ namespace ConvetPdfToLayoutAlta.Models
             }
             catch (Exception exOut)
             {
-                throw new ArgumentOutOfRangeException("Cabeçaho do PDF - Arquivo: BusinessCabecalho - case: " + _case, exOut.InnerException);
+                throw new ArgumentOutOfRangeException("Cabeçaho do PDF - Arquivo: BusinessCabecalho - case: " + _case, exOut.Message);
                 throw exOut;
             }
 
@@ -1044,6 +1045,10 @@ namespace ConvetPdfToLayoutAlta.Models
                                     //Data: 31/07/2019 as 10:30hs
                                     if (o.IsNovoPrazo)
                                     {
+                                        // Solicitação da Camila, quando houver amortização fgts(Damp), seguido de alteração de (Novo Prazo)
+                                        // Enviar a segunda ocorrencia com o codigo 010 exemplo: ***010Alteração Contratual
+                                        strAltaNovoPrazo = strAltaNovoPrazo.Replace("021Amortização rec. Fgts", "010Alteração Contratual").PadRight(71, ' ');
+
                                         strAltaNovoPrazo += string.Format("{0}{1}{2}", "0".PadLeft(72, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'), "PRAZO".PadRight(30, ' '));
                                         strAltaNovoPrazo += string.Format("{0}{1}", _parcela.NumeroPrazo.Substring(3).Trim().PadRight(30, ' '), o.NovoNumeroPrazo.PadLeft(3, '0').Trim().PadRight(30, ' '));
 

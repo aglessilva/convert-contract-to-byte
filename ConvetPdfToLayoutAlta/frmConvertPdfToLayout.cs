@@ -131,7 +131,7 @@ namespace ConvetPdfToLayoutAlta
                 orderExcute[comboBoxTela.SelectedIndex] = true;
                 isProcessado[comboBoxTela.SelectedIndex] = true;
 
-                Text += "-" + comboBoxTela.Text;
+                Text += "-" + comboBoxTela.Text + $" - (V{Application.ProductVersion})"; ;
                 f.ShowDialog();
                 panelSpinner.Visible = !panelSpinner.Visible;
                 Text = Text.Split('-')[0];

@@ -33,7 +33,7 @@ namespace ConversorToByte
             fsf = new FileSafeOperations();
             Users obj = fsf.CheckUser(Environment.UserName);
 
-            dataGridViewContract.Enabled = obj.IsAtivo;
+            dataGridViewContract.Enabled = (obj.IsAtivo || obj.IsGestorApp);
 
             ValidaPermissao(obj);
             List<FileSafe> lst =  fsf.GetFilesSafe(null,null);
