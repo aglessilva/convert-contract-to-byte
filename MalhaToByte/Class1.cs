@@ -19,20 +19,22 @@ namespace ConvertToByte
         static void Main(string[] args)
         {
 
-            GetTableExcel();
+            // GetTableExcel();
 
-            //IEnumerable<string> fileContract = Directory.EnumerateFiles(@"C:\TombamentoV1_01\SIMULADO2019-08-30", "*_16.pdf", SearchOption.AllDirectories);
+            IEnumerable<string> fileContract = Directory.EnumerateFiles(@"C:\TombamentoV1_01\SIMULADO2019-08-30", "*_16.pdf", SearchOption.AllDirectories);
 
-            //using (StreamWriter sw = new StreamWriter(@"C:\TombamentoV1_01\ARQUPONT.txt", true, Encoding.UTF8))
-            //{
-            //    fileContract.ToList().ForEach(w =>
-            //    {
-            //        FileInfo _contract = new FileInfo(w);
+            using (StreamWriter sw = new StreamWriter(@"C:\TombamentoV1_01\ARQUPONT.txt", true, Encoding.ASCII))
+            {
+                using (StreamReader sr = new StreamReader(@"C:\#Projetos\convert-contract-to-byte\ConvetPdfToLayoutAlta\bin\Debug\ALTA\TL16CONT.txt"))
+                {
+                    while (!sr.EndOfStream)
+                    {
+                        string texto = "01"+ sr.ReadLine().Substring(0,15)+"1";
+                        sw.WriteLine(texto);
 
-            //        sw.WriteLine(_contract.Name.Split('_')[0]);
-
-            //    });
-            //}
+                    }
+                }
+            }
         }
 
 

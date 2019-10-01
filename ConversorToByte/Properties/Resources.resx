@@ -118,22 +118,25 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="xmag_search_find_export_locate_5984" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\xmag_search_find_export_locate_5984.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ic_cloud_download_128_28299" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ic_cloud_download_128_28299.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="add_icon-icons.com_52393" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\add_icon-icons.com_52393.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="business_application_addmale_useradd_insert_add_user_client_2312" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\business_application_addmale_useradd_insert_add_user_client_2312.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="xmag_search_find_export_locate_5984" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\xmag_search_find_export_locate_5984.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="clear_filters-48_45590 (1)" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\clear_filters-48_45590 (1).ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="business_salesreport_salesreport_negocio_2353" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\business_salesreport_salesreport_negocio_2353.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="clear_filters-48_45590 (1)" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\clear_filters-48_45590 (1).ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ic_cloud_download_128_28299" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ic_cloud_download_128_28299.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="business_application_addmale_useradd_insert_add_user_client_2312" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\business_application_addmale_useradd_insert_add_user_client_2312.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ajax-loader" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ajax-loader.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

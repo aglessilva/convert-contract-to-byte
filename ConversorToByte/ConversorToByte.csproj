@@ -126,6 +126,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\clear_filters-48_45590 %281%29.ico" />
+    <None Include="Resources\ajax-loader.gif" />
     <Content Include="Resources\xmag_search_find_export_locate_5984.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

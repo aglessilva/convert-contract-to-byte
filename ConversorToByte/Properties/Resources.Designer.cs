@@ -73,6 +73,16 @@ namespace ConversorToByte.Properties {
         /// <summary>
         ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap ajax_loader {
+            get {
+                object obj = ResourceManager.GetObject("ajax-loader", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap business_application_addmale_useradd_insert_add_user_client_2312 {
             get {
                 object obj = ResourceManager.GetObject("business_application_addmale_useradd_insert_add_user_client_2312", resourceCulture);

@@ -92,6 +92,8 @@ namespace ConvetPdfToLayoutAlta
             obj = (UserObject)e.UserState;
 
             lblLidos.Text = string.Format("Contratos lidos: {0}", e.ProgressPercentage.ToString());
+
+            
             progressBarReaderPdf.Value = e.ProgressPercentage;
 
             if (obj != null)
@@ -190,9 +192,13 @@ namespace ConvetPdfToLayoutAlta
                     return;
                 totalPorPasta = listContratoBlockPdf.Count();
 
-                listContratoBlockPdf.ToList().ForEach(w =>
+                foreach (string w in listContratoBlockPdf)
                 {
-                  
+
+                //}
+                //listContratoBlockPdf.ToList().ForEach(w =>
+                //{
+
                     ITextExtractionStrategy its;
                     try
                     {
@@ -225,7 +231,7 @@ namespace ConvetPdfToLayoutAlta
                                     padrao = 1;
 
                                 #region Padrão 1
-
+                               
                                 using (StringReader strReader = new StringReader(pagina))
                                 {
                                     string line;
@@ -246,7 +252,7 @@ namespace ConvetPdfToLayoutAlta
                                         if (Regex.IsMatch(line, @"(^\d{4}\-[\s\w\-]+$)"))
                                             isFinal = true;
 
-                                            if (line.Contains("Cronograma"))
+                                        if (line.Contains("Cronograma"))
                                             lstCronograma.Add(objCabecalho.Contrato);
 
                                         if (i > 1 && line.Contains("C.P.F."))
@@ -266,6 +272,29 @@ namespace ConvetPdfToLayoutAlta
                                             isParcelas = false;
 
                                             objCabecalho = businessCabecalho.PreencheCabecalho(objCabecalho);
+                                        }
+
+                                        if (line.Contains("Emissão"))
+                                        {
+                                            cabecalho = businessCabecalho.TrataLinhaPDF(line, 7);
+
+                                            if (i == 1 && !isBody)
+                                            {
+                                                if (line.Contains("CTFIN"))
+                                                {
+                                                    if (!cabecalho.Any(c => c.Contains("CTFIN/O016A")))
+                                                    {
+                                                        isNotTela16 = true;
+                                                        isErro = true;
+                                                        ExceptionError.countError++;
+                                                        ExceptionError.TrataErros(arquivoPdf.Name, "O Arquivo não é do tipo CTFIN/O016A", diretorioDestinoLayout);
+                                                        break;
+                                                        //continue;
+                                                    }
+                                                }
+                                            }
+                                            //  objCabecalho = businessCabecalho.TrataCabecalho(objCabecalho, cabecalho, 7);
+                                            continue;
                                         }
                                         if (isParcelas)
                                         {
@@ -439,7 +468,8 @@ namespace ConvetPdfToLayoutAlta
                                                     if (lstParcelas.Count == 0)
                                                         objCorrencia.NaoTemParcela = true;
 
-                                                    lstOcorrencia.Add(objCorrencia);
+                                                    if (!string.IsNullOrWhiteSpace(objCorrencia.CodigoOcorrencia))
+                                                        lstOcorrencia.Add(objCorrencia);
 
                                                     continue;
                                                 }
@@ -539,7 +569,7 @@ namespace ConvetPdfToLayoutAlta
                                                 objCabecalho.ContaDeposito = cabecalho[2];
                                                 continue;
                                             }
-                                           
+
 
                                             if (line.Contains("CADOC"))
                                             {
@@ -568,27 +598,7 @@ namespace ConvetPdfToLayoutAlta
                                             objCabecalho = businessCabecalho.TrataCabecalho(objCabecalho, cabecalho, 6);
                                             continue;
                                         }
-                                        if (line.Contains("Emissão"))
-                                        {
-                                            cabecalho = businessCabecalho.TrataLinhaPDF(line, 7);
 
-                                            if (i == 1 && !isBody)
-                                            {
-                                                if (line.Contains("CTFIN"))
-                                                {
-                                                    if (!cabecalho.Any(c => c.Contains("CTFIN/O016A")))
-                                                    {
-                                                        isNotTela16 = true;
-                                                        isErro = true;
-                                                        ExceptionError.countError++;
-                                                        ExceptionError.TrataErros(arquivoPdf.Name, "O Arquivo não é do tipo CTFIN/O016A", diretorioDestinoLayout);
-                                                        break;
-                                                    }
-                                                }
-                                            }
-                                            objCabecalho = businessCabecalho.TrataCabecalho(objCabecalho, cabecalho, 7);
-                                            continue;
-                                        }
                                         if (line.Contains("Carteira"))
                                         {
                                             cabecalho = businessCabecalho.TrataLinhaPDF(line, 8);
@@ -637,11 +647,11 @@ namespace ConvetPdfToLayoutAlta
 
                                         if (arrayGetCampos.Any(y => line.Split(' ').Contains(y)))
                                         {
-                                            cabecalho = businessCabecalho.TrataLinhaPDF(line,100);
+                                            cabecalho = businessCabecalho.TrataLinhaPDF(line, 100);
                                             objCabecalho = businessCabecalho.TrataCabecalho(objCabecalho, cabecalho, 100);
                                             continue;
                                         }
-                                       
+
                                         if (line.Contains("Situações"))
                                         {
                                             if (line.Split(' ').Length == 1)
@@ -665,8 +675,14 @@ namespace ConvetPdfToLayoutAlta
                                 }
 
                                 if (isNotTela16)
-                                    return;
+                                    break;
                                 #endregion
+                            }
+
+                            if (isNotTela16)
+                            {
+                                isNotTela16 = false;
+                                continue;
                             }
 
                             if (objParcelas != null)
@@ -755,17 +771,17 @@ namespace ConvetPdfToLayoutAlta
                             StringBuilder strErro = new StringBuilder();
                             strErro.AppendLine(string.Format("CONTRATO: {0}", arquivoPdf.Name))
                                     .AppendLine(string.Format("PAGINA DO ERRO: {0}", numberPage))
-                                    .AppendLine(string.Format("DESCRIÇÃO DO ERRO: {0}","Arquivo danificado e não pode ser carregado para leitura: " + exFileload.Message))
+                                    .AppendLine(string.Format("DESCRIÇÃO DO ERRO: {0}", "Arquivo danificado e não pode ser carregado para leitura: " + exFileload.Message))
                                     .AppendLine(string.Format("DIRETORIO DO ARQUIVO: {0}", arquivoPdf.DirectoryName));
                             sw.Write(strErro);
                             sw.WriteLine("================================================================================================================================================");
                         }
-                       
+
                         ExceptionError.RemoverTela(arquivoPdf, diretorioOrigemPdf);
 
                         padrao = 0;
                         contador++;
-                        
+
                     }
                     catch (ArgumentOutOfRangeException ex)
                     {
@@ -793,9 +809,16 @@ namespace ConvetPdfToLayoutAlta
                         ExceptionError.RemoverTela(arquivoPdf, diretorioOrigemPdf);
                         padrao = 0;
                         contador++;
-                        
+
                     }
-                });
+
+
+                    catch (Exception ex)
+                    {
+                        string etrr0 = ex.Message;
+                    }
+               // });
+                }
 
             });
             if (lstContratosPdf.Count() > 0)

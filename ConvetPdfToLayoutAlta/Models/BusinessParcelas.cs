@@ -270,10 +270,14 @@ namespace ConvetPdfToLayoutAlta.Models
             Ocorrencia _obj = new Ocorrencia();
             _obj.Contrato = _contrato;
 
-            string _case = string.Empty, _codigoOcorrencia = _linhaOcorrencia.Any(u => u.Trim().Equals("DAMP")) ? _linhaOcorrencia[0] :  Regex.Replace(_linhaOcorrencia[2], @"[^0-9$]","").Substring(0, 3);
+            string _case = string.Empty ,_codigoOcorrencia = string.Empty;
             try
             {
-                    bool hasMora = _linhaOcorrencia.Any(t => t.Contains("Tot"));
+                if (_linhaOcorrencia.Length < 2)
+                    return _obj;
+
+                _codigoOcorrencia = _linhaOcorrencia.Any(u => u.Trim().Equals("DAMP")) ? _linhaOcorrencia[0] : Regex.Replace(_linhaOcorrencia[2], @"[^0-9$]", "").Substring(0, 3);
+                bool hasMora = _linhaOcorrencia.Any(t => t.Contains("Tot"));
 
                     if (_linhaOcorrencia.Any(d => d.Equals("DAMP")))
                         _codigoOcorrencia = "DAMP";

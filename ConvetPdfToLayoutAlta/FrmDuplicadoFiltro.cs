@@ -157,20 +157,23 @@ namespace ConvetPdfToLayoutAlta
                     if (!lstTela18.Any(gg => gg.Contains(dmp)))
                     {
                         strTela = lst16.FirstOrDefault(c => c.Contains(dmp));
-                        f = new FileInfo(strTela);
                         if (!string.IsNullOrWhiteSpace(strTela))
-                            File.Move(strTela, System.IO.Path.ChangeExtension(strTela, ".damp"));
+                        {
+                            f = new FileInfo(strTela);
+                            if (!string.IsNullOrWhiteSpace(strTela))
+                                File.Move(strTela, System.IO.Path.ChangeExtension(strTela, ".damp"));
 
-                        strTela = lst20.FirstOrDefault(c => c.Contains(dmp));
-                        if (!string.IsNullOrWhiteSpace(strTela))
-                            File.Move(strTela, System.IO.Path.ChangeExtension(strTela, ".damp"));
+                            strTela = lst20.FirstOrDefault(c => c.Contains(dmp));
+                            if (!string.IsNullOrWhiteSpace(strTela))
+                                File.Move(strTela, System.IO.Path.ChangeExtension(strTela, ".damp"));
 
-                        strTela = lst25.FirstOrDefault(c => c.Contains(dmp));
-                        if (!string.IsNullOrWhiteSpace(strTela))
-                            File.Move(strTela, System.IO.Path.ChangeExtension(strTela, ".damp"));
+                            strTela = lst25.FirstOrDefault(c => c.Contains(dmp));
+                            if (!string.IsNullOrWhiteSpace(strTela))
+                                File.Move(strTela, System.IO.Path.ChangeExtension(strTela, ".damp"));
 
-                        var o = new UserObject() { Contrato = dmp, PdfInfo = f };
-                        BackgroundWorkerDuplicadoFiltro.ReportProgress(countpercent, o);
+                            var o = new UserObject() { Contrato = dmp, PdfInfo = f };
+                            BackgroundWorkerDuplicadoFiltro.ReportProgress(countpercent, o);
+                        }
                     }
                 });
 

@@ -3,6 +3,7 @@ using ConversorToByte.DTO;
 using System;
 using System.Collections.Generic;
 using System.DirectoryServices;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace ConversorToByte
@@ -36,49 +37,76 @@ namespace ConversorToByte
             return string.Empty;
         }
 
+        private void SetLoading(bool displayLoader)
+        {
+            if (displayLoader)
+            {
+                Invoke((MethodInvoker)delegate
+                {
+                    pnlSpinner.Visible = groupBox1.Enabled;
+                    Cursor =Cursors.WaitCursor;
+                    pnlUser.Enabled = false;
+                    lblNome.Text = string.Empty;
+                    lblEmail.Text = string.Empty;
+                });
+            }
+            else
+            {
+                Invoke((MethodInvoker)delegate
+                {
+                    pnlSpinner.Visible = !groupBox1.Enabled;
+                    Cursor = Cursors.Default;
+                });
+            }
+        }
+
+
+        private void DisplayData()
+        {
+            SetLoading(true);
+
+            DirectoryEntry entry = new DirectoryEntry("LDAP://DCBS05");
+
+            DirectorySearcher dSearch = new DirectorySearcher(entry);
+
+            dSearch.Filter = "(&(objectClass=user)(samaccountname=" + textBoxLogin.Text.Trim() + "))";
+            dSearch.PageSize = 100;
+            dSearch.SizeLimit = 100;
+
+            string dados = null;
+
+            foreach (SearchResult sResultSet in dSearch.FindAll())
+            {
+                dados = GetProperty(sResultSet, "cn") + "|"; // Nome do usuario
+                dados += GetProperty(sResultSet, "mail"); // Email do usuario
+            }
+
+            pnlUser.Enabled = true;
+
+            if (!string.IsNullOrWhiteSpace(dados))
+            {
+                lblNome.Text = dados.Split('|')[0].ToString();
+                lblEmail.Text = dados.Split('|')[1].ToString();
+                btnAdd.Enabled = true;
+            }
+            else
+            {
+                lblNome.Text = "Não Encontrado";
+                lblEmail.Text = "Não Encontrado";
+                btnAdd.Enabled = false;
+            }
+
+            SetLoading(false);
+        }
+
         private void btnPesquisar_Click(object sender, EventArgs e)
         {
             try
             {
 
-                groupBox1.Enabled = !groupBox1.Enabled;
-                lblNome.Text = string.Empty;
-                lblEmail.Text = string.Empty;
-
-                pnlUser.Enabled = false;
-
-                DirectoryEntry entry = new DirectoryEntry("LDAP://DCBS05");
-
-                DirectorySearcher dSearch = new DirectorySearcher(entry);
-
-                dSearch.Filter = "(&(objectClass=user)(samaccountname=" + textBoxLogin.Text.Trim() + "))";
-                dSearch.PageSize = 100;
-                dSearch.SizeLimit = 100;
-
-                string dados = null;
-
-                foreach (SearchResult sResultSet in dSearch.FindAll())
-                {
-                    dados = GetProperty(sResultSet, "cn") + "|"; // Nome do usuario
-                    dados += GetProperty(sResultSet, "mail"); // Email do usuario
-                }
-
-                pnlUser.Enabled = true;
-
-                if (!string.IsNullOrWhiteSpace(dados))
-                {
-                    lblNome.Text = dados.Split('|')[0].ToString();
-                    lblEmail.Text = dados.Split('|')[1].ToString();
-                    btnAdd.Enabled = true;
-                }
-                else
-                {
-                    lblNome.Text = "Não Encontrado";
-                    lblEmail.Text = "Não Encontrado";
-                    btnAdd.Enabled = false;
-                }
-
-                groupBox1.Enabled = !groupBox1.Enabled;
+                Thread threadInput = new Thread(DisplayData);
+                threadInput.Start();
+            
             }
             catch(Exception ex)
             {
