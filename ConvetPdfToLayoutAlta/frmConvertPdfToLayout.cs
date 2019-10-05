@@ -153,19 +153,18 @@ namespace ConvetPdfToLayoutAlta
         private void Button2_Click(object sender, EventArgs e)
         {
             //FrmTela16 f = new FrmTela16(@"C:\TombTesteUnitarios", @"C:\TombTesteUnitarios\ALTA", "TELA16");
-            FrmTela16 f = new FrmTela16(@"C:\TombamentoV1_01\SIMULADO2019-09-27", @"C:\TombTesteUnitarios\ALTA", "TELA16");
+            FrmTela16 f = new FrmTela16(@"C:\TombTesteUnitarios", @"C:\TombTesteUnitarios\ALTA", "TELA16");
             f.ShowDialog();
            
         }
 
         private void UpdateApp()
         {
-
             Text += $" (V{Application.ProductVersion})";
             try
             {
                 var updateManager = NAppUpdate.Framework.UpdateManager.Instance;
-                updateManager.UpdateSource = new NAppUpdate.Framework.Sources.SimpleWebSource($@"\\d1659987\Tecnologia\000_BI_Credito_Imobiliario\Tombamento\UpdateExeExtratorPdf\NAppUpdate.xml");
+                updateManager.UpdateSource = new NAppUpdate.Framework.Sources.SimpleWebSource($@"\\bsbrsp1010\apps\MI\RELATORIOS\ClickOnceExtratorPdf\NAppUpdate.xml");
                 updateManager.ReinstateIfRestarted();
 
                 if (updateManager.State == NAppUpdate.Framework.UpdateManager.UpdateProcessState.NotChecked)
@@ -187,7 +186,7 @@ namespace ConvetPdfToLayoutAlta
 
         private void FrmSelectFolder_Load(object sender, EventArgs e)
         {
-            UpdateApp();
+            //UpdateApp();
 
             comboBoxTela.SelectedIndex = 4;
             ToolTip toolTip = new ToolTip();

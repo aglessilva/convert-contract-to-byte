@@ -231,7 +231,7 @@ namespace ConvetPdfToLayoutAlta
                                     padrao = 1;
 
                                 #region Padrão 1
-                               
+
                                 using (StringReader strReader = new StringReader(pagina))
                                 {
                                     string line;
@@ -487,17 +487,15 @@ namespace ConvetPdfToLayoutAlta
                                                         lstCabecalho.Add(objCabecalho);
 
                                                     string statusContrato = string.Empty;
-                                                    string[] _arraySituacao = null;
-
+                                                    int valor = 0;
                                                     do
                                                     {
                                                         if (line.IndexOf(':') > 1) break;
-                                                        if (line.Split('-')[0].Length == 4)
+                                                        if (Regex.IsMatch(line, @"(^\d{4}\-[\s\w\-]+$)"))
                                                         {
-                                                            _arraySituacao = line.Split('-');
-                                                            if (_arraySituacao[0].Length == 4)
+                                                            if (int.TryParse(line.Split('-')[0], out valor))
                                                             {
-                                                                statusContrato = line.Replace("-", "").Trim();
+                                                                statusContrato = line.Replace("-", "").Trim().Substring(1);
                                                                 if (!lstSituacao.Any(k => k.Equals(statusContrato)))
                                                                     lstSituacao.Add(statusContrato);
                                                                 continue;
@@ -815,7 +813,26 @@ namespace ConvetPdfToLayoutAlta
 
                     catch (Exception ex)
                     {
-                        string etrr0 = ex.Message;
+                        _countPercent++;
+                        backgroundWorker1.ReportProgress(_countPercent, null);
+                        ExceptionError.countError++;
+
+                        isErro = true;
+                        if (!File.Exists(diretorioDestinoLayout + @"\LogErroContratos.txt"))
+                        {
+                            StreamWriter item = File.CreateText(diretorioDestinoLayout + @"\LogErroContratos.txt");
+                            item.Dispose();
+                        }
+                        using (StreamWriter sw = new StreamWriter(diretorioDestinoLayout + @"\LogErroContratos.txt", true, Encoding.UTF8))
+                        {
+                            StringBuilder strErro = new StringBuilder();
+                            strErro.AppendLine(string.Format("CONTRATO: {0}", arquivoPdf.Name))
+                                    .AppendLine(string.Format("PAGINA DO ERRO: {0}", numberPage))
+                                    .AppendLine(string.Format("DESCRIÇÃO DO ERRO: {0}", ex.Message))
+                                    .AppendLine(string.Format("DIRETORIO DO ARQUIVO: {0}", arquivoPdf.DirectoryName));
+                            sw.Write(strErro);
+                            sw.WriteLine("================================================================================================================================================");
+                        }
                     }
                // });
                 }

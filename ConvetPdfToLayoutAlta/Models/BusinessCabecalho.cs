@@ -354,8 +354,8 @@ namespace ConvetPdfToLayoutAlta.Models
 
                             if (_arrayLinha.Any(n => n.Contains("Sistema")))
                             {
-                                string _sistema = Regex.Replace(_arrayLinha[_id].Replace("Sistema", "").Trim(), @"[^A-Za-z0-9$]", " ");
                                 _id = _arrayLinha.ToList().FindIndex(f => f.Contains("Sistema"));
+                                string _sistema = Regex.Replace(_arrayLinha[_id].Replace("Sistema", "").Trim(), @"[^A-Za-z0-9$]", "");
                                 obj.Sistema = _sistema.ToUpper().Contains("SAC") ? "S" : _sistema.ToUpper().Contains("PRICE") ? "P" : _sistema.ToUpper().Contains("LIVRE") ? "L" : _sistema.ToUpper().Contains("SACRE") ? "R" : "O";
                             }
 
@@ -834,6 +834,7 @@ namespace ConvetPdfToLayoutAlta.Models
                 for (int i = 0; i < lstContratosPdf.Count; i++)
                 {
                     ContratoPdf item = lstContratosPdf[i];
+
                     try
                     {
                         strAlta = string.Empty;
@@ -1010,6 +1011,11 @@ namespace ConvetPdfToLayoutAlta.Models
                                     //Data: 31/07/2019 as 10:00hs
                                     if (o.IsNovoPrazo)
                                     {
+                                        // Solicitação da Camila, quando houver 020Amortização extra, seguido de alteração de (Novo Prazo)
+                                        // Enviar a segunda ocorrencia com o codigo 010 exemplo: ***010Alteração Contratual
+                                        // Data: 03/10/2019
+                                        strAltaNovoPrazo = strAltaNovoPrazo.Replace("020Amortização extra", "010Alteração Contratual").Trim().PadRight(71, ' ');
+
                                         strAltaNovoPrazo += string.Format("{0}{1}{2}", "0".PadLeft(72, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'), "PRAZO".PadRight(30, ' '));
                                         strAltaNovoPrazo += string.Format("{0}{1}", _parcela.NumeroPrazo.Substring(3).Trim().PadRight(30, ' '), o.NovoNumeroPrazo.PadLeft(3, '0').Trim().PadRight(30, ' '));
 
@@ -1023,7 +1029,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                         strAltaNovoPrazo = strAltaNovoPrazo.PadRight(281, ' ');
                                         escreverOcorrencia.WriteLine(strAltaNovoPrazo);
 
-                                        strAlta = string.Empty;
+                                        strAlta = strAltaNovoPrazo = string.Empty;
                                     }
                                 }
 
@@ -1059,6 +1065,8 @@ namespace ConvetPdfToLayoutAlta.Models
 
                                         strAltaNovoPrazo = strAltaNovoPrazo.PadRight(281, ' ');
                                         escreverOcorrencia.WriteLine(strAltaNovoPrazo);
+
+                                        strAltaNovoPrazo = string.Empty;
                                     }
                                 }
 
@@ -1117,7 +1125,7 @@ namespace ConvetPdfToLayoutAlta.Models
 
                                             strAlta = strAlta.PadRight(281, ' ');
                                             escreverOcorrencia.WriteLine(strAlta);
-                                            strAlta = string.Empty;
+                                            strAlta = _repactuacao = string.Empty;
                                         }
 
 
@@ -1440,11 +1448,11 @@ namespace ConvetPdfToLayoutAlta.Models
             //======================= BLOCO QUE GERA O ARQUIVO DE PONTEIRO ===================================================
             using (StreamWriter escreveArquiPont = new StreamWriter(_diretorioDestino + @"\ARQUPONT.txt", true, Encoding.Default))
             {
-               
-                lstContratosPdf.ForEach(p =>
+                using (StreamReader sr = new StreamReader(_diretorioDestino + @"\TL16CONT.txt"))
                 {
-                    escreveArquiPont.WriteLine(string.Format("01{0}1", Regex.Replace(p.Carteira.Substring(2)+p.Contrato, "[^0-9$]", "")));
-                });
+                    while(!sr.EndOfStream)
+                        escreveArquiPont.WriteLine("01" + sr.ReadLine().Substring(0, 15) + "1");
+                }
             }
             #endregion
 
