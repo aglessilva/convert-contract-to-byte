@@ -476,7 +476,11 @@ namespace ConvetPdfToLayoutAlta
 
 
                                                 if (arrayLinhaParcela.Any(v => v.Trim().Equals("00/00/0000")))
-                                                    objParcelas = businessParcelas.TrataLinhaParcelas(objParcelas, arrayLinhaParcela, 4, /*hasTaxa, hasIof*/ objCabecalho);
+                                                {
+                                                    objParcelas = businessParcelas.TrataLinhaParcelas(objParcelas, arrayLinhaParcela, 4, /*hasTaxa, hasIof*/ objCabecalho, lstParcelas.LastOrDefault());
+                                                    if (!lstParcelas.Any(p => p.Id == objParcelas.Id))
+                                                        lstParcelas.Add(objParcelas);
+                                                }
                                             }
                                             //  PEGAR AS SITUAÇOES DO CONTRATO PARA ATUALIZAR O ARQUIVO SITU115A.TXT
                                             if (i == reader.NumberOfPages)
