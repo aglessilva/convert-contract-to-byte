@@ -23,9 +23,9 @@ namespace ConvertToByte
 
             IEnumerable<string> fileContract = Directory.EnumerateFiles(@"C:\TombamentoV1_01\SIMULADO2019-08-30", "*_16.pdf", SearchOption.AllDirectories);
 
-            using (StreamWriter sw = new StreamWriter(@"C:\TombamentoV1_01\ARQUPONT.txt", true, Encoding.ASCII))
+            using (StreamWriter sw = new StreamWriter(@"C:\TombamentoV1_01\ALTA\ARQUPONT.txt", true, Encoding.ASCII))
             {
-                using (StreamReader sr = new StreamReader(@"C:\#Projetos\convert-contract-to-byte\ConvetPdfToLayoutAlta\bin\Debug\ALTA\TL16CONT.txt"))
+                using (StreamReader sr = new StreamReader(@"C:\TombamentoV1_01\ALTA\TL16CONT.txt"))
                 {
                     while (!sr.EndOfStream)
                     {

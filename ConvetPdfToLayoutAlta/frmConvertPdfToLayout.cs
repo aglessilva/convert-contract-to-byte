@@ -236,7 +236,7 @@ namespace ConvetPdfToLayoutAlta
 
         private void button8_Click(object sender, EventArgs e)
         {
-            FrmTela25 f = new FrmTela25(@"D:\PDFSTombamento\", @"D:\PDFSTombamento\txt", "TELA25");
+            FrmTela25 f = new FrmTela25(@"C:\TombamentoV1_01\ENSAIO2019-10-04\", @"D:\PDFSTombamento\txt", "TELA25");
             f.ShowDialog();
         }
 
@@ -300,7 +300,7 @@ namespace ConvetPdfToLayoutAlta
 
         private void button10_Click(object sender, EventArgs e)
         {
-            FrmConsolidacaoAlta f = new FrmConsolidacaoAlta(@"D:\testes\Alta", @"D:\testes\");
+            FrmConsolidacaoAlta f = new FrmConsolidacaoAlta(@"C:\TombamentoV1_01\ALTA\", @"C:\TombamentoV1_01\ENSAIO2019-10-04");
             f.ShowDialog();
         }
     }

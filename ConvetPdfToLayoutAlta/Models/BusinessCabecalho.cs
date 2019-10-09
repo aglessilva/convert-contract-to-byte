@@ -820,9 +820,9 @@ namespace ConvetPdfToLayoutAlta.Models
 
             string strAlta = string.Empty;
             string _contratoGT = string.Empty;
-            string  _dataPrimeiroVencimento, _taxaJurosContrato, _valorgarantia, _reajuste, _apolice, _repactuacao;
+            string  _dataPrimeiroVencimento, _taxaJurosContrato, _valorgarantia, _reajuste, _apolice, _repactuacao, _diaVencimento;
 
-            _dataPrimeiroVencimento = _taxaJurosContrato = _valorgarantia = _reajuste = _apolice = _repactuacao = string.Empty;
+            _dataPrimeiroVencimento = _taxaJurosContrato = _valorgarantia = _reajuste = _apolice = _repactuacao = _diaVencimento = string.Empty;
 
             #region BLOCO QUE GERA O ARQUIVO DE CONTRATO
             //======================= BLOCO QUE GERA O ARQUIVO DE CONTRATO================================================
@@ -846,7 +846,7 @@ namespace ConvetPdfToLayoutAlta.Models
                         item.Cabecalhos.ForEach(l =>
                         {
                             _apolice = l.Apolice;
-                            _repactuacao = l.Repactuacao;
+                           // _repactuacao = l.Repactuacao;
 
                             if (!l.TaxaJuros.Trim().Equals(_taxaJurosContrato))
                                 _taxaJurosContrato = l.TaxaJuros.Trim();
@@ -864,6 +864,11 @@ namespace ConvetPdfToLayoutAlta.Models
                             // Data de Alteração: 07/10/2019
                             //if (!l.DataPrimeiroVencimento.Trim().Equals(_dataPrimeiroVencimento))
                             //    _dataPrimeiroVencimento = l.DataPrimeiroVencimento.Trim();
+
+
+                            // Definição pela Andrea, pergar o Dia do Vencimento sempre do ultimo cabeçado
+                            // Data: 09/10/2019
+                            _diaVencimento = l.DataPrimeiroVencimento.Trim().Substring(0,2);
                         });
 
                         c = item.Cabecalhos.FirstOrDefault();
@@ -888,7 +893,11 @@ namespace ConvetPdfToLayoutAlta.Models
                             // Ajuste com orientação do Luis, 
                             // Alteração: Adicionamos o campo Agencia na posição(18,4)
                             // DATA: 29/08/2019 as 11:30
-                            strAlta = string.Format("{0}{1}{2}{3}", c.Carteira.Trim().Substring(2), c.Contrato.Trim(), (string.IsNullOrWhiteSpace(_dataPrimeiroVencimento) ? c.DataPrimeiroVencimento.Trim() : _dataPrimeiroVencimento).Substring(0, 2), c.Agencia.Substring(2, 4)).PadRight(24, ' ');
+
+                            // strAlta = string.Format("{0}{1}{2}{3}", c.Carteira.Trim().Substring(2), c.Contrato.Trim(), (string.IsNullOrWhiteSpace(_dataPrimeiroVencimento) ? c.DataPrimeiroVencimento.Trim() : _dataPrimeiroVencimento).Substring(0, 2), c.Agencia.Substring(2, 4)).PadRight(24, ' ');
+                            // COMENTAMOS A LINHA ACIMA, PORQUE FOI DEFINIDO PELA ANDREA QUE O DIA DE VENCIMENTO SERÁ SEMPRE O DIA DO ULTIMO CABEÇALHO
+
+                            strAlta = string.Format("{0}{1}{2}{3}", c.Carteira.Trim().Substring(2), c.Contrato.Trim(), _diaVencimento, c.Agencia.Substring(2, 4)).PadRight(24, ' ');
                             strAlta += string.Format("{0}{1}{2}{3}", (c.Nome.Trim().Length > 40 ? c.Nome.Trim().Substring(0, 40) : c.Nome.Trim()).PadRight(40, ' '), c.DataNascimento.Trim().PadRight(10, ' '), "".PadRight(14, ' '), c.EnderecoImovel.Trim().PadRight(80, ' '));
                             strAlta += string.Format("{0}{1}{2}{3}", c.Cpf.Trim().PadRight(14, ' '), "".PadRight(3, ' '), _contratoGT.Trim().PadRight(20, ' '), "".PadRight(20, ' '));
                             strAlta += string.Format("{0}{1}", c.Modalidade.Trim().PadRight(40, ' '), (c.CidadeImovel.Trim().Length <= 31 ? c.CidadeImovel.Trim() : c.CidadeImovel.Trim().Substring(0, 31)).PadRight(31, ' '));
@@ -916,6 +925,7 @@ namespace ConvetPdfToLayoutAlta.Models
                             strAlta += string.Format("{0}{1}{2}{3}", "0".PadRight(11, '0'), c.Correcao.Trim().PadRight(10, ' '), "0".PadLeft(2, '0'), c.Razao.Trim().PadLeft(18, '0'));
                             strAlta += string.Format("{0}{1}", "0".PadLeft(2, '0'), c.Situacao.Trim()).PadRight(60, ' ');
                             c = null;
+
                             _contratoGT = string.Empty;
 
                             strAlta = strAlta.PadRight(648, ' ');
