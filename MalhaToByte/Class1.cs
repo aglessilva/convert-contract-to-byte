@@ -21,19 +21,24 @@ namespace ConvertToByte
 
             // GetTableExcel();
 
-            IEnumerable<string> fileContract = Directory.EnumerateFiles(@"C:\TombamentoV1_01\SIMULADO2019-08-30", "*_16.pdf", SearchOption.AllDirectories);
+            IEnumerable<string> fileContract = Directory.EnumerateFiles(@"C:\TombamentoV1_01\ENSAIO2019-10-11", "*_16.pdf", SearchOption.AllDirectories);
 
+            FileInfo f = null;
             using (StreamWriter sw = new StreamWriter(@"C:\TombamentoV1_01\ALTA\ARQUPONT.txt", true, Encoding.ASCII))
             {
-                using (StreamReader sr = new StreamReader(@"C:\TombamentoV1_01\ALTA\TL16CONT.txt"))
+                //using (StreamReader sr = new StreamReader(@"C:\TombamentoV1_01\ALTA\TL16CONT.txt"))
+                //{
+                //    while (!sr.EndOfStream)
+                //    {
+                fileContract.ToList().ForEach(w =>
                 {
-                    while (!sr.EndOfStream)
-                    {
-                        string texto = "01"+ sr.ReadLine().Substring(0,15)+"1";
-                        sw.WriteLine(texto);
+                    f = new FileInfo(w);
 
-                    }
-                }
+                    sw.WriteLine( f.Name.Split('_')[0]);
+                });
+
+                //    }
+                //}
             }
         }
 
