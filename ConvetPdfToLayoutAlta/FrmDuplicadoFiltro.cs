@@ -27,21 +27,55 @@ namespace ConvetPdfToLayoutAlta
 
         string diretorioOrigemPdf, tmp, tela, _descricao, diretorioConfig;
 
+        void GerarPonteiro()
+        {
+            Cursor.Current = Cursors.WaitCursor;
+            IEnumerable<string> fileContract = Directory.EnumerateFiles(diretorioOrigemPdf, "*_16.pdf", SearchOption.AllDirectories);
+            string diretorioConfig = Directory.GetCurrentDirectory() + @"\config\ARQUPONT.txt";
+            List<string> listagemContratos16 = new List<string>();
+            FileInfo f = null;
+            fileContract.ToList().ForEach(w =>
+            {
+                f = new FileInfo(w);
+                if (!listagemContratos16.Any(c => c.Trim().Equals(f.Name.Split('_')[0].Trim())))
+                    listagemContratos16.Add(f.Name.Split('_')[0].Trim());
+            });
+
+            fileContract = listagemContratos16.OrderBy(o => o);
+
+            using (StreamWriter sw = new StreamWriter(diretorioConfig, true, Encoding.ASCII))
+            {
+                fileContract.ToList().ForEach(w =>
+                {
+                    sw.WriteLine(w.Trim());
+                });
+            }
+
+
+            Cursor.Current = Cursors.Default;
+        }
+
         private void FrmDuplicadoFiltro_Load(object sender, EventArgs e)
         {
 
             try
             {
-
                 diretorioConfig = Directory.GetCurrentDirectory();
 
                 string _path = string.Format("{0}{1}", diretorioConfig, @"\config\ARQUPONT.txt");
 
                 if (!File.Exists(_path))
                 {
-                    string msgAviso = string.Format("{0}{1}{2}", "Adicione o arquivo ARQUPONT.TXT no diretório:\n", diretorioConfig, @"\config");
-                    MessageBox.Show(msgAviso, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
+                    string msgAviso = string.Format("{0}{1}{2}", "O arquivo ARQUPONT.TXT não foi encontrado no diretório:" +Environment.NewLine , diretorioConfig, @"\config "+ Environment.NewLine + "Deseja gerar o ARQUPONT.txt a partir dos contrados?");
+                    DialogResult dialogResult = MessageBox.Show(msgAviso, "Aviso", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+                    if (dialogResult == DialogResult.Yes)
+                        GerarPonteiro();
+                    else
+                    {
+                        Close();
+                        return;
+                    }
                 }
 
                 using (StreamReader sw = new StreamReader(_path, Encoding.UTF8))

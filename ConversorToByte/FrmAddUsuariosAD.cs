@@ -13,6 +13,8 @@ namespace ConversorToByte
         
         private List<Users> lst = null;
         FileSafeOperations fso = null;
+        string dados = null;
+
         public FrmAddUsuariosAD()
         {
             InitializeComponent();
@@ -56,6 +58,7 @@ namespace ConversorToByte
                 {
                     pnlSpinner.Visible = !groupBox1.Enabled;
                     Cursor = Cursors.Default;
+                    HabilitarCampo();
                 });
             }
         }
@@ -73,7 +76,7 @@ namespace ConversorToByte
             dSearch.PageSize = 100;
             dSearch.SizeLimit = 100;
 
-            string dados = null;
+            
 
             foreach (SearchResult sResultSet in dSearch.FindAll())
             {
@@ -81,6 +84,13 @@ namespace ConversorToByte
                 dados += GetProperty(sResultSet, "mail"); // Email do usuario
             }
 
+            SetLoading(false);
+
+        }
+
+
+        void HabilitarCampo()
+        {
             pnlUser.Enabled = true;
 
             if (!string.IsNullOrWhiteSpace(dados))
@@ -88,6 +98,7 @@ namespace ConversorToByte
                 lblNome.Text = dados.Split('|')[0].ToString();
                 lblEmail.Text = dados.Split('|')[1].ToString();
                 btnAdd.Enabled = true;
+                dados = null;
             }
             else
             {
@@ -95,8 +106,6 @@ namespace ConversorToByte
                 lblEmail.Text = "Não Encontrado";
                 btnAdd.Enabled = false;
             }
-
-            SetLoading(false);
         }
 
         private void btnPesquisar_Click(object sender, EventArgs e)
@@ -106,7 +115,7 @@ namespace ConversorToByte
 
                 Thread threadInput = new Thread(DisplayData);
                 threadInput.Start();
-            
+
             }
             catch(Exception ex)
             {
