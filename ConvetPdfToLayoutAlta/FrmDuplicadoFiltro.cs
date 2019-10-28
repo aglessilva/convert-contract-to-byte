@@ -18,7 +18,7 @@ namespace ConvetPdfToLayoutAlta
     {
         Stopwatch stopwatch = new Stopwatch();
         UserObject obj = null;
-        int countpercent = 0, MaximumProgress = 0;
+        int countpercent = 0, MaximumProgress = 0, _indiceSubstring = 0;
         List<string> _arrayDuplicado = null;
         List<string> lst16 = null;
         private List<string> lstDuplicado = null;
@@ -57,7 +57,7 @@ namespace ConvetPdfToLayoutAlta
 
         private void FrmDuplicadoFiltro_Load(object sender, EventArgs e)
         {
-
+          
             try
             {
                 diretorioConfig = Directory.GetCurrentDirectory();
@@ -77,6 +77,9 @@ namespace ConvetPdfToLayoutAlta
                         return;
                     }
                 }
+
+
+               
 
                 using (StreamReader sw = new StreamReader(_path, Encoding.UTF8))
                 {
@@ -135,11 +138,13 @@ namespace ConvetPdfToLayoutAlta
             {
                 tmp = string.Format("Tempo de Execução: {0}:{1}:{2}:{3} ms", stopwatch.Elapsed.Hours, stopwatch.Elapsed.Minutes, stopwatch.Elapsed.Seconds, stopwatch.Elapsed.Milliseconds);
 
+                _indiceSubstring = obj.PdfInfo.FullName.Length / 2;
+
                 lblDescricao.Text = _descricao;
                 lblPorcentagem.Text = string.Format("{0:P2}", (double)e.ProgressPercentage / (double)(progressBarReaderPdf.Maximum));
                 lblTempo.Text = tmp;
                 lblContrato.Text = string.Format("Contrato: {0}", obj.Contrato);
-                lblDiretorio.Text = string.Format("Diretório: {0}", obj.PdfInfo.FullName);
+                lblDiretorio.Text = string.Format("Diretório: ...{0}", obj.PdfInfo.FullName.Substring(_indiceSubstring));
                 lbltotalDuplicado.Text = "Aguarde...";
 
                 progressBarReaderPdf.Maximum = MaximumProgress;

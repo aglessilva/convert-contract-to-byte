@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConvertToByte.DAL;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
@@ -13,7 +14,8 @@ namespace MalhaToByte.DAL
     {
 
        public static string strConn = @"Password=01#$Sucesso;Persist Security Info=True;User ID=sa;Initial Catalog=DB_FileSafe;Data Source=NP2110929\SQLEXPRESS";
-            
+       
+        public static string strConnTombamneto = @"Password=01#$Sucesso;Persist Security Info=True;User ID=sa;Initial Catalog=DB_Tombamento;Data Source=NP2110929\SQLEXPRESS";
 
         static SqlCommand command = new SqlCommand();
 
@@ -31,8 +33,27 @@ namespace MalhaToByte.DAL
             command.Clone();
         }
 
- 
 
+
+        public static void AddHistoricoParcela(List<HistoricoParcela> historicoParcela)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(strConnTombamneto))
+                {
+                    Parametriza("SP_GET_FILES");
+                    connection.Open();
+                    command.Connection = connection;
+
+
+                };
+            }
+            catch (Exception exErro)
+            {
+                string strErro = exErro.Message;
+                throw;
+            }
+        }
 
         public static byte[] DownloadFile(string p)
         {

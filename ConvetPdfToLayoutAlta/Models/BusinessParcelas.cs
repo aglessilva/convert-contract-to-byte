@@ -4,18 +4,39 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Data.SqlClient;
+using System.Data;
 
 namespace ConvetPdfToLayoutAlta.Models
 {
-    public class BusinessParcelas
+    public class BusinessParcelas: IDisposable
     {
-        public Parcela TrataLinhaParcelas(Parcela _obj, string[] _linha, int sequencia, /*bool _hasTaxa, bool _hasIof,*/ Cabecalho cabecalho, Parcela  _parcela =  null)
+        private Conn cnx = null;
+        private SqlCommand command = null;
+
+        public BusinessParcelas()
         {
-           
-            string _case = "VAZIO";
             try
             {
+                cnx = new Conn();
+                command = new SqlCommand();
+                command.Connection = command.Connection;
+            }
+            catch (Exception exe)
+            {
+                string errp = exe.Message;
+                throw;
+            }
+           
+        }
 
+        ~BusinessParcelas() { cnx.FecharConexao(command); }
+
+        public Parcela TrataLinhaParcelas(Parcela _obj, string[] _linha, int sequencia, /*bool _hasTaxa, bool _hasIof,*/ Cabecalho cabecalho, Parcela  _parcela =  null)
+        {
+           string _case = "VAZIO";
+            try
+            {
                 switch (sequencia)
                 {
                     case 1: // PEGA A LINHA DE CORREÇÃO
@@ -58,7 +79,6 @@ namespace ConvetPdfToLayoutAlta.Models
                             _obj.Juros = Regex.Replace(_linha[count++], @"[^0-9$]", "");
                             _obj.Amortizacao = Regex.Replace(_linha[count++], @"[^0-9$\-]", "");
                             _obj.SaldoDevedor = Regex.Replace(_linha[count++], @"[^0-9$]", "");
-
 
                             break;
                         }
@@ -145,13 +165,14 @@ namespace ConvetPdfToLayoutAlta.Models
                             _case = "Case 4 - Metodo: TrataLinhaParcelas - PEGA A LINHA DE PROXIMO PAGAMENTO E MORA";
 
                             _obj.Proc_Emi_Pag = Regex.Replace(_linha[0] + _linha[1], @"[^0-9\/$]", "");
-                            if (_linha.Length == 3 )
+                            if (_linha.Length == 3)
                             {
-                                if ((Convert.ToDateTime(cabecalho.DataBase) > Convert.ToDateTime(_obj.Vencimento)))
-                                    _obj.Mora = _obj.Mora == "0" ? Regex.Replace(_linha[2], @"[^0-9$]", "") : "0";
+                                if (Convert.ToDateTime(cabecalho.DataBase) <= Convert.ToDateTime(_obj.Vencimento))
+                                    _obj.Mora = _obj.Mora = "0";
                                 else
-                                    _obj.Fgts = _obj.Fgts == "0" ? Regex.Replace(_linha[2], @"[^0-9$]", "") : "0";
+                                    _obj.Mora = _obj.Mora == "0" ? Regex.Replace(_linha[2], @"[^0-9$]", "") : "0";
                             }
+                              
                             if (_linha.Length > 3 )
                             {
                                 _obj.Fgts = _obj.Fgts == "0" ? Regex.Replace(_linha[2], @"[^0-9$]", "") : "0";
@@ -241,7 +262,7 @@ namespace ConvetPdfToLayoutAlta.Models
                 {
                     x = arrayPagina[(i - 1)].Split(' ').Where(j => !string.IsNullOrWhiteSpace(j)).ToList();
 
-                    if (x.Any(l => l.Trim().Contains("PRO") || l.Trim().Contains("***")))
+                    if (x.Any(l => l.Trim().Contains("PRO") || l.Trim().Contains("***") || l.Trim().Contains("00/00/0000")))
                     {
                         x = arrayPagina[(i + 1)].Split(' ').Where(j => !string.IsNullOrWhiteSpace(j)).ToList();
                     }
@@ -702,6 +723,9 @@ namespace ConvetPdfToLayoutAlta.Models
 
                     x = _linhaAtual.Split(' ').ToList();
 
+                    if(y.Any(t => t.Equals("COR")))
+                        return x.ToArray();
+
                     if (y.Any(h => h.Contains("*")))
                         return x.ToArray();
 
@@ -744,9 +768,109 @@ namespace ConvetPdfToLayoutAlta.Models
                 }
             }
 
+            x.Remove("COR");
             x.RemoveAll(rem => string.IsNullOrWhiteSpace(rem));
 
             return x.ToArray();
+        }
+
+        private DataTable CriaTabelaParcelas()
+        {
+            var table = new DataTable();
+            table.Columns.Add("Carteira", typeof(string));
+            table.Columns.Add("Contrato", typeof(string));
+            table.Columns.Add("Vencimento", typeof(string));
+            table.Columns.Add("DataBaseContrato", typeof(string));
+            table.Columns.Add("Indice", typeof(string));
+            table.Columns.Add("Pagamento", typeof(string));
+            table.Columns.Add("NumeroPrazo", typeof(string));
+            table.Columns.Add("Prestacao", typeof(string));
+            table.Columns.Add("Seguro", typeof(string));
+            table.Columns.Add("Taxa", typeof(string));
+            table.Columns.Add("Fgts", typeof(string));
+            table.Columns.Add("AmortizacaoCorrecao", typeof(string));
+            table.Columns.Add("SaldoDevedorCorrecao", typeof(string));
+            table.Columns.Add("Encargo", typeof(string));
+            table.Columns.Add("Pago", typeof(string));
+            table.Columns.Add("Juros", typeof(string));
+            table.Columns.Add("Mora", typeof(string));
+            table.Columns.Add("Amortizacao", typeof(string));
+            table.Columns.Add("Indicador", typeof(char));
+            table.Columns.Add("SaldoDevedor", typeof(string));
+            table.Columns.Add("Proc_Emi_Pag", typeof(string));
+            table.Columns.Add("Iof", typeof(string));
+
+            return table;
+        }
+
+        public void AddParcela(List<Parcela> _parcela)
+        {
+          
+            try
+            {
+                DataTable dataTable = CriaTabelaParcelas();
+
+                command = cnx.Parametriza();
+
+                DataRow dataRow = null;
+                SqlBulkCopy bulkCopy = new SqlBulkCopy(command.Connection, SqlBulkCopyOptions.TableLock | SqlBulkCopyOptions.FireTriggers | SqlBulkCopyOptions.UseInternalTransaction, null);
+                bulkCopy.DestinationTableName = "dbo.PARCELAS";
+
+                if (command.Connection.State == ConnectionState.Closed)
+                    command.Connection.Open();
+
+                foreach (var item in _parcela)
+                {
+                    dataRow = dataTable.NewRow();
+
+                    dataRow["Carteira"] = item.Carteira.Trim();
+                    dataRow["Contrato"] = item.Carteira.Trim().Substring(3) + item.Contrato.Trim();
+                    dataRow["Vencimento"] = item.Vencimento.Trim();
+                    dataRow["DataBaseContrato"] = item.DataBaseContrato.Trim();
+                    dataRow["Indice"] = item.Indice.Trim();
+                    dataRow["Pagamento"] = item.Pagamento.Trim();
+                    dataRow["NumeroPrazo"] = item.NumeroPrazo.Trim();
+                    dataRow["Prestacao"] = item.Prestacao.Trim();
+                    dataRow["Seguro"] = item.Seguro.Trim();
+                    dataRow["Taxa"] = item.Taxa.Trim();
+                    dataRow["Fgts"] = item.Fgts.Trim();
+                    dataRow["AmortizacaoCorrecao"] = item.AmortizacaoCorrecao.Trim();
+                    dataRow["SaldoDevedorCorrecao"] = item.SaldoDevedorCorrecao.Trim();
+                    dataRow["Encargo"] = item.Encargo.Trim();
+                    dataRow["Pago"] = item.Pago.Trim();
+                    dataRow["Juros"] = item.Juros.Trim();
+                    dataRow["Mora"] = item.Mora.Trim();
+                    dataRow["Amortizacao"] = item.Amortizacao.Trim();
+                    dataRow["Indicador"] = item.Indicador.Trim();
+                    dataRow["SaldoDevedor"] = item.SaldoDevedor.Trim();
+                    dataRow["Proc_Emi_Pag"] = item.Proc_Emi_Pag.Trim();
+                    dataRow["Iof"] = item.Iof.Trim();
+
+                    dataTable.Rows.Add(dataRow);
+                }
+
+               
+                // dispara o commando de bulkInsert
+                bulkCopy.WriteToServer(dataTable);
+
+                dataTable = null;
+                _parcela = null;
+
+                if (command.Connection.State == ConnectionState.Open)
+                    command.Connection.Close();
+
+                cnx.FecharConexao(command);
+            }
+            catch (Exception ex)
+            {
+                command.Connection.Close();
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public void Dispose()
+        {
+            command.Dispose();
         }
     }
 }

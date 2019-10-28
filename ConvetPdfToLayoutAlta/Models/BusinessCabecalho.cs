@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -808,7 +810,6 @@ namespace ConvetPdfToLayoutAlta.Models
             };
         }
 
-
         public void PopulaContrato(object parametro)
         {
 
@@ -1131,6 +1132,9 @@ namespace ConvetPdfToLayoutAlta.Models
                                         Cabecalho item = q.Cabecalhos.SingleOrDefault(k => k.Id == o.IdCabecalho); 
                                         Cabecalho item1 = q.Cabecalhos.SingleOrDefault(k => k.Id == (o.IdCabecalho + 1));
 
+                                        if (item1 == null)
+                                            item1 = item;
+
                                         if (!item.Repactuacao.Equals(item1.Repactuacao)) // REPACTUAÇÃO")
                                         {
                                             _repactuacao = item1.Repactuacao;
@@ -1153,6 +1157,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                                 strAlta = _repactuacao = string.Empty;
                                             }
                                         }
+
 
 
                                         if (!_cabecalhoAnterior.Apolice.Equals(_cabecalho.Apolice)) // APOLICE
@@ -1464,6 +1469,12 @@ namespace ConvetPdfToLayoutAlta.Models
                 strAlta = string.Empty;
                 using (StreamWriter escreverParcelas = new StreamWriter(_diretorioDestino + @"\TL16PARC.txt", true, Encoding.Default))
                 {
+                    BusinessParcelas businessParcelas = new BusinessParcelas();
+
+                    List<Parcela> parcelas = new List<Parcela>();
+
+                    //cria tabela para adicionar os valore e fazer o BulkInsert
+
                     string _sinal = string.Empty;
                     lstContratosPdf.ForEach(q =>
                     {
@@ -1478,7 +1489,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                     strAlta = string.Empty;
 
                                     _sinal = Convert.ToInt32(p.Amortizacao) < 0 ? "-" : "+";
-
+                                    
                                     bool hasOcorrencia = q.Ocorrencias.Any(x => x.IdParcela == p.Id);
                                     strAlta = string.Format("{0}", (q.Carteira.Substring(2, 2) + q.Contrato).PadRight(15, '0'));
                                     strAlta += string.Format("{0}{1}", p.Vencimento.Trim().PadLeft(10, '0'), (p.Indice.Trim().Equals("") ? p.IndiceCorrecao.Trim() : p.Indice.Trim()).PadRight(7, '0'));
@@ -1493,6 +1504,14 @@ namespace ConvetPdfToLayoutAlta.Models
                                     strAlta += string.Format("{0}{1}{2}", p.Proc_Emi_Pag.Trim().PadLeft(20, '0'), (hasOcorrencia ? p.NumeroPrazo.Substring(0, 3) : "0".PadLeft(3, '0')), p.Iof.PadLeft(12, '0'));
 
                                     escreverParcelas.WriteLine(strAlta);
+
+                                    p.Carteira = q.Carteira;
+                                    p.Indicador = _sinal;
+                                    p.Contrato = q.Contrato;
+                                    p.DataBaseContrato = q.Cabecalhos[0].DataBase;
+
+                                    parcelas.Add(p);
+
                                     strAlta = string.Empty;
                                 }
                                 catch (Exception exp)
@@ -1505,6 +1524,12 @@ namespace ConvetPdfToLayoutAlta.Models
                         strAlta = string.Empty;
                     });
 
+
+                    businessParcelas.AddParcela(parcelas);
+                    parcelas = null;
+
+                    businessParcelas.Dispose();
+
                 }
                 //===============================================================================================================
                 #endregion
@@ -1513,17 +1538,7 @@ namespace ConvetPdfToLayoutAlta.Models
             #endregion
 
             strAlta = string.Empty;
-            #region BLOCO QUE GERA O ARQUIVO DE PONTEIRO
-            //======================= BLOCO QUE GERA O ARQUIVO DE PONTEIRO ===================================================
-            using (StreamWriter escreveArquiPont = new StreamWriter(_diretorioDestino + @"\ARQUPONT.txt", true, Encoding.Default))
-            {
-                using (StreamReader sr = new StreamReader(_diretorioDestino + @"\TL16CONT.txt"))
-                {
-                    while(!sr.EndOfStream)
-                        escreveArquiPont.WriteLine("01" + sr.ReadLine().Substring(0, 15) + "1");
-                }
-            }
-            #endregion
+           
 
             #region BLOCO QUE GERA O ARQUIVO DE CRONOGRAMA
             //======================= BLOCO QUE GERA O ARQUIVO DE CRONOGRAMA ===================================================
@@ -1538,6 +1553,8 @@ namespace ConvetPdfToLayoutAlta.Models
                 });
             }
             #endregion
+
+            lstContratosPdf = null;
         }
 
         public string ValidaData(string _data)
@@ -1556,5 +1573,18 @@ namespace ConvetPdfToLayoutAlta.Models
             return string.IsNullOrWhiteSpace(_novaData) ? _data : _novaData;
         }
 
+        public void TruncaTabelaParcelas()
+        {
+            Conn conn = new Conn();
+            SqlCommand commad = conn.Parametriza("SP_TRUNCA_TABLEAS");
+
+            if (commad.Connection.State == ConnectionState.Closed)
+                commad.Connection.Open();
+
+            commad.ExecuteNonQuery();
+            commad.Connection.Close();
+            commad.Dispose();
+
+        }
     }
 }

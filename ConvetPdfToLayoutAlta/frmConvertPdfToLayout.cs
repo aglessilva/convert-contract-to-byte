@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConvetPdfToLayoutAlta.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -27,7 +28,7 @@ namespace ConvetPdfToLayoutAlta
             {
                 if (SelectFolders(1) == DialogResult.Yes)
                 {
-                    string[] _arquivos = { Directory.GetCurrentDirectory() + @"\config\SITU115A.TXT", Directory.GetCurrentDirectory() + @"\config\ARQ_GARANTIA.TXT" };
+                    string[] _arquivos = { Directory.GetCurrentDirectory() + @"\config\SITU115A.TXT", Directory.GetCurrentDirectory() + @"\config\ARQ_GARANTIA.TXT", Directory.GetCurrentDirectory() + @"\config\ARQUPONT.TXT" };
                     string msg = string.Format("--- COPIE OS ARQUIVOS NO DIRETORIO ABAIXO ---\n\n");
 
                     if (!Directory.Exists(Directory.GetCurrentDirectory() + @"\config"))
@@ -38,19 +39,22 @@ namespace ConvetPdfToLayoutAlta
 
                     if (!File.Exists(Directory.GetCurrentDirectory() + @"\config\SITU115A.TXT"))
                     {
-                        msg += string.Format("--> {0}\n--> {1}", _arquivos[0], _arquivos[1]);
-
+                        msg += string.Format("--> {0}", _arquivos[0]);
                         MessageBox.Show(msg, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                         return;
                     }
 
                     if (!File.Exists(Directory.GetCurrentDirectory() + @"\config\ARQ_GARANTIA.TXT"))
                     {
+                        msg += string.Format("--> {0}", _arquivos[1]);
                         MessageBox.Show(msg, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                         return;
                     }
+
                     btnDuplicata.Enabled = comboBoxTela.Enabled = (textDestinoLayout.TextLength > 0 && textOrigemContratosPdf.TextLength > 0);
                 }
+
+               
             }
         }
         
@@ -242,12 +246,41 @@ namespace ConvetPdfToLayoutAlta
 
         private void BtnDuplicata_Click(object sender, EventArgs e)
         {
+
             if (comboBoxTela.SelectedIndex == 4)
             {
                 MessageBox.Show("Selecione um tipo de tela.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
-            consistencia[comboBoxTela.SelectedIndex] = true;
+
+            // Inicia o processo para renomear os arquivos antes de filtrar
+            FileInfo ffRename = new FileInfo(Directory.GetCurrentDirectory() + @"\config\ARQUPONT.txt");
+
+            if(!ffRename.Exists)
+            {
+               DialogResult result =  MessageBox.Show("Arquivo de PONTEIRO, não encontrado\nDeseja criar um arquivo de ponteiro a partir dos contratos?","Aviso", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (result == DialogResult.Yes)
+                    ExceptionError.GerarPonteiro(textOrigemContratosPdf.Text);
+                else
+                    return;
+            }
+
+           
+            string _tela = Regex.Replace(comboBoxTela.Text, @"[^0-9$]", "");
+
+            var extencao = new List<string>() { $"*_{_tela}.dup", $"*_{_tela}.damp", $"*_{_tela}.fil", $"*_{_tela}.err", $"*_{_tela}.rej" };
+            foreach (var item in extencao)
+            {
+                if (Directory.EnumerateFiles(textOrigemContratosPdf.Text, item, SearchOption.AllDirectories).Count() > 0)
+                {
+                    panelSpinner.Visible = !panelSpinner.Visible;
+                    FrmRenomearPdf frmRenomear = new FrmRenomearPdf(textOrigemContratosPdf.Text, _tela);
+                    frmRenomear.ShowDialog();
+                    panelSpinner.Visible = !panelSpinner.Visible;
+                    break;
+                }
+            } 
 
             Text += "-" + comboBoxTela.Text;
             panelSpinner.Visible = !panelSpinner.Visible;
@@ -256,9 +289,12 @@ namespace ConvetPdfToLayoutAlta
             panelSpinner.Visible = !panelSpinner.Visible;
             Text = Text.Split('-')[0];
 
+            consistencia[comboBoxTela.SelectedIndex] = true;
+
             btnIniciarConvercao.Enabled = consistencia.ToList().TrueForAll(iis => iis);
 
         }
+
 
         private void comboBoxTela_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -303,6 +339,83 @@ namespace ConvetPdfToLayoutAlta
             FrmConsolidacaoAlta f = new FrmConsolidacaoAlta(@"C:\TombamentoV1_01\ALTA\", @"C:\TombamentoV1_01\ENSAIO2019-10-04");
             f.ShowDialog();
         }
-       
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnLocalizar_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.Filter = "Arquivo de Damp|*.txt";
+            if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                textBoxDamp3.Text = openFileDialog1.FileName;
+                btnDamp3.Enabled = true;
+            }
+        }
+
+        private void btnDamp3_Click(object sender, EventArgs e)
+        {
+            panelSpinner.Visible = !panelSpinner.Visible;
+            FrmGeraDamp3 f = new FrmGeraDamp3(textBoxDamp3.Text, lstDamp3);
+            f.ShowDialog();
+            panelSpinner.Visible = !panelSpinner.Visible;
+        }
+
+        private void parcelasToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FrmParcelas frmParcelas = new FrmParcelas();
+            frmParcelas.ShowDialog();
+        }
+
+        private void cabeçalhoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+          
+        }
+
+        private void btnLocalizarHistoricoParcela_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.Filter = "08 Hist Parcelas|*.txt";
+            if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                textBoxHistoricoParcelas.Text = openFileDialog1.FileName;
+                button11.Enabled = true;
+            }
+        }
+
+
+
+        private void gerarArquivoDeDamp3ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            groupBox1.Visible = panelDamp3.Visible; 
+            panelDamp3.Visible = !panelDamp3.Visible;
+            gerarArquivoDeDamp3ToolStripMenuItem.Checked = !gerarArquivoDeDamp3ToolStripMenuItem.Checked;
+            MenuItemGravarHistoricoParcelas.Enabled = !MenuItemGravarHistoricoParcelas.Enabled;
+        }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+            MenuItemGravarHistoricoParcelas_Click(null, null);
+            panelSpinner.Visible = !panelSpinner.Visible;
+            FrmHistoricoParcelas f = new FrmHistoricoParcelas(textBoxHistoricoParcelas.Text);
+            f.ShowDialog();
+            panelSpinner.Visible = !panelSpinner.Visible;
+        }
+
+        private void MenuItemGravarHistoricoParcelas_Click(object sender, EventArgs e)
+        {
+            groupBox1.Visible = !groupBox1.Visible;
+            pnlHistoricoParcela.Visible = !groupBox1.Visible;
+            MenuItemGravarHistoricoParcelas.Checked = !MenuItemGravarHistoricoParcelas.Checked;
+            gerarArquivoDeDamp3ToolStripMenuItem.Enabled = !gerarArquivoDeDamp3ToolStripMenuItem.Enabled;
+        }
+
+        private void consultarHistóricoDeParcelasToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FrmCabecalho frmCabecalho = new FrmCabecalho();
+            frmCabecalho.ShowDialog();
+        }
     }
 }

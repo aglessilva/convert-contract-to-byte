@@ -11,6 +11,7 @@ namespace ConvetPdfToLayoutAlta.Models
     public static class ExceptionError
     {
         public static int countError;
+
         public static void TrataErros(Exception exception, string _contrato, string _detalhes, string _path)
         {
             using (StreamWriter sw = new StreamWriter(_path + @"\LogErroContratos.txt", true, Encoding.UTF8))
@@ -78,6 +79,23 @@ namespace ConvetPdfToLayoutAlta.Models
                 }
             }
 
+        }
+
+
+
+        public static void GerarPonteiro(string _diretorioPdf)
+        {
+            IEnumerable<string> fileContract = Directory.EnumerateFiles(_diretorioPdf, "*_16.*", SearchOption.AllDirectories);
+
+            FileInfo f = null;
+            using (StreamWriter sw = new StreamWriter($@"{Directory.GetCurrentDirectory()}\config\ARQUPONT.txt", true, Encoding.ASCII))
+            {
+                fileContract.ToList().ForEach(w =>
+                {
+                    f = new FileInfo(w);
+                    sw.WriteLine(f.Name.Split('_')[0]);
+                });
+            }
         }
     }
 }

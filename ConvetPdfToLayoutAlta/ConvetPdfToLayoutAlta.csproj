@@ -67,6 +67,7 @@
       <HintPath>..\packages\NAppUpdate.Framework.0.5.1.0\lib\net40\NAppUpdate.Framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -78,6 +79,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FrmConsultaHist.Parcelas.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmConsultaHist.Parcelas.Designer.cs">
+      <DependentUpon>FrmConsultaHist.Parcelas.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmConsolidacaoAlta.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -95,6 +102,30 @@
     </Compile>
     <Compile Include="FrmDuplicadoFiltro.Designer.cs">
       <DependentUpon>FrmDuplicadoFiltro.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmGeraDamp3.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmGeraDamp3.Designer.cs">
+      <DependentUpon>FrmGeraDamp3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmHistoricoParcelas.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmHistoricoParcelas.Designer.cs">
+      <DependentUpon>FrmHistoricoParcelas.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmParcelas.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmParcelas.Designer.cs">
+      <DependentUpon>FrmParcelas.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmRenomearPdf.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmRenomearPdf.Designer.cs">
+      <DependentUpon>FrmRenomearPdf.cs</DependentUpon>
     </Compile>
     <Compile Include="FrmTela16.cs">
       <SubType>Form</SubType>
@@ -121,12 +152,15 @@
       <DependentUpon>FrmTela25.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\BusinessCabecalho.cs" />
+    <Compile Include="Models\BusinessHistoricoParcelas.cs" />
     <Compile Include="Models\BusinessTela18.cs" />
     <Compile Include="Models\BusinessTela20.cs" />
     <Compile Include="Models\BusinessTela25.cs" />
     <Compile Include="Models\Cabecalho.cs" />
+    <Compile Include="Models\Conn.cs" />
     <Compile Include="Models\ContratoPdf.cs" />
     <Compile Include="Models\ExceptionError.cs" />
+    <Compile Include="Models\HistoricoParcelas.cs" />
     <Compile Include="Models\Ocorrencia.cs" />
     <Compile Include="Models\Parcela.cs" />
     <Compile Include="Models\BusinessParcelas.cs" />
@@ -135,6 +169,9 @@
     <Compile Include="Models\Tela25.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="FrmConsultaHist.Parcelas.resx">
+      <DependentUpon>FrmConsultaHist.Parcelas.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FrmConsolidacaoAlta.resx">
       <DependentUpon>FrmConsolidacaoAlta.cs</DependentUpon>
     </EmbeddedResource>
@@ -143,6 +180,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FrmDuplicadoFiltro.resx">
       <DependentUpon>FrmDuplicadoFiltro.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmGeraDamp3.resx">
+      <DependentUpon>FrmGeraDamp3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmHistoricoParcelas.resx">
+      <DependentUpon>FrmHistoricoParcelas.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmParcelas.resx">
+      <DependentUpon>FrmParcelas.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmRenomearPdf.resx">
+      <DependentUpon>FrmRenomearPdf.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmTela16.resx">
       <DependentUpon>FrmTela16.cs</DependentUpon>
@@ -204,6 +253,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="190819082615.ico" />
+    <None Include="Resources\xmag_search_find_export_locate_5984.ico" />
+    <None Include="Resources\clear_filters-48_45590 %281%29.ico" />
+    <None Include="Resources\search-file256_25202.ico" />
+    <Content Include="Resources\txtdocument_text_tx_9804.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

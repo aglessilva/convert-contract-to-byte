@@ -21,7 +21,7 @@ namespace ConvetPdfToLayoutAlta
         Thread _thread = null;
         UserObject obj = null;
         List<string> _situacoesAtual = new List<string>();
-        
+        BusinessCabecalho businessCabecalho = null;
 
         int contador = 0, countLote = 1, totalArquivo = 0, totalPorPasta = 0;
         bool isErro = false, isFinal = false;
@@ -76,6 +76,10 @@ namespace ConvetPdfToLayoutAlta
                     while (!lerTxt.EndOfStream)
                         _situacoesAtual.Add(lerTxt.ReadLine());
                 };
+
+
+                businessCabecalho = new BusinessCabecalho();
+                businessCabecalho.TruncaTabelaParcelas();
 
                 backgroundWorker1.RunWorkerAsync();
             }
@@ -160,7 +164,7 @@ namespace ConvetPdfToLayoutAlta
 
             FileInfo arquivoPdf = null;
 
-            string[] arrayIgnoraOcorrencia = { "Portabilidade", "BRADESCO","SAFRA", "ITAU","ITAÚ", "PACTUAL","BTG", "UNIBANCO","HSBC", "NORDESTE","SATNANDER","BNDS","CITIBANK","CITI", "CITY", "ECONOMICA", "FEDERAL" };
+            string[] arrayIgnoraOcorrencia = { "Portabilidade:", "BRADESCO","SAFRA", "ITAU","ITAÚ", "PACTUAL","BTG", "UNIBANCO","HSBC", "NORDESTE","SATNANDER","BNDS","CITIBANK","CITI", "CITY", "ECONOMICA", "FEDERAL" };
             string[] arrayIgnorParcelas = { "Encargo", "Índice", "Devedor", "Proc.Emi/Pag", "Mora", "Gerad", };
             string[] arrayIgnorCabecalho = { "End.Correspondência", "Demonstrativo", "Telefone", "Modalidade", "Nome" };
             string[] arrayIgonorCampo = { "Nº", "CTFIN", "Emissão", "PRO","ANT", "SANTANDER", "Carteira", "Data","CTFIN","Carteira","Contrato","Seguro","TAXA", };
@@ -237,6 +241,9 @@ namespace ConvetPdfToLayoutAlta
                                     string line;
                                     while ((line = strReader.ReadLine()) != null)
                                     {
+                                        if (string.IsNullOrWhiteSpace(line))
+                                            continue;
+
                                         numberLine++;
 
                                         if (line.Trim().Equals("a") || line.Trim().Equals("v") || line.Trim().Equals("***") || line.Length < 2) continue;
@@ -426,10 +433,11 @@ namespace ConvetPdfToLayoutAlta
 
                                                 if (line.Contains("***"))
                                                 {
-                                                    Ocorrencia objCorrencia = null;
 
                                                     if (arrayIgnoraOcorrencia.Any(k => line.Split(' ').Any(p => k.Equals(p))))
                                                         continue;
+
+                                                    Ocorrencia objCorrencia = null;
 
                                                     if (line.Contains("Novo prazo"))
                                                     {
@@ -663,7 +671,7 @@ namespace ConvetPdfToLayoutAlta
 
                                             if (!lstCabecalho.Any(c => c.Id == objCabecalho.Id))
                                             {
-                                                if (!string.IsNullOrWhiteSpace(objCabecalho.Situacao))
+                                                if (!string.IsNullOrWhiteSpace(objCabecalho.TipoOrigem))
                                                 {
                                                     objCabecalho = businessCabecalho.PreencheCabecalho(objCabecalho);
                                                     lstCabecalho.Add(objCabecalho);
@@ -706,6 +714,7 @@ namespace ConvetPdfToLayoutAlta
 
                             if (lstCronograma.Count > 0)
                                 objContratoPdf.Cronogramas.AddRange(lstCronograma);
+
 
                             if (!lstContratosPdf.Any(pdf => pdf.Contrato.Trim().Equals(objContratoPdf.Contrato.Trim())))
                                 lstContratosPdf.Add(objContratoPdf);
@@ -797,6 +806,9 @@ namespace ConvetPdfToLayoutAlta
                             StreamWriter item = File.CreateText(diretorioDestinoLayout + @"\LogErroContratos.txt");
                             item.Dispose();
                         }
+
+                        //ListaContratoErros.Add(obj.Contrato);
+
                         using (StreamWriter sw = new StreamWriter(diretorioDestinoLayout + @"\LogErroContratos.txt", true, Encoding.UTF8))
                         {
                             StringBuilder strErro = new StringBuilder();
@@ -811,12 +823,13 @@ namespace ConvetPdfToLayoutAlta
                         ExceptionError.RemoverTela(arquivoPdf, diretorioOrigemPdf);
                         padrao = 0;
                         contador++;
-
+                        
                     }
 
 
                     catch (Exception ex)
                     {
+                        //ListaContratoErros.Add(obj.Contrato);
                         _countPercent++;
                         backgroundWorker1.ReportProgress(_countPercent, null);
                         ExceptionError.countError++;
@@ -837,6 +850,8 @@ namespace ConvetPdfToLayoutAlta
                             sw.Write(strErro);
                             sw.WriteLine("================================================================================================================================================");
                         }
+                        contador++;
+                       
                     }
                // });
                 }

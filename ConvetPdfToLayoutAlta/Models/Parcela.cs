@@ -10,6 +10,7 @@ namespace ConvetPdfToLayoutAlta.Models
 
         public string VencimentoCorrecao { get; set; }
         public string Vencimento { get; set; }
+        public string DataBaseContrato { get; set; }
         public string Pagamento { get; set; }
         public string NumeroPrazo { get; set; }
         public string Indice { get; set; }
@@ -36,5 +37,7 @@ namespace ConvetPdfToLayoutAlta.Models
         public string DataVencimentoAnterior { get; set; }
         public bool IsAnt { get; set; }
         public string Contrato { get; set; }
+        public string Indicador { get; set; }
+        public string Carteira { get; set; }
     }
 }

@@ -124,11 +124,10 @@ namespace ConvetPdfToLayoutAlta
             }
 
             Close();
-            if (Directory.EnumerateFiles(diretorioOrigemPdf, "*.err", SearchOption.AllDirectories).Count() > 0)
-            {
-                FrmConsolidacaoAlta f = new FrmConsolidacaoAlta(diretorioDestinoLayout, diretorioOrigemPdf);
-                f.ShowDialog();
-            }
+          
+            FrmConsolidacaoAlta f = new FrmConsolidacaoAlta(diretorioDestinoLayout, diretorioOrigemPdf);
+            f.ShowDialog();
+            
         }
 
         private void BackgroundWorkerTela25_DoWork(object sender, DoWorkEventArgs e)
