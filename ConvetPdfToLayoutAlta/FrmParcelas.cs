@@ -1,80 +1,33 @@
 ﻿using ConvetPdfToLayoutAlta.Models;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Windows.Forms;
 
 namespace ConvetPdfToLayoutAlta
 {
     public partial class FrmParcelas : Form
     {
-
-        private Conn cnx = null;
-        private SqlCommand command = null;
-        List<Parcela> lst = null;
+        BusinessParcelas businessParcelas = null;
 
         public FrmParcelas()
         {
             InitializeComponent();
         }
 
-        List<Parcela> GetParcelas(string _contrato = null)
+        List<Parcela> GetParcelas()
         {
-            List<Parcela> listaParcelas = new List<Parcela>();
             try
             {
-                Parcela objParcela = null;
-                cnx = new Conn();
-                command = cnx.Parametriza("SP_GET_PARCELAS");
-                command.Connection = command.Connection;
-                command.Connection.Open();
+                if (string.IsNullOrWhiteSpace(textBoxContrato.Text))
+                    return null;
 
-                if (!string.IsNullOrWhiteSpace(_contrato))
-                    command.Parameters.Add(new SqlParameter("@Contrato", _contrato.Trim()));
-
-                SqlDataReader reader = command.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    objParcela = new Parcela
-                    {
-                        Carteira = reader[0].ToString(),
-                        Contrato = reader[1].ToString(),
-                        Vencimento = reader[2].ToString(),
-                        DataBaseContrato = reader[3].ToString(),
-                        Indice = reader[4].ToString(),
-                        Pagamento = reader[5].ToString(),
-                        NumeroPrazo = reader[6].ToString(),
-                        Prestacao = reader[7].ToString(),
-                        Seguro = reader[8].ToString(),
-                        Taxa = reader[9].ToString(),
-                        Fgts = reader[10].ToString(),
-                        AmortizacaoCorrecao = reader[11].ToString(),
-                        SaldoDevedorCorrecao = reader[12].ToString(),
-                        Encargo = reader[13].ToString(),
-                        Pago = reader[14].ToString(),
-                        Juros = reader[15].ToString(),
-                        Mora = reader[16].ToString(),
-                        Amortizacao = reader[17].ToString(),
-                        Indicador = reader[18].ToString(),
-                        SaldoDevedor = reader[19].ToString(),
-                        Proc_Emi_Pag = reader[20].ToString(),
-                        Iof = reader[21].ToString()
-                    };
-
-                    listaParcelas.Add(objParcela);
-                }
-
-                return listaParcelas;
+                businessParcelas = new BusinessParcelas();
+                return businessParcelas.GetParcelas(textBoxContrato.Text);
             }
+            
             catch (Exception exErro)
             {
-                cnx.FecharConexao(command);
                 throw new Exception("Erro na tentativar de carregar dos dados: " + exErro.Message);
-            }
-            finally
-            {
-                cnx.FecharConexao(command);
             }
 
         }
@@ -84,10 +37,8 @@ namespace ConvetPdfToLayoutAlta
             try
             {
                 dataGridViewParcelas.DataSource = null;
-                List<Parcela> Parcelas = GetParcelas();
-
                 dataGridViewParcelas.AutoGenerateColumns = false;
-                dataGridViewParcelas.DataSource = Parcelas;
+                dataGridViewParcelas.DataSource = GetParcelas();
                 textBoxContrato.Focus();
 
             }
@@ -100,9 +51,24 @@ namespace ConvetPdfToLayoutAlta
 
         private void button1_Click(object sender, EventArgs e)
         {
-            lst = GetParcelas(textBoxContrato.Text);
+            Cursor.Current = Cursors.WaitCursor;
+            Enabled = !Enabled;
+           
+            if (string.IsNullOrWhiteSpace(textBoxContrato.Text.Trim()))
+            {
+                MessageBox.Show("Informe o número de contrato para realizar a consulta.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                textBoxContrato.Focus();
+                Enabled = !Enabled;
+                return;
+            }
             dataGridViewParcelas.DataSource = null;
-            dataGridViewParcelas.DataSource = lst;
+            dataGridViewParcelas.DataSource = GetParcelas();
+
+            if (dataGridViewParcelas.Rows.Count == 0)
+                MessageBox.Show("Nenhum registro encontrado para o contrato " + textBoxContrato.Text, "Consulta", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+            Enabled = !Enabled;
+            Cursor.Current = Cursors.Default;
         }
 
         private void button2_Click(object sender, EventArgs e)

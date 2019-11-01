@@ -16,6 +16,7 @@ namespace ConvetPdfToLayoutAlta
         bool[] consistencia = { false, false, false, false };
         bool[] isProcessado = { false, false, false, false };
         bool[] orderExcute = { false, false, false, false };
+        List<string> telas = new List<string> {"TELA 16", "TELA 18", "TELA 20", "TELA 25" };
 
         public FrmSelectFolder()
         {
@@ -24,7 +25,7 @@ namespace ConvetPdfToLayoutAlta
 
         private void BtnSelectDiretorioOrigem_Click(object sender, EventArgs e)
         {
-            if (folderBrowserDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
             {
                 if (SelectFolders(1) == DialogResult.Yes)
                 {
@@ -51,7 +52,8 @@ namespace ConvetPdfToLayoutAlta
                         return;
                     }
 
-                    btnDuplicata.Enabled = comboBoxTela.Enabled = (textDestinoLayout.TextLength > 0 && textOrigemContratosPdf.TextLength > 0);
+                    //btnDuplicata.Enabled = comboBoxTela.Enabled = (textDestinoLayout.TextLength > 0 && textOrigemContratosPdf.TextLength > 0);
+                    btnDuplicata.Enabled  = (textDestinoLayout.TextLength > 0 && textOrigemContratosPdf.TextLength > 0);
                 }
 
                
@@ -98,53 +100,56 @@ namespace ConvetPdfToLayoutAlta
 
         private void BtnIniciarConvercao_Click(object sender, EventArgs e)
         {
-            if (comboBoxTela.SelectedIndex.Equals(4))
-            {
-                MessageBox.Show("Selecione uma tela para converção.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+            //if (comboBoxTela.SelectedIndex.Equals(4))
+            //{
+            //    MessageBox.Show("Selecione uma tela para converção.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            //    return;
+            //}
 
-            for (int i = (comboBoxTela.SelectedIndex - 1); i >= 0; i--)
-            {
-                if (!orderExcute[i])
-                {
-                    MessageBox.Show("A converção deve ser realizada em ordem crescente de tela.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-                    return;
-                }
-            }
+            //for (int i = (comboBoxTela.SelectedIndex - 1); i >= 0; i--)
+            //{
+            //    if (!orderExcute[i])
+            //    {
+            //        MessageBox.Show("A converção deve ser realizada em ordem crescente de tela.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            //        return;
+            //    }
+            //}
 
-           
-            if (!isProcessado[comboBoxTela.SelectedIndex])
+
+            //if (!isProcessado[comboBoxTela.SelectedIndex])
+            //{
+            panelSpinner.Visible = !panelSpinner.Visible;
+            telas.ForEach(t =>
             {
-                panelSpinner.Visible = !panelSpinner.Visible;
+                Text += "-" + t + $" - (V{Application.ProductVersion})"; ;
                 Form f = null;
 
-                if (comboBoxTela.Text.ToUpper().Equals("TELA 16"))
-                    f = new FrmTela16(textOrigemContratosPdf.Text, textDestinoLayout.Text, comboBoxTela.Text);
+                if (t.Equals("TELA 16"))
+                    f = new FrmTela16(textOrigemContratosPdf.Text, textDestinoLayout.Text, t);
 
-                if (comboBoxTela.Text.ToUpper().Equals("TELA 18"))
-                    f = new FrmTela18(textOrigemContratosPdf.Text, textDestinoLayout.Text, comboBoxTela.Text);
+                if (t.Equals("TELA 18"))
+                    f = new FrmTela18(textOrigemContratosPdf.Text, textDestinoLayout.Text, t);
 
-                if (comboBoxTela.Text.ToUpper().Equals("TELA 20"))
-                    f = new FrmTela20(textOrigemContratosPdf.Text, textDestinoLayout.Text, comboBoxTela.Text);
+                if (t.Equals("TELA 20"))
+                    f = new FrmTela20(textOrigemContratosPdf.Text, textDestinoLayout.Text, t);
 
-                if (comboBoxTela.Text.ToUpper().Equals("TELA 25"))
-                    f = new FrmTela25(textOrigemContratosPdf.Text, textDestinoLayout.Text, comboBoxTela.Text);
+                if (t.Equals("TELA 25"))
+                    f = new FrmTela25(textOrigemContratosPdf.Text, textDestinoLayout.Text, t);
 
 
-                orderExcute[comboBoxTela.SelectedIndex] = true;
-                isProcessado[comboBoxTela.SelectedIndex] = true;
+                // orderExcute[comboBoxTela.SelectedIndex] = true;
+                // isProcessado[comboBoxTela.SelectedIndex] = true;
 
-                Text += "-" + comboBoxTela.Text + $" - (V{Application.ProductVersion})"; ;
                 f.ShowDialog();
-                panelSpinner.Visible = !panelSpinner.Visible;
-                Text = Text.Split('-')[0];
-            }
-            else
-            {
-                string msg = string.Format("A {0} já foi processada!", comboBoxTela.Text.ToUpper());
-                MessageBox.Show(msg, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
+                Text = Text.Split('-')[0].Trim();
+            });
+            panelSpinner.Visible = !panelSpinner.Visible;
+            //}
+            //else
+            //{
+            //    string msg = string.Format("A {0} já foi processada!", comboBoxTela.Text.ToUpper());
+            //    MessageBox.Show(msg, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            //}
         }
 
         private void Button1_Click(object sender, EventArgs e)
@@ -192,7 +197,7 @@ namespace ConvetPdfToLayoutAlta
         {
             //UpdateApp();
 
-            comboBoxTela.SelectedIndex = 4;
+           // comboBoxTela.SelectedIndex = 4;
             ToolTip toolTip = new ToolTip();
             toolTip.SetToolTip(btnDuplicata, "Filtra os arquivos com base no PONTEIRO e remove duplicidade de pdfs das VM's.");
 #if DEBUG
@@ -246,12 +251,12 @@ namespace ConvetPdfToLayoutAlta
 
         private void BtnDuplicata_Click(object sender, EventArgs e)
         {
-
-            if (comboBoxTela.SelectedIndex == 4)
-            {
-                MessageBox.Show("Selecione um tipo de tela.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                return;
-            }
+            bool isFilter = false;
+            //if (comboBoxTela.SelectedIndex == 4)
+            //{
+            //    MessageBox.Show("Selecione um tipo de tela.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            //    return;
+            //}
 
             // Inicia o processo para renomear os arquivos antes de filtrar
             FileInfo ffRename = new FileInfo(Directory.GetCurrentDirectory() + @"\config\ARQUPONT.txt");
@@ -266,33 +271,44 @@ namespace ConvetPdfToLayoutAlta
                     return;
             }
 
-           
-            string _tela = Regex.Replace(comboBoxTela.Text, @"[^0-9$]", "");
+            string _tela = string.Empty;
+            panelSpinner.Visible = !panelSpinner.Visible;
 
-            var extencao = new List<string>() { $"*_{_tela}.dup", $"*_{_tela}.damp", $"*_{_tela}.fil", $"*_{_tela}.err", $"*_{_tela}.rej" };
-            foreach (var item in extencao)
+            telas.ForEach(t =>
             {
-                if (Directory.EnumerateFiles(textOrigemContratosPdf.Text, item, SearchOption.AllDirectories).Count() > 0)
+                Text += " - " +t;
+                _tela = Regex.Replace(t, @"[^0-9$]", "");
+                var extencao = new List<string>() { $"*_{_tela}.dup", $"*_{_tela}.damp", $"*_{_tela}.fil", $"*_{_tela}.err", $"*_{_tela}.rej" };
+                foreach (var item in extencao)
                 {
-                    panelSpinner.Visible = !panelSpinner.Visible;
-                    FrmRenomearPdf frmRenomear = new FrmRenomearPdf(textOrigemContratosPdf.Text, _tela);
-                    frmRenomear.ShowDialog();
-                    panelSpinner.Visible = !panelSpinner.Visible;
-                    break;
+                    if (Directory.EnumerateFiles(textOrigemContratosPdf.Text, item, SearchOption.AllDirectories).Count() > 0)
+                    {
+                        FrmRenomearPdf frmRenomear = new FrmRenomearPdf(textOrigemContratosPdf.Text, _tela);
+                        frmRenomear.ShowDialog();
+                        //panelSpinner.Visible = !panelSpinner.Visible;
+                        // break;
+                    }
                 }
-            } 
 
-            Text += "-" + comboBoxTela.Text;
+               // panelSpinner.Visible = !panelSpinner.Visible;
+                //Text = Text.Split('-')[0];
+                FrmDuplicadoFiltro f = new FrmDuplicadoFiltro(textOrigemContratosPdf.Text, t, lstDamp3);
+                f.ShowDialog();
+
+                //consistencia[comboBoxTela.SelectedIndex] = true;
+
+                // btnIniciarConvercao.Enabled = consistencia.ToList().TrueForAll(iis => iis);
+
+                Text = Text.Split('-')[0].Trim(); ;
+            });
+
             panelSpinner.Visible = !panelSpinner.Visible;
-            FrmDuplicadoFiltro f = new FrmDuplicadoFiltro(textOrigemContratosPdf.Text, comboBoxTela.Text, lstDamp3);
-            f.ShowDialog();
-            panelSpinner.Visible = !panelSpinner.Visible;
-            Text = Text.Split('-')[0];
+            FileInfo fileInfo = new FileInfo(Directory.GetCurrentDirectory() + @"\DbTombamento.sdf");
+            if (fileInfo.Exists)
+                fileInfo.Delete();
 
-            consistencia[comboBoxTela.SelectedIndex] = true;
-
-            btnIniciarConvercao.Enabled = consistencia.ToList().TrueForAll(iis => iis);
-
+            btnDuplicata.Enabled = false;
+            btnIniciarConvercao.Enabled = true;
         }
 
 
@@ -309,13 +325,14 @@ namespace ConvetPdfToLayoutAlta
 
             bool[] x = { true, false, false, false };
 
-            for (int i = (comboBoxTela.SelectedIndex-1) ; i > 0 ; i--)
+            for (int i = (comboBoxTela.SelectedIndex - 1); i > 0; i--)
             {
                 if (!x[i])
                 {
                     break;
                 }
             }
+        
             //List<string> lstArquiPoint = new List<string>();
             //using (StreamReader sw = new StreamReader(@"D:\HomologacaoFerramenta\config\ARQUPONT.TXT", Encoding.UTF8))
             //{
@@ -340,39 +357,27 @@ namespace ConvetPdfToLayoutAlta
             f.ShowDialog();
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
+      
 
-        }
+        //private void btnLocalizar_Click(object sender, EventArgs e)
+        //{
+        //    openFileDialog1.Filter = "Arquivo de Damp|*.txt";
+        //    if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        //    {
+        //        textBoxDamp3.Text = openFileDialog1.FileName;
+        //        btnDamp3.Enabled = true;
+        //    }
+        //}
 
-        private void btnLocalizar_Click(object sender, EventArgs e)
-        {
-            openFileDialog1.Filter = "Arquivo de Damp|*.txt";
-            if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                textBoxDamp3.Text = openFileDialog1.FileName;
-                btnDamp3.Enabled = true;
-            }
-        }
+        //private void btnDamp3_Click(object sender, EventArgs e)
+        //{
+        //    panelSpinner.Visible = !panelSpinner.Visible;
+        //    FrmGeraDamp3 f = new FrmGeraDamp3(textBoxDamp3.Text, lstDamp3);
+        //    f.ShowDialog();
+        //    panelSpinner.Visible = !panelSpinner.Visible;
+        //}
 
-        private void btnDamp3_Click(object sender, EventArgs e)
-        {
-            panelSpinner.Visible = !panelSpinner.Visible;
-            FrmGeraDamp3 f = new FrmGeraDamp3(textBoxDamp3.Text, lstDamp3);
-            f.ShowDialog();
-            panelSpinner.Visible = !panelSpinner.Visible;
-        }
-
-        private void parcelasToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            FrmParcelas frmParcelas = new FrmParcelas();
-            frmParcelas.ShowDialog();
-        }
-
-        private void cabeçalhoToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-          
-        }
+      
 
         private void btnLocalizarHistoricoParcela_Click(object sender, EventArgs e)
         {
@@ -388,34 +393,81 @@ namespace ConvetPdfToLayoutAlta
 
         private void gerarArquivoDeDamp3ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
-            groupBox1.Visible = panelDamp3.Visible; 
-            panelDamp3.Visible = !panelDamp3.Visible;
-            gerarArquivoDeDamp3ToolStripMenuItem.Checked = !gerarArquivoDeDamp3ToolStripMenuItem.Checked;
-            MenuItemGravarHistoricoParcelas.Enabled = !MenuItemGravarHistoricoParcelas.Enabled;
+            label4.Text = "16 - Selecione o arquivo TL16PARC.txt";
+            button11.Text = "Gravar Parcelas (pdf)";
+            Painel();
         }
 
         private void button11_Click(object sender, EventArgs e)
         {
-            MenuItemGravarHistoricoParcelas_Click(null, null);
+            FileInfo fileInfo = new FileInfo(textBoxHistoricoParcelas.Text);
+            Painel();
             panelSpinner.Visible = !panelSpinner.Visible;
-            FrmHistoricoParcelas f = new FrmHistoricoParcelas(textBoxHistoricoParcelas.Text);
-            f.ShowDialog();
+
+            Form f = null;
+            if (label4.Text.Split('-')[0].Trim().Equals("8"))
+            {
+                if (!fileInfo.Name.Equals("ARQ.EXT.08.HIST.PARCELAS.TXT"))
+                    MessageBox.Show("O conteúdo deste arquivo não é compativel com o arquivo Hitorico de Parcelas", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                else
+                    f = new FrmHistoricoParcelas(textBoxHistoricoParcelas.Text);
+            }
+
+            if (label4.Text.Split('-')[0].Trim().Equals("16"))
+            {
+                if (!fileInfo.Name.Equals("TL16PARC.txt"))
+                    MessageBox.Show("O conteúdo deste arquivo não é compativel com o arquivo de parcelas da tela 16", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                else
+                    f = new FrmCarregaParcelas(textBoxHistoricoParcelas.Text);
+            }
+
+
+            if (f != null)
+                f.ShowDialog();
+
             panelSpinner.Visible = !panelSpinner.Visible;
         }
 
         private void MenuItemGravarHistoricoParcelas_Click(object sender, EventArgs e)
         {
-            groupBox1.Visible = !groupBox1.Visible;
-            pnlHistoricoParcela.Visible = !groupBox1.Visible;
-            MenuItemGravarHistoricoParcelas.Checked = !MenuItemGravarHistoricoParcelas.Checked;
-            gerarArquivoDeDamp3ToolStripMenuItem.Enabled = !gerarArquivoDeDamp3ToolStripMenuItem.Enabled;
+            
+            label4.Text = "8 - Selecione o arquivo ARQ.EXT.08.HIST.PARCELAS.TXT";
+            button11.Text = "Gravar Histórico de Parcelas";
+            button11.Width = 182;
+            Painel();
         }
 
         private void consultarHistóricoDeParcelasToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FrmCabecalho frmCabecalho = new FrmCabecalho();
             frmCabecalho.ShowDialog();
+        }
+
+        private void gravarParcelasToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+           
+            label4.Text = "16 - Selecione o arquivo TL16PARC.txt";
+            button11.Text = "Gravar Parcelas (pdf)";
+            button11.Width = 155;
+            Painel();
+        }
+
+        private void consultarParcelasToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FrmParcelas frmParcelas = new FrmParcelas();
+            frmParcelas.ShowDialog();
+        }
+
+        void Painel(bool _is = false)
+        {
+            groupBox1.Visible = _is;
+            pnlHistoricoParcela.Visible = !groupBox1.Visible;
+            voltarToolStripMenuItem.Enabled = !groupBox1.Visible;
+        }
+
+        private void voltarToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Painel(true);   
         }
     }
 }

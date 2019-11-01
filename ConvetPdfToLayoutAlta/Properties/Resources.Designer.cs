@@ -83,6 +83,16 @@ namespace ConvetPdfToLayoutAlta.Properties {
         /// <summary>
         ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap _62941cardfilebox_109271 {
+            get {
+                object obj = ResourceManager.GetObject("62941cardfilebox_109271", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap add_icon_icons_com_52393 {
             get {
                 object obj = ResourceManager.GetObject("add_icon-icons.com_52393", resourceCulture);
@@ -93,9 +103,39 @@ namespace ConvetPdfToLayoutAlta.Properties {
         /// <summary>
         ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap back_12955 {
+            get {
+                object obj = ResourceManager.GetObject("back_12955", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap back_left_arrow_circular_button_outline_icon_icons_com_73313 {
+            get {
+                object obj = ResourceManager.GetObject("back-left-arrow-circular-button-outline_icon-icons.com_73313", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap clear_filters_48_45590__1_ {
             get {
                 object obj = ResourceManager.GetObject("clear_filters-48_45590 (1)", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Save_icon_icons_com_73702 {
+            get {
+                object obj = ResourceManager.GetObject("Save_icon-icons.com_73702", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

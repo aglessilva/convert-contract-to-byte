@@ -2,6 +2,107 @@
 {
     public class HistoricoParcela
     {
+        public HistoricoParcela()
+        {
+
+            TipoArquivo = "";
+            DataReferenciaExtracao = "";
+            IdentificacaoContrato = "";
+            TipoRegistroContrato = "";
+            DataAmortizacaoParcela = "";
+            NumeroParcelaContrato = "";
+            Sinal0 = "";
+            ValorAmortizacaoParcela = "";
+            Sinal1 = "";
+            ValorJurosParcela = "";
+            Sinal2 = "";
+            ValorSeguroMIPParcela = "";
+            Sinal3 = "";
+            ValorSeguroDFIParcela = "";
+            Sinal4 = "";
+            ValorTarifaParcela = "";
+            CodigoEstipulanteMIP = "";
+            RegiaoApoliceMIP = "";
+            MatriculaMIP = "";
+            AgenciaMIP = "";
+            EmpreendimentoMIP = "";
+            CodigoApoliceAtualContratoMIP = "";
+            CodigoEstipulanteDFI = "";
+            RegiaoApoliceDFI = "";
+            MatriculaDFI = "";
+            AgenciaDFI = "";
+            EmpreendimentoDFI = "";
+            CodigoApoliceAtualContratoDFI = "";
+            Sinal5 = "";
+            ValorAmortizacaoParcelaCorrigida = "";
+            Sinal6 = "";
+            ValorJurosParcelaCorrigida = "";
+            Sinal7 = "";
+            ValorSeguroMIPParcelaCorrigida = "";
+            Sinal8 = "";
+            ValorSeguroDFIParcelaCorrigida = "";
+            Sinal9 = "";
+            ValorIOFSeguroMIP = "";
+            Sinal10 = "";
+            ValorIOFSeguroDFI = "";
+            Sinal11 = "";
+            ValorTarifaParcelaCorrigidaTSA = "";
+            Sinal12 = "";
+            ValorAbatimentoFGTSDAMP3 = "";
+            FatorCorrecaoMonetariaAplicada = "";
+            Sinal13 = "";
+            ValorCorrecaoMonetariaEncargos = "";
+            Sinal14 = "";
+            ValorJurosRemuneratorios = "";
+            Sinal15 = "";
+            ValorJurosMoratorios = "";
+            Sinal16 = "";
+            ValorCorrecaoMonetariaAtraso = "";
+            Sinal117 = "";
+            ValorIncrementoDescontoOriginal = "";
+            Sinal18 = "";
+            ValorIncrementoDescontoCorrigido = "";
+            Sinal19 = "";
+            ValorRDM = "";
+            Sinal20 = "";
+            SaldoAmortizado = "";
+            NumeroBoleto = "";
+            IndicativoParcelaPaga = "";
+            DataMovimentoPagamento = "";
+            DataProcessamentoPagamento = "";
+            FormaLiquidacao = "";
+            Sinal21 = "";
+            ValorPago = "";
+            Sinal22 = "";
+            ValorDescontoConcedido = "";
+            ValorDiferencaProximaParcela = "";
+            Sinal23 = "";
+            ValorPrincipalSaldoDevedor = "";
+            ValorJurosSaldoDevedor = "";
+            Sinal24 = "";
+            ValorCMSaldoDevedor = "";
+            CodigoTipoOcorrência = "";
+            Sinal25 = "";
+            ValorOcorrencia = "";
+            IndicadorParcelaEmitida = "";
+            SistemaAmortizacao = "";
+            TaxaJurosEfetivoContrato = "";
+            TaxaJurosNominalContrato = "";
+            To08_Ind_Incorp = "";
+            To08_Vl_Quot_S = "";
+            To08_Vl_Quot = "";
+            To08_Sld_Fgts_Ant_S = "";
+            To08_Sld_Fgts_Ant = "";
+            To08_Sld_Fgts_Atu_S = "";
+            To08_Sld_Fgts_Atu = "";
+            To08_Sld_Sob_Acu_S = "";
+            To08_Sld_Sob_Acu = "";
+            To08_Sld_Soma_Sob_S = "";
+            To08_Sld_Soma_Sob = "";
+            Filler = "";
+
+        }
+        public int Id { get; set; }
         public string TipoArquivo { get; set; }
         public string DataReferenciaExtracao { get; set; }
         public string IdentificacaoContrato { get; set; }

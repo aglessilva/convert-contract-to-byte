@@ -77,10 +77,6 @@ namespace ConvetPdfToLayoutAlta
                         _situacoesAtual.Add(lerTxt.ReadLine());
                 };
 
-
-                businessCabecalho = new BusinessCabecalho();
-                businessCabecalho.TruncaTabelaParcelas();
-
                 backgroundWorker1.RunWorkerAsync();
             }
             catch (Exception ex)

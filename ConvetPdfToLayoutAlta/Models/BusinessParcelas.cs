@@ -4,33 +4,15 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Data.SqlClient;
 using System.Data;
+using ErikEJ.SqlCe;
 
 namespace ConvetPdfToLayoutAlta.Models
 {
-    public class BusinessParcelas: IDisposable
+    public class BusinessParcelas
     {
-        private Conn cnx = null;
-        private SqlCommand command = null;
 
-        public BusinessParcelas()
-        {
-            try
-            {
-                cnx = new Conn();
-                command = new SqlCommand();
-                command.Connection = command.Connection;
-            }
-            catch (Exception exe)
-            {
-                string errp = exe.Message;
-                throw;
-            }
-           
-        }
-
-        ~BusinessParcelas() { cnx.FecharConexao(command); }
+        public BusinessParcelas(){}
 
         public Parcela TrataLinhaParcelas(Parcela _obj, string[] _linha, int sequencia, /*bool _hasTaxa, bool _hasIof,*/ Cabecalho cabecalho, Parcela  _parcela =  null)
         {
@@ -774,21 +756,25 @@ namespace ConvetPdfToLayoutAlta.Models
             return x.ToArray();
         }
 
-        private DataTable CriaTabelaParcelas()
+        public DataTable CriaTabelaParcelas()
         {
             var table = new DataTable();
             table.Columns.Add("Carteira", typeof(string));
             table.Columns.Add("Contrato", typeof(string));
+            table.Columns.Add("Agencia", typeof(string));
             table.Columns.Add("Vencimento", typeof(string));
             table.Columns.Add("DataBaseContrato", typeof(string));
             table.Columns.Add("Indice", typeof(string));
+            table.Columns.Add("IndiceCorrecao", typeof(string));
             table.Columns.Add("Pagamento", typeof(string));
             table.Columns.Add("NumeroPrazo", typeof(string));
             table.Columns.Add("Prestacao", typeof(string));
             table.Columns.Add("Seguro", typeof(string));
+            table.Columns.Add("TPG_EVE_HIS", typeof(string));
             table.Columns.Add("Taxa", typeof(string));
             table.Columns.Add("Fgts", typeof(string));
             table.Columns.Add("AmortizacaoCorrecao", typeof(string));
+            table.Columns.Add("Banco", typeof(string));
             table.Columns.Add("SaldoDevedorCorrecao", typeof(string));
             table.Columns.Add("Encargo", typeof(string));
             table.Columns.Add("Pago", typeof(string));
@@ -803,74 +789,118 @@ namespace ConvetPdfToLayoutAlta.Models
             return table;
         }
 
-        public void AddParcela(List<Parcela> _parcela)
+
+        public void AddParcelas(object _dataTable)
         {
-          
+            DataTable dataTable = (DataTable)_dataTable.GetType().GetProperty("item1").GetValue(_dataTable, null);
+            SqlCeBulkCopyOptions options = new SqlCeBulkCopyOptions();
+
+            if (true)
+            {
+                options = options |= SqlCeBulkCopyOptions.KeepNulls;
+            }
+
             try
             {
-                DataTable dataTable = CriaTabelaParcelas();
-
-                command = cnx.Parametriza();
-
-                DataRow dataRow = null;
-                SqlBulkCopy bulkCopy = new SqlBulkCopy(command.Connection, SqlBulkCopyOptions.TableLock | SqlBulkCopyOptions.FireTriggers | SqlBulkCopyOptions.UseInternalTransaction, null);
-                bulkCopy.DestinationTableName = "dbo.PARCELAS";
-
-                if (command.Connection.State == ConnectionState.Closed)
-                    command.Connection.Open();
-
-                foreach (var item in _parcela)
+                using (DbConnEntity connEntity = new DbConnEntity())
                 {
-                    dataRow = dataTable.NewRow();
-
-                    dataRow["Carteira"] = item.Carteira.Trim();
-                    dataRow["Contrato"] = item.Carteira.Trim().Substring(3) + item.Contrato.Trim();
-                    dataRow["Vencimento"] = item.Vencimento.Trim();
-                    dataRow["DataBaseContrato"] = item.DataBaseContrato.Trim();
-                    dataRow["Indice"] = item.Indice.Trim();
-                    dataRow["Pagamento"] = item.Pagamento.Trim();
-                    dataRow["NumeroPrazo"] = item.NumeroPrazo.Trim();
-                    dataRow["Prestacao"] = item.Prestacao.Trim();
-                    dataRow["Seguro"] = item.Seguro.Trim();
-                    dataRow["Taxa"] = item.Taxa.Trim();
-                    dataRow["Fgts"] = item.Fgts.Trim();
-                    dataRow["AmortizacaoCorrecao"] = item.AmortizacaoCorrecao.Trim();
-                    dataRow["SaldoDevedorCorrecao"] = item.SaldoDevedorCorrecao.Trim();
-                    dataRow["Encargo"] = item.Encargo.Trim();
-                    dataRow["Pago"] = item.Pago.Trim();
-                    dataRow["Juros"] = item.Juros.Trim();
-                    dataRow["Mora"] = item.Mora.Trim();
-                    dataRow["Amortizacao"] = item.Amortizacao.Trim();
-                    dataRow["Indicador"] = item.Indicador.Trim();
-                    dataRow["SaldoDevedor"] = item.SaldoDevedor.Trim();
-                    dataRow["Proc_Emi_Pag"] = item.Proc_Emi_Pag.Trim();
-                    dataRow["Iof"] = item.Iof.Trim();
-
-                    dataTable.Rows.Add(dataRow);
+                    using (SqlCeBulkCopy bc = new SqlCeBulkCopy(connEntity.Database.Connection.ConnectionString.ToString(), options))
+                    {
+                        bc.DestinationTableName = "Parcelas";
+                        bc.WriteToServer(dataTable);
+                    }
                 }
 
-               
-                // dispara o commando de bulkInsert
-                bulkCopy.WriteToServer(dataTable);
-
                 dataTable = null;
-                _parcela = null;
+            }
+            catch (Exception exdb)
+            {
+                throw new Exception("Erro ao tentar converter objeto na função AddHistoricoParcelas: " + exdb.Message);
+            }
+        }
 
-                if (command.Connection.State == ConnectionState.Open)
-                    command.Connection.Close();
+        public void DoBulkCopy(bool keepNulls, List<Parcela> _parcela)
+        {
+            DataTable dataTable = CriaTabelaParcelas();
+            DataRow dataRow = null;
 
-                cnx.FecharConexao(command);
+            foreach (var item in _parcela)
+            {
+                dataRow = dataTable.NewRow();
+
+                dataRow["Carteira"] = item.Carteira.Trim();
+                dataRow["Contrato"] = item.Carteira.Trim().Substring(3) + item.Contrato.Trim();
+                dataRow["Agencia"] = item.Agencia.Trim();
+                dataRow["Vencimento"] = item.Vencimento.Trim();
+                dataRow["DataBaseContrato"] = item.DataBaseContrato.Trim();
+                dataRow["Indice"] = item.Indice.Trim();
+                dataRow["IndiceCorrecao"] = item.IndiceCorrecao.Trim();
+                dataRow["Pagamento"] = item.Pagamento.Trim();
+                dataRow["NumeroPrazo"] = item.NumeroPrazo.Trim();
+                dataRow["Prestacao"] = item.Prestacao.Trim();
+                dataRow["Seguro"] = item.Seguro.Trim();
+                dataRow["TPG_EVE_HIS"] = item.TPG_EVE_HIS.Trim();
+                dataRow["Taxa"] = item.Taxa.Trim();
+                dataRow["Fgts"] = item.Fgts.Trim();
+                dataRow["AmortizacaoCorrecao"] = item.AmortizacaoCorrecao.Trim();
+                dataRow["Banco"] = item.Banco.Trim();
+                dataRow["SaldoDevedorCorrecao"] = item.SaldoDevedorCorrecao.Trim();
+                dataRow["Encargo"] = item.Encargo.Trim();
+                dataRow["Pago"] = item.Pago.Trim();
+                dataRow["Juros"] = item.Juros.Trim();
+                dataRow["Mora"] = item.Mora.Trim();
+                dataRow["Amortizacao"] = item.Amortizacao.Trim();
+                dataRow["Indicador"] = item.Indicador.Trim();
+                dataRow["SaldoDevedor"] = item.SaldoDevedor.Trim();
+                dataRow["Proc_Emi_Pag"] = item.Proc_Emi_Pag.Trim();
+                dataRow["Iof"] = item.Iof.Trim();
+
+                dataTable.Rows.Add(dataRow);
+            }
+
+            SqlCeBulkCopyOptions options = new SqlCeBulkCopyOptions();
+            if (keepNulls)
+            {
+                options = options |= SqlCeBulkCopyOptions.KeepNulls;
+            }
+
+            try
+            {
+                using (DbConnEntity connEntity = new DbConnEntity())
+                {
+                    if (!connEntity.Database.Exists())
+                        connEntity.Parcelas.Create();
+
+                    using (SqlCeBulkCopy bc = new SqlCeBulkCopy(connEntity.Database.Connection.ConnectionString.ToString(), options))
+                    {
+                        bc.DestinationTableName = "Parcelas";
+                        bc.WriteToServer(dataTable);
+                    }
+                }
+            }
+            catch (Exception exEntity)
+            {
+                string erro = exEntity.Message;
+                throw;
+            }
+        }
+
+        public List<Parcela> GetParcelas(string _contrato)
+        {
+            try
+            {
+                using (DbConnEntity dbConnEntity = new DbConnEntity())
+                {
+                    return dbConnEntity.Parcelas.Where(p => p.Contrato.Equals(_contrato.Trim())).ToList();
+                }
             }
             catch (Exception ex)
             {
-                command.Connection.Close();
-                throw new Exception(ex.Message);
+                throw ex;
             }
+
         }
 
-        public void Dispose()
-        {
-            command.Dispose();
-        }
+
     }
 }

@@ -1,8 +1,6 @@
 ﻿using ConvetPdfToLayoutAlta.Models;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace ConvetPdfToLayoutAlta
@@ -34,6 +32,9 @@ namespace ConvetPdfToLayoutAlta
             dataGridViewHistoricaParcelas.Enabled = true;
             groupBoxHistoricoParcela.Enabled = !groupBoxHistoricoParcela.Enabled;
             Cursor.Current = Cursors.Default;
+
+            if (dataGridViewHistoricaParcelas.Rows.Count == 0)
+                MessageBox.Show("Nenhum registro encontrado para o contrato " + textBoxContrato.Text, "Consulta", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
         private void btnLimpaFiltro_Click(object sender, EventArgs e)
@@ -49,9 +50,9 @@ namespace ConvetPdfToLayoutAlta
             {
                 _historicoParcelas =  businessHistoricoParcelas.GetHistoricoParcelas(textBoxContrato.Text.Trim());
             }
-            catch (SqlException sqlErro)
+            catch (Exception sqlErro)
             {
-                MessageBox.Show($"Erro ao consultar hitórico de parcelas\nMsg:{sqlErro.Message}\nProcedure:{sqlErro.Procedure}\nLinha:{sqlErro.LineNumber}");
+                MessageBox.Show($"Erro ao consultar hitórico de parcelas\nMsg:{sqlErro.Message}");
             }
 
             return _historicoParcelas;

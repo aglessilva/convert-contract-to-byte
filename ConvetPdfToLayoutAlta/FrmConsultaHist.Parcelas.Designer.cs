@@ -100,6 +100,9 @@
             // 
             // dataGridViewHistoricaParcelas
             // 
+            this.dataGridViewHistoricaParcelas.AllowUserToAddRows = false;
+            this.dataGridViewHistoricaParcelas.AllowUserToDeleteRows = false;
+            this.dataGridViewHistoricaParcelas.AllowUserToResizeRows = false;
             dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.dataGridViewHistoricaParcelas.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridViewHistoricaParcelas.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 

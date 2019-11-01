@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -1473,8 +1472,6 @@ namespace ConvetPdfToLayoutAlta.Models
 
                     List<Parcela> parcelas = new List<Parcela>();
 
-                    //cria tabela para adicionar os valore e fazer o BulkInsert
-
                     string _sinal = string.Empty;
                     lstContratosPdf.ForEach(q =>
                     {
@@ -1524,11 +1521,9 @@ namespace ConvetPdfToLayoutAlta.Models
                         strAlta = string.Empty;
                     });
 
-
-                    businessParcelas.AddParcela(parcelas);
+                    //cria tabela para adicionar os valore e fazer o BulkInsert
+                    businessParcelas.DoBulkCopy(true, parcelas);
                     parcelas = null;
-
-                    businessParcelas.Dispose();
 
                 }
                 //===============================================================================================================
@@ -1573,18 +1568,5 @@ namespace ConvetPdfToLayoutAlta.Models
             return string.IsNullOrWhiteSpace(_novaData) ? _data : _novaData;
         }
 
-        public void TruncaTabelaParcelas()
-        {
-            Conn conn = new Conn();
-            SqlCommand commad = conn.Parametriza("SP_TRUNCA_TABLEAS");
-
-            if (commad.Connection.State == ConnectionState.Closed)
-                commad.Connection.Open();
-
-            commad.ExecuteNonQuery();
-            commad.Connection.Close();
-            commad.Dispose();
-
-        }
     }
 }
