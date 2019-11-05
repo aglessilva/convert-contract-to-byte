@@ -138,6 +138,7 @@
             this.Name = "FrmCabecalho";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "08 - Histórico de Parcelas ";
+            this.Load += new System.EventHandler(this.FrmCabecalho_Load);
             this.groupBoxHistoricoParcela.ResumeLayout(false);
             this.groupBoxHistoricoParcela.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewHistoricaParcelas)).EndInit();

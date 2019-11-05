@@ -94,13 +94,14 @@ namespace ConvetPdfToLayoutAlta
                             var tab = new
                             {
                                 item1 = dataTable,
+                                item2 = "Parcelas"
                             };
 
                             if (_thread != null)
                                 if (_thread.ThreadState == System.Threading.ThreadState.Running)
                                     _thread.Join();
 
-                            _thread = new Thread(new ParameterizedThreadStart(businessParcelas.AddParcelas));
+                            _thread = new Thread(new ParameterizedThreadStart(businessParcelas.AddBulkItens));
                             _thread.Start(tab);
 
                             contador = 0;
@@ -115,13 +116,14 @@ namespace ConvetPdfToLayoutAlta
                     var tab = new
                     {
                         item1 = dataTable,
+                        item2 = "Parcelas"
                     };
 
                     if (_thread != null)
                         if (_thread.ThreadState == System.Threading.ThreadState.Running)
                             _thread.Join();
 
-                    _thread = new Thread(new ParameterizedThreadStart(businessParcelas.AddParcelas));
+                    _thread = new Thread(new ParameterizedThreadStart(businessParcelas.AddBulkItens));
                     _thread.Start(tab);
 
                     dataTable = businessParcelas.CriaTabelaParcelas();

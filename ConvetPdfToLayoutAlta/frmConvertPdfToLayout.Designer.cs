@@ -31,7 +31,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmSelectFolder));
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.comboBoxTela = new System.Windows.Forms.ComboBox();
             this.button6 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
@@ -58,6 +57,9 @@
             this.textBoxHistoricoParcelas = new System.Windows.Forms.TextBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.menuToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.gravarOcorrênciaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.consultarOcorrênciaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.parcelasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.gravarParcelasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.consultarParcelasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -83,23 +85,6 @@
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
-            // 
-            // comboBoxTela
-            // 
-            this.comboBoxTela.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxTela.Enabled = false;
-            this.comboBoxTela.FormattingEnabled = true;
-            this.comboBoxTela.Items.AddRange(new object[] {
-            "TELA 16",
-            "TELA 18",
-            "TELA 20",
-            "TELA 25",
-            "Telas..."});
-            this.comboBoxTela.Location = new System.Drawing.Point(378, 4);
-            this.comboBoxTela.Name = "comboBoxTela";
-            this.comboBoxTela.Size = new System.Drawing.Size(190, 21);
-            this.comboBoxTela.TabIndex = 3;
-            this.comboBoxTela.SelectedIndexChanged += new System.EventHandler(this.comboBoxTela_SelectedIndexChanged);
             // 
             // button6
             // 
@@ -296,6 +281,7 @@
             // btnIniciarConvercao
             // 
             this.btnIniciarConvercao.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.btnIniciarConvercao.Enabled = false;
             this.btnIniciarConvercao.Image = global::ConvetPdfToLayoutAlta.Properties.Resources._1485477153_arrow_right_78596;
             this.btnIniciarConvercao.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnIniciarConvercao.Location = new System.Drawing.Point(318, 110);
@@ -383,6 +369,7 @@
             // menuToolStripMenuItem
             // 
             this.menuToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem1,
             this.parcelasToolStripMenuItem,
             this.menuItemSubHistoricoParcela,
             this.gerarArquivoDeDamp3ToolStripMenuItem,
@@ -390,6 +377,32 @@
             this.menuToolStripMenuItem.Name = "menuToolStripMenuItem";
             this.menuToolStripMenuItem.Size = new System.Drawing.Size(50, 20);
             this.menuToolStripMenuItem.Text = "Menu";
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.gravarOcorrênciaToolStripMenuItem,
+            this.consultarOcorrênciaToolStripMenuItem});
+            this.toolStripMenuItem1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripMenuItem1.Image")));
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(207, 22);
+            this.toolStripMenuItem1.Text = "Ocorrência";
+            // 
+            // gravarOcorrênciaToolStripMenuItem
+            // 
+            this.gravarOcorrênciaToolStripMenuItem.Image = global::ConvetPdfToLayoutAlta.Properties.Resources.Save_icon_icons_com_73702;
+            this.gravarOcorrênciaToolStripMenuItem.Name = "gravarOcorrênciaToolStripMenuItem";
+            this.gravarOcorrênciaToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.gravarOcorrênciaToolStripMenuItem.Text = "Gravar Ocorrências";
+            this.gravarOcorrênciaToolStripMenuItem.Click += new System.EventHandler(this.gravarOcorrênciaToolStripMenuItem_Click);
+            // 
+            // consultarOcorrênciaToolStripMenuItem
+            // 
+            this.consultarOcorrênciaToolStripMenuItem.Image = global::ConvetPdfToLayoutAlta.Properties.Resources.xmag_search_find_export_locate_5984;
+            this.consultarOcorrênciaToolStripMenuItem.Name = "consultarOcorrênciaToolStripMenuItem";
+            this.consultarOcorrênciaToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.consultarOcorrênciaToolStripMenuItem.Text = "Consultar Ocorrências";
+            this.consultarOcorrênciaToolStripMenuItem.Click += new System.EventHandler(this.consultarOcorrênciaToolStripMenuItem_Click);
             // 
             // parcelasToolStripMenuItem
             // 
@@ -463,6 +476,7 @@
             // panelSpinner
             // 
             this.panelSpinner.BackColor = System.Drawing.SystemColors.Control;
+            this.panelSpinner.Controls.Add(this.pnlHistoricoParcela);
             this.panelSpinner.Controls.Add(this.groupBox1);
             this.panelSpinner.Controls.Add(this.button8);
             this.panelSpinner.Controls.Add(this.button1);
@@ -472,9 +486,7 @@
             this.panelSpinner.Controls.Add(this.button3);
             this.panelSpinner.Controls.Add(this.button2);
             this.panelSpinner.Controls.Add(this.button6);
-            this.panelSpinner.Controls.Add(this.comboBoxTela);
             this.panelSpinner.Controls.Add(this.menuStrip1);
-            this.panelSpinner.Controls.Add(this.pnlHistoricoParcela);
             this.panelSpinner.Location = new System.Drawing.Point(0, 0);
             this.panelSpinner.Name = "panelSpinner";
             this.panelSpinner.Size = new System.Drawing.Size(574, 199);
@@ -510,7 +522,6 @@
         #endregion
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private System.Windows.Forms.ComboBox comboBoxTela;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
@@ -546,6 +557,9 @@
         private System.Windows.Forms.ToolStripMenuItem gravarParcelasToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem consultarParcelasToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem voltarToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem gravarOcorrênciaToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem consultarOcorrênciaToolStripMenuItem;
     }
 }
 

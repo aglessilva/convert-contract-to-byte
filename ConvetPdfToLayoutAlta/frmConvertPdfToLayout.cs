@@ -312,26 +312,26 @@ namespace ConvetPdfToLayoutAlta
         }
 
 
-        private void comboBoxTela_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (comboBoxTela.SelectedIndex.Equals(4))
-                btnDuplicata.Enabled = false;
-            else
-                btnDuplicata.Enabled = true;
-        }
+        //private void comboBoxTela_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    if (comboBoxTela.SelectedIndex.Equals(4))
+        //        btnDuplicata.Enabled = false;
+        //    else
+        //        btnDuplicata.Enabled = true;
+        //}
 
         private void button9_Click(object sender, EventArgs e)
         {
 
-            bool[] x = { true, false, false, false };
+            //bool[] x = { true, false, false, false };
 
-            for (int i = (comboBoxTela.SelectedIndex - 1); i > 0; i--)
-            {
-                if (!x[i])
-                {
-                    break;
-                }
-            }
+            //for (int i = (comboBoxTela.SelectedIndex - 1); i > 0; i--)
+            //{
+            //    if (!x[i])
+            //    {
+            //        break;
+            //    }
+            //}
         
             //List<string> lstArquiPoint = new List<string>();
             //using (StreamReader sw = new StreamReader(@"D:\HomologacaoFerramenta\config\ARQUPONT.TXT", Encoding.UTF8))
@@ -381,7 +381,7 @@ namespace ConvetPdfToLayoutAlta
 
         private void btnLocalizarHistoricoParcela_Click(object sender, EventArgs e)
         {
-            openFileDialog1.Filter = "08 Hist Parcelas|*.txt";
+            openFileDialog1.Filter = "08 Hist Parcelas|*.txt|Ocorrência|*.txt";
             if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 textBoxHistoricoParcelas.Text = openFileDialog1.FileName;
@@ -421,6 +421,13 @@ namespace ConvetPdfToLayoutAlta
                     f = new FrmCarregaParcelas(textBoxHistoricoParcelas.Text);
             }
 
+            if (label4.Text.Split('-')[0].Trim().Equals("32"))
+            {
+                if (!fileInfo.Name.Equals("TL16OCOR.txt"))
+                    MessageBox.Show("O conteúdo deste arquivo não é compativel com o arquivo de ocorrências da tela 16", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                else
+                    f = new FrmCarregaOcorrencia(textBoxHistoricoParcelas.Text);
+            }
 
             if (f != null)
                 f.ShowDialog();
@@ -468,6 +475,20 @@ namespace ConvetPdfToLayoutAlta
         private void voltarToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Painel(true);   
+        }
+
+        private void gravarOcorrênciaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            label4.Text = "32 - Selecione o arquivo TL16OCOR.txt";
+            button11.Text = "Gravar Ocorrências (pdf)";
+            button11.Width = 165;
+            Painel();
+        }
+
+        private void consultarOcorrênciaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FrmCabecalho frmCabecalho = new FrmCabecalho(0);
+            frmCabecalho.ShowDialog();
         }
     }
 }

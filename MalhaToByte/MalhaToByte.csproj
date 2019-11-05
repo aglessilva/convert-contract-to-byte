@@ -47,7 +47,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>ConvertToByte.ImportarHistoricoParcela</StartupObject>
+    <StartupObject>MalhaToByte.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
     <SignManifests>true</SignManifests>
@@ -82,7 +82,6 @@
     <Compile Include="DAL\cnn.cs" />
     <Compile Include="DAL\FileCompress.cs" />
     <Compile Include="DAL\HistoricoParcela.cs" />
-    <Compile Include="GeraPonteiro.cs" />
     <Compile Include="ImportarHistoricoParcela.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

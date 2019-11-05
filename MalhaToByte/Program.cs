@@ -8,20 +8,27 @@ using System.Text.RegularExpressions;
 using MalhaToByte.DAL;
 using iTextSharp.text.pdf.parser;
 using iTextSharp.text.pdf;
+using System.Data;
 
 namespace MalhaToByte
 {
     class Program
     {
+       
+
         static void Main(string[] args)
         {
+            DataTable table = null;
+            DataRow dataRow = null;
+
             Console.WriteLine("Lendo contratos...");
-            string PathFileCompany = @"C:\Temp1";
+            string PathFileCompany = @"C:\TombamentoV1_01\TOMBAMENTO2019-10-25";
             try
             {
+                table = CriaTabelaPdf();
+
                 string newNameContract = string.Empty;
-                int contador = 0, totalContratos = 0, numLote = 1;
-                List<FileCompress> lstFile = new List<FileCompress>();
+                int contador = 0, totalContratos = 0;
                 string pagina, _cpf;
                 IEnumerable<string> fileContract = Directory.EnumerateFiles(PathFileCompany,"*_16.pdf", SearchOption.AllDirectories);
 
@@ -59,25 +66,27 @@ namespace MalhaToByte
                                        break;
                                }
 
-                               byte[] ArqPdf = File.ReadAllBytes(_contract.FullName);
-                               newNameContract = _contract.Name.Split('_')[0];
 
-                               if (!lstFile.Any(n => n.DocumentCpf.Equals(_cpf)))
-                                   lstFile.Add(new FileCompress() { FileEncryption = ArqPdf, ContractName = newNameContract, DocumentCpf = _cpf });
+                               dataRow = table.NewRow();
+
+                               dataRow["ContractName"] = _contract.Name.Split('_')[0];
+                               dataRow["DocumentCpf"] = _cpf;
+                               dataRow["FileEncryption"] = File.ReadAllBytes(_contract.FullName);
+                               dataRow["DateInput"] = DateTime.Now;
+
+                               table.Rows.Add(dataRow);
+
                            }
                            contador++;
                            _contract = null;
 
-                           if (contador == 1000)
+                           if (contador == 5000)
                            {
                                totalContratos += contador;
 
-                               Console.WriteLine($"Aguarde...\n\nArmazenando o {numLote++}º lote de contratos\n");
-                               int total = Cnn.FileStores(lstFile);
-                               Console.WriteLine($"De {contador} contratos {total} foram armazenados - total lidos {totalContratos}\n\n Realizando leitura de contratos");
-                               lstFile.Clear();
+                               Cnn.FileStores(table);
+                               Console.WriteLine($"Aguarde...\n\nTotal Arnazenado  {totalContratos} \n");
                                contador = 0;
-                               total = 0;
                            }
 
 
@@ -94,6 +103,16 @@ namespace MalhaToByte
 
                    });
 
+
+                if (contador > 0)
+                {
+                    totalContratos += contador;
+
+                    Cnn.FileStores(table);
+                    contador = 0;
+                    table = null;
+                }
+
             }
             catch (Exception ex)
             {
@@ -101,7 +120,21 @@ namespace MalhaToByte
             }
 
 
+            Console.WriteLine("\n\n\n CONCLUIDO");
+            Console.ReadKey();
 
+        }
+
+
+        private static DataTable CriaTabelaPdf()
+        {
+            var table = new DataTable();
+            table.Columns.Add("ContractName", typeof(string));
+            table.Columns.Add("DocumentCpf", typeof(string));
+            table.Columns.Add("FileEncryption", typeof(byte[]));
+            table.Columns.Add("DateInput", typeof(DateTime));
+
+            return table;
         }
 
     }

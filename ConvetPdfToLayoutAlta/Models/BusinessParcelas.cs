@@ -789,10 +789,34 @@ namespace ConvetPdfToLayoutAlta.Models
             return table;
         }
 
+        public DataTable CriaTabelaOcorrencia()
+        {
+            var table = new DataTable();
+            table.Columns.Add("Contrato", typeof(string));
+            table.Columns.Add("DataVencimento", typeof(string));
+            table.Columns.Add("DataPagamento", typeof(string));
+            table.Columns.Add("Simbulo", typeof(string));
+            table.Columns.Add("CodigoOcorrencia", typeof(string));
+            table.Columns.Add("Descricao", typeof(string));
+            table.Columns.Add("Enc_Pago", typeof(string));
+            table.Columns.Add("Juros", typeof(string));
+            table.Columns.Add("Mora", typeof(string));
+            table.Columns.Add("ValorAmortizado", typeof(string));
+            table.Columns.Add("Sinal", typeof(char));
+            table.Columns.Add("SaldoDevedor", typeof(string));
+            table.Columns.Add("Alterado", typeof(string));
+            table.Columns.Add("Sit_Anterior", typeof(string));
+            table.Columns.Add("Sit_Atual", typeof(string));
+            table.Columns.Add("Sit_Aux", typeof(string));
 
-        public void AddParcelas(object _dataTable)
+            return table;
+        }
+
+        public void AddBulkItens(object _dataTable)
         {
             DataTable dataTable = (DataTable)_dataTable.GetType().GetProperty("item1").GetValue(_dataTable, null);
+            string _nameTable = (string)_dataTable.GetType().GetProperty("item2").GetValue(_dataTable, null);
+
             SqlCeBulkCopyOptions options = new SqlCeBulkCopyOptions();
 
             if (true)
@@ -806,7 +830,7 @@ namespace ConvetPdfToLayoutAlta.Models
                 {
                     using (SqlCeBulkCopy bc = new SqlCeBulkCopy(connEntity.Database.Connection.ConnectionString.ToString(), options))
                     {
-                        bc.DestinationTableName = "Parcelas";
+                        bc.DestinationTableName = _nameTable;
                         bc.WriteToServer(dataTable);
                     }
                 }

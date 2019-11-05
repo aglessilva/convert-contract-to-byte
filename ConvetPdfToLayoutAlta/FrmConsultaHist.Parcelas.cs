@@ -1,4 +1,5 @@
-﻿using ConvetPdfToLayoutAlta.Models;
+﻿using ConvetPdfToLayoutAlta.FluentApi;
+using ConvetPdfToLayoutAlta.Models;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -8,10 +9,13 @@ namespace ConvetPdfToLayoutAlta
     public partial class FrmCabecalho : Form
     {
         List<HistoricoParcela> _historicoParcelas = null;
+        List<OcorrenciaBulk> ocorrenciaBulks = null;
 
-        public FrmCabecalho()
+        int? tipo = null;
+        public FrmCabecalho(int? _type = null)
         {
             InitializeComponent();
+            tipo = _type;
         }
 
        
@@ -28,7 +32,11 @@ namespace ConvetPdfToLayoutAlta
             groupBoxHistoricoParcela.Enabled = !groupBoxHistoricoParcela.Enabled;
             dataGridViewHistoricaParcelas.DataSource = null;
             dataGridViewHistoricaParcelas.Enabled = false;
-            dataGridViewHistoricaParcelas.DataSource = GetHistoricoParcelas();
+            if (!tipo.HasValue)
+                dataGridViewHistoricaParcelas.DataSource = GetHistoricoParcelas();
+            else
+                dataGridViewHistoricaParcelas.DataSource = GetOcorrenciaBulks();
+
             dataGridViewHistoricaParcelas.Enabled = true;
             groupBoxHistoricoParcela.Enabled = !groupBoxHistoricoParcela.Enabled;
             Cursor.Current = Cursors.Default;
@@ -56,6 +64,27 @@ namespace ConvetPdfToLayoutAlta
             }
 
             return _historicoParcelas;
+        }
+
+        List<OcorrenciaBulk> GetOcorrenciaBulks()
+        {
+            BusinessHistoricoParcelas businessHistoricoParcelas = new BusinessHistoricoParcelas();
+            try
+            {
+                ocorrenciaBulks = businessHistoricoParcelas.GetOcorrenciaBulks(textBoxContrato.Text.Trim());
+            }
+            catch (Exception sqlErro)
+            {
+                MessageBox.Show($"Erro ao consultar hitórico de parcelas\nMsg:{sqlErro.Message}");
+            }
+
+            return ocorrenciaBulks;
+        }
+
+        private void FrmCabecalho_Load(object sender, EventArgs e)
+        {
+            if (tipo.HasValue)
+                Text = "16 - Consulta de Ocorrências";
         }
     }
 }

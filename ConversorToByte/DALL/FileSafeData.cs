@@ -25,7 +25,6 @@ namespace ConversorToByte.DALL
                 command = cnx.Parametriza(Procedures.SP_GET_FILES);
                 command.Connection = command.Connection;
                 command.Parameters.Add(new SqlParameter("@CONTRACTNAME", string.IsNullOrWhiteSpace(_contratoCPF) ? null : _contratoCPF));
-                command.Parameters.Add(new SqlParameter("@ID", string.IsNullOrWhiteSpace(_id) ? null : _id));
 
                 command.Connection.Open();
                 SqlDataReader dr = command.ExecuteReader();
@@ -35,10 +34,9 @@ namespace ConversorToByte.DALL
                 {
                     obj = new FileSafe()
                     {
-                        Id = Convert.ToInt32(dr[0].ToString()),
-                        NameContract = dr[1].ToString(),
-                        DocumentCpf  = dr[2].ToString(),
-                        FileEncryption = (dr[3] == DBNull.Value) ? default(byte[]) : (byte[])dr[3] 
+                        NameContract = dr[0].ToString(),
+                        DocumentCpf  = dr[1].ToString(),
+                        FileEncryption = (dr[2] == DBNull.Value) ? default(byte[]) : (byte[])dr[2] 
                     };
 
                     lst.Add(obj);

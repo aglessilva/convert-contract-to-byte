@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -92,31 +93,28 @@ namespace MalhaToByte.DAL
 
 
 
-        public static int FileStores(List<FileCompress> ByteFile)
+        public static void FileStores(DataTable dataTable)
         {
             using (SqlConnection connection = new SqlConnection(strConn))
             {
-                int ret = 0;
                 try
                 {
-                    Parametriza("SP_POST_FILE_SAFE");
-                    command.Connection = connection;
-                    connection.Open();
-
-                    ByteFile.ForEach(x =>
+                    SqlBulkCopy bulkCopy = new SqlBulkCopy(connection, SqlBulkCopyOptions.TableLock | SqlBulkCopyOptions.FireTriggers | SqlBulkCopyOptions.UseInternalTransaction, null)
                     {
-                        command.Parameters.Add(new SqlParameter("@ContractName", x.ContractName));
-                        command.Parameters.Add(new SqlParameter("@DocumentCpf", x.DocumentCpf));
-                        command.Parameters.Add(new SqlParameter("@FileEncryption", x.FileEncryption));
-                        ret += command.ExecuteNonQuery();
-                        command.Parameters.Clear();
-                       // Thread.Sleep(100);
-                    });
+                        DestinationTableName = "FileSafe"
+                    };
 
+                    if (connection.State == ConnectionState.Closed)
+                        connection.Open();
 
-                    FecharConexao();
+                    bulkCopy.WriteToServer(dataTable);
+                    connection.Close();
 
+                    dataTable.Clear();
                 }
+
+
+            
                 catch (SqlException ex)
                 {
                     FecharConexao();
@@ -124,12 +122,9 @@ namespace MalhaToByte.DAL
                     throw ex;
                 }
 
-                return ret;
             }
 
         }
-
-
        
     }
 }

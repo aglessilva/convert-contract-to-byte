@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Data;
+using ConvetPdfToLayoutAlta.FluentApi;
 
 namespace ConvetPdfToLayoutAlta.Models
 {
@@ -45,6 +46,23 @@ namespace ConvetPdfToLayoutAlta.Models
                 using (DbConnEntity dbConnEntity = new DbConnEntity())
                 {
                     return dbConnEntity.HistoricoParcelas.Where(hp => hp.IdentificacaoContrato.Equals(_numeroContrato.Trim())).ToList();
+                }
+            }
+
+            catch (Exception sqlExe)
+            {
+                throw sqlExe;
+            }
+
+        }
+
+        public List<OcorrenciaBulk> GetOcorrenciaBulks(string _numeroContrato)
+        {
+            try
+            {
+                using (DbConnEntity dbConnEntity = new DbConnEntity())
+                {
+                    return dbConnEntity.Ocorrencias.Where(hp => hp.Contrato.Equals(_numeroContrato.Trim())).ToList();
                 }
             }
 

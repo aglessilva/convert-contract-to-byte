@@ -13,6 +13,8 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -27,8 +29,6 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -62,6 +62,13 @@
     <GenerateManifests>false</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup />
+  <PropertyGroup>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.3.0\lib\net45\EntityFramework.dll</HintPath>
@@ -102,7 +109,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FluentApi\FluentApiHistoricoParcelas.cs" />
+    <Compile Include="FluentApi\FluentApiOcorrecias.cs" />
     <Compile Include="FluentApi\FluentApiParcelas.cs" />
+    <Compile Include="FrmCarregaOcorrencia.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmCarregaOcorrencia.Designer.cs">
+      <DependentUpon>FrmCarregaOcorrencia.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmCarregaParcelas.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -199,6 +213,9 @@
     <Compile Include="Models\Tela25.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="FrmCarregaOcorrencia.resx">
+      <DependentUpon>FrmCarregaOcorrencia.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FrmCarregaParcelas.resx">
       <DependentUpon>FrmCarregaParcelas.cs</DependentUpon>
     </EmbeddedResource>

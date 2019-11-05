@@ -14,11 +14,13 @@ namespace ConvetPdfToLayoutAlta.Models
 
         public DbSet<Parcela> Parcelas { get; set; }
         public DbSet<HistoricoParcela> HistoricoParcelas { get; set; }
+        public DbSet<OcorrenciaBulk> Ocorrencias { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Configurations.Add(new FluentApiParcelas());
             modelBuilder.Configurations.Add(new FluentApiHistoricoParcelas());
+            modelBuilder.Configurations.Add(new FluentApiOcorrecias());
 
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
 
