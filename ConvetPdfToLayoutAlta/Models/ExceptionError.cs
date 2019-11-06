@@ -45,7 +45,7 @@ namespace ConvetPdfToLayoutAlta.Models
 
         public static void NovoContratoGT(string _contrato, string _path)
         {
-            using (StreamWriter sw = new StreamWriter(_path + @"\ARQ_GARANTIA.err", true, Encoding.UTF8))
+            using (StreamWriter sw = new StreamWriter(_path + @"\ARQ_GARANTIA.arq", true, Encoding.UTF8))
             {
                 if (_contrato != "0")
                     sw.WriteLine(_contrato);

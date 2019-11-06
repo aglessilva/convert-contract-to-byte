@@ -35,8 +35,8 @@ namespace ConvetPdfToLayoutAlta
                     if (!Directory.Exists(Directory.GetCurrentDirectory() + @"\config"))
                         Directory.CreateDirectory(Directory.GetCurrentDirectory() + @"\config");
 
-                    if(!Directory.Exists(Directory.GetCurrentDirectory() + @"\ALTA"))
-                        Directory.CreateDirectory(Directory.GetCurrentDirectory() + @"\ALTA");
+                    if(!Directory.Exists(textOrigemContratosPdf.Text + @"\ALTA"))
+                        Directory.CreateDirectory(textOrigemContratosPdf.Text + @"\ALTA");
 
                     if (!File.Exists(Directory.GetCurrentDirectory() + @"\config\SITU115A.TXT"))
                     {
@@ -90,10 +90,10 @@ namespace ConvetPdfToLayoutAlta
             if (campo == 1) 
             {
                 textOrigemContratosPdf.Text = folderBrowserDialog1.SelectedPath;
-                textDestinoLayout.Text = Directory.GetCurrentDirectory() + @"\ALTA";
+                textDestinoLayout.Text = textOrigemContratosPdf.Text + @"\ALTA";
             }
             else
-                textDestinoLayout.Text = Directory.GetCurrentDirectory() + @"\ALTA";
+                textDestinoLayout.Text = textOrigemContratosPdf.Text + @"\ALTA";
 
             return result;
         }
@@ -154,7 +154,7 @@ namespace ConvetPdfToLayoutAlta
 
         private void Button1_Click(object sender, EventArgs e)
         {
-            FrmTela16 f = new FrmTela16(@"D:\Testes", @"D:\Testes\txt", "TELA 16");
+            FrmTela16 f = new FrmTela16(textOrigemContratosPdf.Text,textDestinoLayout.Text, "TELA 16");
             f.ShowDialog();
            
         }
@@ -353,7 +353,7 @@ namespace ConvetPdfToLayoutAlta
 
         private void button10_Click(object sender, EventArgs e)
         {
-            FrmConsolidacaoAlta f = new FrmConsolidacaoAlta(@"C:\TombamentoV1_01\ALTA\", @"C:\TombamentoV1_01\ENSAIO2019-10-04");
+            FrmConsolidacaoAlta f = new FrmConsolidacaoAlta(textDestinoLayout.Text, textOrigemContratosPdf.Text);
             f.ShowDialog();
         }
 

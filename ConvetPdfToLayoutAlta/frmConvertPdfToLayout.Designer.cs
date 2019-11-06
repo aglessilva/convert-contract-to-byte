@@ -42,7 +42,6 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.button9 = new System.Windows.Forms.Button();
             this.button10 = new System.Windows.Forms.Button();
-            this.btnSelectDiretorioDestino = new System.Windows.Forms.Button();
             this.btnSelectDiretorioOrigem = new System.Windows.Forms.Button();
             this.btnDuplicata = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -178,7 +177,6 @@
             // 
             this.groupBox1.Controls.Add(this.button9);
             this.groupBox1.Controls.Add(this.button10);
-            this.groupBox1.Controls.Add(this.btnSelectDiretorioDestino);
             this.groupBox1.Controls.Add(this.btnSelectDiretorioOrigem);
             this.groupBox1.Controls.Add(this.btnDuplicata);
             this.groupBox1.Controls.Add(this.label1);
@@ -214,17 +212,6 @@
             this.button10.UseVisualStyleBackColor = true;
             this.button10.Visible = false;
             this.button10.Click += new System.EventHandler(this.button10_Click);
-            // 
-            // btnSelectDiretorioDestino
-            // 
-            this.btnSelectDiretorioDestino.Location = new System.Drawing.Point(502, 83);
-            this.btnSelectDiretorioDestino.Name = "btnSelectDiretorioDestino";
-            this.btnSelectDiretorioDestino.Size = new System.Drawing.Size(40, 22);
-            this.btnSelectDiretorioDestino.TabIndex = 5;
-            this.btnSelectDiretorioDestino.Text = "...";
-            this.btnSelectDiretorioDestino.UseVisualStyleBackColor = true;
-            this.btnSelectDiretorioDestino.Visible = false;
-            this.btnSelectDiretorioDestino.Click += new System.EventHandler(this.BtnSelectDiretorioDestino_Click);
             // 
             // btnSelectDiretorioOrigem
             // 
@@ -476,8 +463,8 @@
             // panelSpinner
             // 
             this.panelSpinner.BackColor = System.Drawing.SystemColors.Control;
-            this.panelSpinner.Controls.Add(this.pnlHistoricoParcela);
             this.panelSpinner.Controls.Add(this.groupBox1);
+            this.panelSpinner.Controls.Add(this.pnlHistoricoParcela);
             this.panelSpinner.Controls.Add(this.button8);
             this.panelSpinner.Controls.Add(this.button1);
             this.panelSpinner.Controls.Add(this.button7);
@@ -533,7 +520,6 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button button9;
         private System.Windows.Forms.Button button10;
-        private System.Windows.Forms.Button btnSelectDiretorioDestino;
         private System.Windows.Forms.Button btnSelectDiretorioOrigem;
         private System.Windows.Forms.Button btnDuplicata;
         private System.Windows.Forms.Label label1;
