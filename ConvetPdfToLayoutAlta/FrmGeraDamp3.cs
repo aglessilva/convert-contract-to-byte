@@ -4,29 +4,28 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ConvetPdfToLayoutAlta
 {
     public partial class FrmGeraDamp3 : Form
     {
-        string _damp3Path = string.Empty;
+        string arquivoCTO068A = string.Empty;
         string tmp = string.Empty;
         Stopwatch stopwatch = new Stopwatch();
         UserObject obj = null;
         int countpercent = 0, MaximumProgress = 0, countDamp = 0;
         List<string> listContratoDamp = new List<string>();
 
-        public FrmGeraDamp3(string _arquivoRelaDamp, List<string> lstDamp3)
+        public FrmGeraDamp3(string _arquivoCTO068A, List<string> lstDamp3)
         {
             InitializeComponent();
-            _damp3Path = _arquivoRelaDamp;
+            arquivoCTO068A = _arquivoCTO068A;
             listContratoDamp = lstDamp3;
             countDamp = lstDamp3.Count;
         }
@@ -35,7 +34,7 @@ namespace ConvetPdfToLayoutAlta
         {
             try
             {
-                using (StreamReader sr = new StreamReader(_damp3Path, true))
+                using (StreamReader sr = new StreamReader(Directory.GetCurrentDirectory()+@"\config\RELADAMP.txt", true))
                 {
                     string _linha = string.Empty;
                     List<string> _arrayLinha = sr.ReadToEnd().Split('\n').Where(i => !string.IsNullOrWhiteSpace(i)).ToList();
@@ -81,9 +80,7 @@ namespace ConvetPdfToLayoutAlta
                     {
                         listContratoDamp.ForEach(n =>
                         {
-
                             sw.WriteLine(n);
-
                             countpercent++;
                             obj = new UserObject() { DescricaoPercentural = $"Atualizando Arquivo de Damp - Contratos: {n}", TotalArquivoPorPasta = MaximumProgress };
                             backgroundWorkerDamp3.ReportProgress(countpercent, obj);
@@ -101,6 +98,7 @@ namespace ConvetPdfToLayoutAlta
         private void FrmGeraDamp3_Load(object sender, EventArgs e)
         {
             lblPendente.Text = "";
+            IncrementaRegistroDamp();
             stopwatch.Restart();
             backgroundWorkerDamp3.RunWorkerAsync();
 
@@ -120,17 +118,84 @@ namespace ConvetPdfToLayoutAlta
                 lblTempo.Text = tmp;
                 lblPendente.Text = string.Format("{0}", obj.DescricaoPercentural);
             }
-            catch (Exception ex)
+            catch (Exception exProge)
             {
-
-                throw ex;
+                MessageBox.Show("Ocorreu um erro ao tentar Atualizar o arquivo DAMP03\n" + exProge.Message, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Close();
             }
         }
 
         private void backgroundWorkerDamp3_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            
             MessageBox.Show("Arquivo de Damp Atualizado!!!", "Finalizado com Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
             Close();
+        }
+
+
+        void IncrementaRegistroDamp()
+        {
+            try
+            {
+                List<RelaDamp> lstRelaDamp = new List<RelaDamp>();
+                using (StreamReader streamReader = new StreamReader(arquivoCTO068A, Encoding.Default))
+                {
+                    streamReader.ReadLine();
+                    string[] linha = null;
+
+                    RelaDamp objDamp = null;
+                    while (!streamReader.EndOfStream)
+                    {
+                        linha = streamReader.ReadLine().Split(';');
+
+                        objDamp = new RelaDamp()
+                        {
+                            MIECDAMP_CONTRATO = linha[3].Trim(),
+                            MIECDAMP_DT_ABERT = Convert.ToDateTime(linha[1].Trim()).ToString("yyyy-MM-dd"),
+                            MIECDAMP_TP_OPER = linha[2].Trim(),
+                            MIECDAMP_TT_FGTS = Regex.Replace(linha[4].Trim(), @"[^0-9$]", ""),
+                            MIECDAMP_AMB_OPER = linha[5].Trim(),
+                            MIECDAMP_CTA_EMPR = linha[8].Trim(),
+                            MIECDAMP_PIS_PASEP = linha[9].Trim(),
+                            MIECDAMP_CTA_TRAB = linha[10].Trim(),
+                            MIECDAMP_VL_UTILZ = Regex.Replace(linha[11].Trim(), @"[^0-9$]", ""),
+                            MIECDAMP_STATUS = linha[6].Trim(),
+                            MIECDAMP_TP_REQUS = linha[7].Trim(),
+                            MIECDAMP_FILLER = linha[0].Trim().Substring(6, 2),
+                            MIECDAMP_NR_DAMP = linha[2].Trim(),
+
+                        };
+
+                        lstRelaDamp.Add(objDamp);
+                    }
+
+                }
+
+
+                using (StreamWriter streamWriter = new StreamWriter(Directory.GetCurrentDirectory()+@"\config\RELADAMP.txt", true, Encoding.Default))
+                {
+                    string linhaFormatada = string.Empty;
+
+                    lstRelaDamp.ForEach(g => {
+
+                        linhaFormatada += g.MIECDAMP_CONTRATO.Trim() + g.MIECDAMP_DT_ABERT.Trim() + g.MIECDAMP_TP_OPER.Trim().PadRight(50, ' ');
+                        linhaFormatada += g.MIECDAMP_TT_FGTS.Trim().PadLeft(18, '0') + g.MIECDAMP_AMB_OPER.Trim().PadRight(50, ' ');
+                        linhaFormatada += g.MIECDAMP_CTA_EMPR.Trim().PadLeft(16, '0') + g.MIECDAMP_PIS_PASEP.Trim().PadLeft(11, '0');
+                        linhaFormatada += g.MIECDAMP_CTA_TRAB.Trim().Substring(3) + g.MIECDAMP_VL_UTILZ.Trim().PadLeft(18, '0');
+                        linhaFormatada += g.MIECDAMP_STATUS.Trim().PadRight(30, ' ') + g.MIECDAMP_TP_REQUS.Trim().PadRight(12, ' ');
+                        linhaFormatada += g.MIECDAMP_FILLER.Trim();
+
+                        streamWriter.WriteLine(linhaFormatada);
+                        linhaFormatada = string.Empty;
+                    });
+                }
+
+            }
+            catch (Exception exDamp)
+            {
+                MessageBox.Show("Ocorreu um erro ao tentar Atualizar o arquivo RELADAMP\n" + exDamp.Message, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Close();
+            }
         }
     }
 }

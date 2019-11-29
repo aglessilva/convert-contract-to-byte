@@ -54,6 +54,7 @@ namespace ConvetPdfToLayoutAlta.Models
             SaldoFgtsJAM = "";
             SaldoFgtsQUO = "";
             SobraMes = "";
+            SobraMesJAM = "0";
             SobraAcumulada = "";
             DataPagamento = "";
             ValorUtilizado = "";
@@ -66,6 +67,7 @@ namespace ConvetPdfToLayoutAlta.Models
         public string SaldoFgtsJAM { get; set; }
         public string SaldoFgtsQUO { get; set; }
         public string SobraMes { get; set; }
+        public string SobraMesJAM { get; set; }
         public string SobraAcumulada { get; set; }
         public string SobraAcumuladaJAM { get; set; }
         public string DataPagamento { get; set; }

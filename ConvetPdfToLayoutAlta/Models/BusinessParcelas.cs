@@ -6,6 +6,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Data;
 using ErikEJ.SqlCe;
+using iTextSharp.text.pdf.parser;
+using iTextSharp.text.pdf;
 
 namespace ConvetPdfToLayoutAlta.Models
 {
@@ -14,7 +16,7 @@ namespace ConvetPdfToLayoutAlta.Models
 
         public BusinessParcelas(){}
 
-        public Parcela TrataLinhaParcelas(Parcela _obj, string[] _linha, int sequencia, /*bool _hasTaxa, bool _hasIof,*/ Cabecalho cabecalho, Parcela  _parcela =  null)
+        public Parcela TrataLinhaParcelas(Parcela _obj, string[] _linha, int sequencia, /*bool _hasTaxa, bool _hasIof,*/ Cabecalho cabecalho, Parcela  _parcela =  null, List<DampFgts> lstDampFgts = null)
         {
            string _case = "VAZIO";
             try
@@ -56,7 +58,7 @@ namespace ConvetPdfToLayoutAlta.Models
                             _obj.Prestacao = Regex.Replace(_linha[count++], @"[^0-9$]", "");
                             _obj.Seguro = Regex.Replace(_linha[count++], @"[^0-9$]", "");
                             _obj.Taxa = _obj.Taxa != "0" ? _obj.Taxa :  _linha.Length > 11 ? Regex.Replace(_linha[count++], @"[^0-9$]", "") :  _linha.Length > 10 && cabecalho.Iof == "0" ? Regex.Replace(_linha[count++], @"[^0-9$]", "") : "0";
-                            _obj.Iof = Convert.ToInt32(cabecalho.Iof) != 0 ? Regex.Replace(_linha[count++], @"[^0-9$]", "") : "0";
+                            _obj.Iof = Convert.ToInt32(cabecalho.Iof) != 0 ? Regex.Replace(_linha[count++], @"[^0-9$]", "") : _linha.Length > 11 ? Regex.Replace(_linha[count++], @"[^0-9$]", "") : "0";
                             _obj.Encargo = Regex.Replace(_linha[count++], @"[^0-9.,$]", "");
                             _obj.Juros = Regex.Replace(_linha[count++], @"[^0-9$]", "");
                             _obj.Amortizacao = Regex.Replace(_linha[count++], @"[^0-9$\-]", "");
@@ -86,18 +88,24 @@ namespace ConvetPdfToLayoutAlta.Models
 
                             if (newItem.Count == 0)
                                 break;
-                                
+
                             // TRATAMENTO FODA PARA FGTS, MORA, PAGAMENTO
                             if (newItem.Count == 1)
+                            {
                                 _obj.Pago = Regex.Replace(newItem[0].Trim(), @"[^0-9$]+", "");
+                                //Console.WriteLine($"Pago: {newItem[0].Trim()}");
+                            }
 
                             else if (newItem.Count == 2)
                             {
-                                // SE o primeiro valor da lista form >= ao Encargo da parcela, entap..
+
+
+                                // SE o primeiro valor da lista for >= ao Encargo da parcela, entap..
                                 if (Convert.ToDecimal(newItem[0]) >= Convert.ToDecimal(_obj.Encargo))
                                 {
                                     _obj.Pago = Regex.Replace(newItem[0].Trim(), @"[^0-9$]+", "");
                                     _obj.Mora = Regex.Replace(newItem[1].Trim(), @"[^0-9$]+", "");
+                                    //Console.WriteLine($"Pago: {newItem[0].Trim()} - Mora: {newItem[1].Trim()}");
                                 }
                                 else
                                 {
@@ -105,28 +113,72 @@ namespace ConvetPdfToLayoutAlta.Models
                                     {
                                         _obj.Fgts = Regex.Replace(newItem[0].Trim(), @"[^0-9$]+", "");
                                         _obj.Pago = Regex.Replace(newItem[1].Trim(), @"[^0-9$]+", "");
+                                        //Console.WriteLine($"FGTS: {newItem[0].Trim()} - Pago: {newItem[1].Trim()}");
                                     }
                                     else
                                     {
-                                        
+
                                         // Se a data de pagamento for igual a INCORP, então usar a data do proximo pagamento da propriedade "Proc_Emi_Pag"
                                         if (Convert.ToDateTime(_obj.Vencimento) == (_obj.Pagamento.Equals("INCORP") ? Convert.ToDateTime(_obj.Proc_Emi_Pag.Substring(10)) : Convert.ToDateTime(_obj.Pagamento)))
                                         {
                                             _obj.Fgts = Regex.Replace(newItem[0].Trim(), @"[^0-9$]+", "");
                                             _obj.Pago = Regex.Replace(newItem[1].Trim(), @"[^0-9$]+", "");
+                                            //Console.WriteLine($"FGTS: {newItem[0].Trim()} - Pago: {newItem[1].Trim()}");
                                         }
                                         else
                                         {
-                                            // Se o segundo valor da lista sobre o "Encargo" form <= 8% então preencha os campos "Pago", "Mora"
-                                            if (((Convert.ToDecimal(newItem[1]) / Convert.ToDecimal(_obj.Encargo)) * 100) <= 8)
+
+                                            if (_obj.Vencimento.Trim().Equals(_obj.Pagamento) && newItem.Count == 2)
                                             {
-                                                _obj.Pago = Regex.Replace(newItem[0].Trim(), @"[^0-9$]+", ""); 
-                                                _obj.Mora = Regex.Replace(newItem[1].Trim(), @"[^0-9$]+", "");
+                                                if (((Convert.ToDecimal(newItem[0]) / Convert.ToDecimal(_obj.Encargo)) * 100) <= 80)
+                                                {
+                                                    _obj.Fgts = Regex.Replace(newItem[0].Trim(), @"[^0-9$]+", "");
+                                                    _obj.Pago = Regex.Replace(newItem[1].Trim(), @"[^0-9$]+", "");
+                                                   // Console.WriteLine($"FGTS: {newItem[0].Trim()} - Pago: {newItem[1].Trim()}");
+                                                }
+                                                else
+                                                {
+                                                    _obj.Pago = Regex.Replace(newItem[0].Trim(), @"[^0-9$]+", "");
+                                                    _obj.Mora = Regex.Replace(newItem[1].Trim(), @"[^0-9$]+", "");
+                                                   // Console.WriteLine($"Pago: {newItem[0].Trim()} - Mora: {newItem[1].Trim()}");
+                                                }
                                             }
                                             else
                                             {
-                                                _obj.Fgts = Regex.Replace(newItem[0].Trim(), @"[^0-9$]+", "");
-                                                _obj.Pago = Regex.Replace(newItem[1].Trim(), @"[^0-9$]+", "");
+                                                //Se a soma do campo  "FTGS" + "Valor Pago" for menor que o campo "Encargo"
+                                                // consideramos que o primeiro valor do array é o "FGTS", e o segundo valor é "Valor Pago" 
+                                                // if ((Convert.ToDecimal(newItem[0].Trim()) + Convert.ToDecimal(newItem[1].Trim())) < Convert.ToDecimal(_obj.Encargo))
+                                                if (Convert.ToDecimal(_obj.Encargo) - Convert.ToDecimal(newItem[0].Trim()) == Convert.ToDecimal(newItem[1].Trim()))
+                                                {
+                                                    _obj.Fgts = Regex.Replace(newItem[0].Trim(), @"[^0-9$]+", "");
+                                                    _obj.Pago = Regex.Replace(newItem[1].Trim(), @"[^0-9$]+", "");
+                                                    //Console.WriteLine($"FGTS: {newItem[0].Trim()} - Pago: {newItem[1].Trim()}");
+                                                }
+                                                else
+                                                {
+                                                    if (lstDampFgts.Any(p => Convert.ToDateTime(p.ValidadeInicial) <= Convert.ToDateTime(_obj.Vencimento.Substring(3)) && Convert.ToDateTime(_obj.Vencimento.Substring(3)) <= Convert.ToDateTime(p.ValidadeFinal)))
+                                                    {
+                                                        _obj.Fgts = Regex.Replace(newItem[0].Trim(), @"[^0-9$]+", "");
+                                                        _obj.Pago = Regex.Replace(newItem[1].Trim(), @"[^0-9$]+", "");
+                                                        //Console.WriteLine($"FGTS: {newItem[0].Trim()} - Pago: {newItem[1].Trim()}");
+                                                    }
+                                                    // Se o segundo valor da lista sobre o "Encargo" form <= 80% então preencha os campos "Pago", "Mora"
+                                                    else
+                                                    {
+                                                        if (((Convert.ToDecimal(newItem[1]) / Convert.ToDecimal(_obj.Encargo)) * 100) <= 80)
+                                                        {
+                                                            _obj.Pago = Regex.Replace(newItem[0].Trim(), @"[^0-9$]+", "");
+                                                            _obj.Mora = Regex.Replace(newItem[1].Trim(), @"[^0-9$]+", "");
+                                                            //Console.WriteLine($"Pago: {newItem[0].Trim()} - Mora: {newItem[1].Trim()}");
+                                                        }
+                                                        else
+                                                        {
+                                                            _obj.Fgts = Regex.Replace(newItem[0].Trim(), @"[^0-9$]+", "");
+                                                            _obj.Pago = Regex.Replace(newItem[1].Trim(), @"[^0-9$]+", "");
+                                                            //Console.WriteLine($"FGTS: {newItem[0].Trim()} - Pago: {newItem[1].Trim()}");
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -138,6 +190,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                 _obj.Fgts = Regex.Replace(newItem[0].Trim(), @"[^0-9$]+", "");
                                 _obj.Pago = Regex.Replace(newItem[1].Trim(), @"[^0-9$]+", "");
                                 _obj.Mora = Regex.Replace(newItem[2].Trim(), @"[^0-9$]+", "");
+                                //Console.WriteLine($"FGTS: {newItem[0].Trim()} - Pago: {newItem[1].Trim()} - Mora: {newItem[2].Trim()}");
                             }
 
                             break;
@@ -146,24 +199,37 @@ namespace ConvetPdfToLayoutAlta.Models
                         {
                             _case = "Case 4 - Metodo: TrataLinhaParcelas - PEGA A LINHA DE PROXIMO PAGAMENTO E MORA";
 
-                            _obj.Proc_Emi_Pag = Regex.Replace(_linha[0] + _linha[1], @"[^0-9\/$]", "");
-                            if (_linha.Length == 3)
+                            if (_linha.Count(u => Regex.IsMatch(u, @"(^\d{2}\/\d{2}\/\d{4}$)")) == 2)
                             {
-                                if (Convert.ToDateTime(cabecalho.DataBase) <= Convert.ToDateTime(_obj.Vencimento))
-                                    _obj.Mora = _obj.Mora = "0";
-                                else
-                                    _obj.Mora = _obj.Mora == "0" ? Regex.Replace(_linha[2], @"[^0-9$]", "") : "0";
+                                _obj.Proc_Emi_Pag = Regex.Replace(_linha[0] + _linha[1], @"[^0-9\/$]", "");
+
+                                if (_linha.Length == 3)
+                                {
+                                    // não foi definido se iremos utilizar p campo "DataBase" ou "DataEmissao"
+                                    // optamos por utilizar "DataEmissao", até o que o Luis esclareça essa dúvida com a Andrea
+                                    //Data de Correção: 22/11/2019
+                                    if (Convert.ToDateTime(cabecalho.DataEmicao) <= Convert.ToDateTime(_obj.Vencimento))
+                                        _obj.Mora = _obj.Mora = "0";
+                                    else
+                                        if (Convert.ToInt32((Convert.ToDecimal(_linha[2]) / Convert.ToDecimal(_obj.Encargo)) * 100) <= 80)
+                                            _obj.Mora = _obj.Mora == "0" ? Regex.Replace(_linha[2], @"[^0-9$]", "") : "0";
+
+                                    if(_obj.Mora.Equals("0"))
+                                        _obj.Fgts = _obj.Fgts == "0" ? Regex.Replace(_linha[2], @"[^0-9$]", "") : "0";
+                                }
+
+                                if (_linha.Length > 3)
+                                {
+                                    _obj.Fgts = _obj.Fgts == "0" ? Regex.Replace(_linha[2], @"[^0-9$]", "") : "0";
+                                    _obj.Mora = _obj.Mora == "0" ? Regex.Replace(_linha[3], @"[^0-9$]", "") : "0";
+                                }
                             }
-                              
-                            if (_linha.Length > 3 )
-                            {
-                                _obj.Fgts = _obj.Fgts == "0" ? Regex.Replace(_linha[2], @"[^0-9$]", "") : "0";
-                                _obj.Mora = _obj.Mora == "0" ? Regex.Replace(_linha[3], @"[^0-9$]", "") : "0";
-                            }
+
+                            if (_linha.Count(u => Regex.IsMatch(u, @"(^\d{2}\/\d{2}\/\d{4}$)")) > 2)
+                                _obj.Proc_Emi_Pag = Regex.Replace(_linha[1] + _linha[2], @"[^0-9\/$]", "");
+
                             break;
                         }
-                    
-                   
                     default:
                         break;
                 }
@@ -381,6 +447,7 @@ namespace ConvetPdfToLayoutAlta.Models
                             {
                                 _obj.Juros = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
                             }
+
                             else _obj.Juros = "0";
 
                             _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[(_linhaOcorrencia.Length - 2)].Trim(), @"[^0-9$\/-]", "");
@@ -926,5 +993,42 @@ namespace ConvetPdfToLayoutAlta.Models
         }
 
 
+        public List<DampFgts> GetDampFgts(int numeroPagina, string pathDoc)
+        {
+            LocationTextExtractionStrategy its = null;
+
+            List<DampFgts> lstFgts = new List<DampFgts>();  
+            try
+            {
+                using (PdfReader reader = new PdfReader(pathDoc))
+                {
+                    its = new LocationTextExtractionStrategy();
+                    string pagina = PdfTextExtractor.GetTextFromPage(reader, numeroPagina, its).Trim();
+                    pagina = Encoding.UTF8.GetString(Encoding.Convert(Encoding.Default, Encoding.UTF8, Encoding.Default.GetBytes(pagina)));
+                    string _contrato = string.Empty;
+                    using (StringReader strReader = new StringReader(pagina))
+                    {
+                        string line;
+                        string[] arrayLinha;
+
+                        while ((line = strReader.ReadLine()) != null)
+                        {
+                            arrayLinha = line.Split(' ');
+                            if (arrayLinha.Any(f => Regex.IsMatch(f, @"(^\d{2}\/\d{4}$)")))
+                            {
+                                _contrato = new FileInfo(pathDoc).Name.Split('_')[0];
+                                lstFgts.Add(new DampFgts() { Contrato = _contrato, ValidadeInicial = arrayLinha.FirstOrDefault(v => Regex.IsMatch(v, @"(^\d{2}\/\d{4}$)")), ValidadeFinal = arrayLinha.LastOrDefault(v => Regex.IsMatch(v, @"(^\d{2}\/\d{4}$)")) });
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception exDamp)
+            {
+                throw exDamp;
+            }
+
+            return lstFgts;
+        }
     }
 }

@@ -21,10 +21,10 @@ namespace ConvertToByte
 
             // GetTableExcel();
 
-            IEnumerable<string> fileContract = Directory.EnumerateFiles(@"C:\TombamentoV1_01\TOMBAMENTO2019-10-25", "*_16.pdf", SearchOption.AllDirectories);
+            IEnumerable<string> fileContract = Directory.EnumerateFiles(@"C:\@TombamentoV1_01\TOMBAMENTO2019-10-25", "*_16.pdf", SearchOption.AllDirectories);
 
             FileInfo f = null;
-            using (StreamWriter sw = new StreamWriter(@"C:\TombamentoV1_01\config\ARQUPONT.txt", true, Encoding.ASCII))
+            using (StreamWriter sw = new StreamWriter(@"C:\@TombamentoV1_01\config\ARQUPONT.txt", true, Encoding.ASCII))
             {
                 //using (StreamReader sr = new StreamReader(@"C:\TombamentoV1_01\ALTA\TL16CONT.txt"))
                 //{

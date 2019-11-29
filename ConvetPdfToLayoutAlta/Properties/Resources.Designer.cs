@@ -133,6 +133,16 @@ namespace ConvetPdfToLayoutAlta.Properties {
         /// <summary>
         ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap couple_of_arrows_changing_places_icon_icons_com_73608 {
+            get {
+                object obj = ResourceManager.GetObject("couple-of-arrows-changing-places_icon-icons.com_73608", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Save_icon_icons_com_73702 {
             get {
                 object obj = ResourceManager.GetObject("Save_icon-icons.com_73702", resourceCulture);

@@ -16,7 +16,7 @@ namespace ConvetPdfToLayoutAlta
         bool[] consistencia = { false, false, false, false };
         bool[] isProcessado = { false, false, false, false };
         bool[] orderExcute = { false, false, false, false };
-        List<string> telas = new List<string> {"TELA 16", "TELA 18", "TELA 20", "TELA 25" };
+        List<string> telas = new List<string> { "TELA 16", "TELA 18", "TELA 20", "TELA 25" };
 
         public FrmSelectFolder()
         {
@@ -35,7 +35,7 @@ namespace ConvetPdfToLayoutAlta
                     if (!Directory.Exists(Directory.GetCurrentDirectory() + @"\config"))
                         Directory.CreateDirectory(Directory.GetCurrentDirectory() + @"\config");
 
-                    if(!Directory.Exists(textOrigemContratosPdf.Text + @"\ALTA"))
+                    if (!Directory.Exists(textOrigemContratosPdf.Text + @"\ALTA"))
                         Directory.CreateDirectory(textOrigemContratosPdf.Text + @"\ALTA");
 
                     if (!File.Exists(Directory.GetCurrentDirectory() + @"\config\SITU115A.TXT"))
@@ -53,13 +53,13 @@ namespace ConvetPdfToLayoutAlta
                     }
 
                     //btnDuplicata.Enabled = comboBoxTela.Enabled = (textDestinoLayout.TextLength > 0 && textOrigemContratosPdf.TextLength > 0);
-                    btnDuplicata.Enabled  = (textDestinoLayout.TextLength > 0 && textOrigemContratosPdf.TextLength > 0);
+                    btnDuplicata.Enabled = (textDestinoLayout.TextLength > 0 && textOrigemContratosPdf.TextLength > 0);
                 }
 
-               
+
             }
         }
-        
+
 
         private void BtnSelectDiretorioDestino_Click(object sender, EventArgs e)
         {
@@ -87,7 +87,7 @@ namespace ConvetPdfToLayoutAlta
             else
                 result = DialogResult.Yes;
 
-            if (campo == 1) 
+            if (campo == 1)
             {
                 textOrigemContratosPdf.Text = folderBrowserDialog1.SelectedPath;
                 textDestinoLayout.Text = textOrigemContratosPdf.Text + @"\ALTA";
@@ -154,17 +154,17 @@ namespace ConvetPdfToLayoutAlta
 
         private void Button1_Click(object sender, EventArgs e)
         {
-            FrmTela16 f = new FrmTela16(textOrigemContratosPdf.Text,textDestinoLayout.Text, "TELA 16");
+            FrmTela16 f = new FrmTela16(textOrigemContratosPdf.Text, textDestinoLayout.Text, "TELA 16");
             f.ShowDialog();
-           
+
         }
 
         private void Button2_Click(object sender, EventArgs e)
         {
             //FrmTela16 f = new FrmTela16(@"C:\TombTesteUnitarios", @"C:\TombTesteUnitarios\ALTA", "TELA16");
-            FrmTela16 f = new FrmTela16(@"C:\TombTesteUnitarios", @"C:\TombTesteUnitarios\ALTA", "TELA16");
+            FrmTela16 f = new FrmTela16(@"C:\@TombTesteUnitarios", @"C:\@TombTesteUnitarios\ALTA", "TELA16");
             f.ShowDialog();
-           
+
         }
 
         private void UpdateApp()
@@ -197,7 +197,7 @@ namespace ConvetPdfToLayoutAlta
         {
             //UpdateApp();
 
-           // comboBoxTela.SelectedIndex = 4;
+            // comboBoxTela.SelectedIndex = 4;
             ToolTip toolTip = new ToolTip();
             toolTip.SetToolTip(btnDuplicata, "Filtra os arquivos com base no PONTEIRO e remove duplicidade de pdfs das VM's.");
 #if DEBUG
@@ -215,13 +215,13 @@ namespace ConvetPdfToLayoutAlta
 
         private void Button3_Click(object sender, EventArgs e)
         {
-            FrmTela18 f = new FrmTela18(@"D:\PDFSTombamento\Exceptions18", @"D:\PDFSTombamento\txt", "TELA18");
+            FrmTela18 f = new FrmTela18(@"C:\@TombTesteUnitarios\", @"C:\@TombTesteUnitarios\ALTA", "TELA18");
             f.ShowDialog();
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
-            FrmTela18 f = new FrmTela18(@"D:\testes\", @"D:\testes\ALTA", "TELA18");
+            FrmTela18 f = new FrmTela18(@"C:\TombamentoV1_01\SIMULADOS\SIMULADO2019-11-20", @"C:\TombTesteUnitarios\ALTA", "TELA18");
             f.ShowDialog();
         }
 
@@ -251,7 +251,7 @@ namespace ConvetPdfToLayoutAlta
 
         private void BtnDuplicata_Click(object sender, EventArgs e)
         {
-            bool isFilter = false;
+            //bool isFilter = false;
             //if (comboBoxTela.SelectedIndex == 4)
             //{
             //    MessageBox.Show("Selecione um tipo de tela.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -261,9 +261,9 @@ namespace ConvetPdfToLayoutAlta
             // Inicia o processo para renomear os arquivos antes de filtrar
             FileInfo ffRename = new FileInfo(Directory.GetCurrentDirectory() + @"\config\ARQUPONT.txt");
 
-            if(!ffRename.Exists)
+            if (!ffRename.Exists)
             {
-               DialogResult result =  MessageBox.Show("Arquivo de PONTEIRO, não encontrado\nDeseja criar um arquivo de ponteiro a partir dos contratos?","Aviso", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                DialogResult result = MessageBox.Show("Arquivo de PONTEIRO, não encontrado\nDeseja criar um arquivo de ponteiro a partir dos contratos?", "Aviso", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 if (result == DialogResult.Yes)
                     ExceptionError.GerarPonteiro(textOrigemContratosPdf.Text);
@@ -276,7 +276,7 @@ namespace ConvetPdfToLayoutAlta
 
             telas.ForEach(t =>
             {
-                Text += " - " +t;
+                Text += " - " + t;
                 _tela = Regex.Replace(t, @"[^0-9$]", "");
                 var extencao = new List<string>() { $"*_{_tela}.dup", $"*_{_tela}.damp", $"*_{_tela}.fil", $"*_{_tela}.err", $"*_{_tela}.rej" };
                 foreach (var item in extencao)
@@ -290,7 +290,7 @@ namespace ConvetPdfToLayoutAlta
                     }
                 }
 
-               // panelSpinner.Visible = !panelSpinner.Visible;
+                // panelSpinner.Visible = !panelSpinner.Visible;
                 //Text = Text.Split('-')[0];
                 FrmDuplicadoFiltro f = new FrmDuplicadoFiltro(textOrigemContratosPdf.Text, t, lstDamp3);
                 f.ShowDialog();
@@ -332,7 +332,7 @@ namespace ConvetPdfToLayoutAlta
             //        break;
             //    }
             //}
-        
+
             //List<string> lstArquiPoint = new List<string>();
             //using (StreamReader sw = new StreamReader(@"D:\HomologacaoFerramenta\config\ARQUPONT.TXT", Encoding.UTF8))
             //{
@@ -357,7 +357,7 @@ namespace ConvetPdfToLayoutAlta
             f.ShowDialog();
         }
 
-      
+
 
         //private void btnLocalizar_Click(object sender, EventArgs e)
         //{
@@ -377,7 +377,7 @@ namespace ConvetPdfToLayoutAlta
         //    panelSpinner.Visible = !panelSpinner.Visible;
         //}
 
-      
+
 
         private void btnLocalizarHistoricoParcela_Click(object sender, EventArgs e)
         {
@@ -393,8 +393,8 @@ namespace ConvetPdfToLayoutAlta
 
         private void gerarArquivoDeDamp3ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            label4.Text = "16 - Selecione o arquivo TL16PARC.txt";
-            button11.Text = "Gravar Parcelas (pdf)";
+            label4.Text = "68 - Selecione o arquivo CTO068A.txt";
+            button11.Text = "Atualizar Arquivo RelaDamp";
             Painel();
         }
 
@@ -429,6 +429,17 @@ namespace ConvetPdfToLayoutAlta
                     f = new FrmCarregaOcorrencia(textBoxHistoricoParcelas.Text);
             }
 
+            if (label4.Text.Split('-')[0].Trim().Equals("68"))
+            {
+                if (!fileInfo.Name.Equals("CTO068A.txt"))
+                    MessageBox.Show("O conteúdo deste arquivo não é compativel com o arquivo CTO068A.txt", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                else
+                {
+                    f = new FrmGeraDamp3(textBoxHistoricoParcelas.Text, lstDamp3);
+                    Painel(true);
+                }
+            }
+
             if (f != null)
                 f.ShowDialog();
 
@@ -437,7 +448,7 @@ namespace ConvetPdfToLayoutAlta
 
         private void MenuItemGravarHistoricoParcelas_Click(object sender, EventArgs e)
         {
-            
+
             label4.Text = "8 - Selecione o arquivo ARQ.EXT.08.HIST.PARCELAS.TXT";
             button11.Text = "Gravar Histórico de Parcelas";
             button11.Width = 182;
@@ -452,7 +463,7 @@ namespace ConvetPdfToLayoutAlta
 
         private void gravarParcelasToolStripMenuItem_Click(object sender, EventArgs e)
         {
-           
+
             label4.Text = "16 - Selecione o arquivo TL16PARC.txt";
             button11.Text = "Gravar Parcelas (pdf)";
             button11.Width = 155;
@@ -474,7 +485,8 @@ namespace ConvetPdfToLayoutAlta
 
         private void voltarToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Painel(true);   
+            Painel(true);
+            textBoxHistoricoParcelas.Text = string.Empty;
         }
 
         private void gravarOcorrênciaToolStripMenuItem_Click(object sender, EventArgs e)
@@ -490,5 +502,34 @@ namespace ConvetPdfToLayoutAlta
             FrmCabecalho frmCabecalho = new FrmCabecalho(0);
             frmCabecalho.ShowDialog();
         }
+
+        private void gerarPonteiroFullToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            folderBrowserDialog1.Description = "Selecione o diretório das VM's que contém os PDFs";
+
+            if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
+            {
+                panelSpinner.Enabled = !panelSpinner.Enabled;
+                IEnumerable<string> fileContract = Directory.EnumerateFiles(folderBrowserDialog1.SelectedPath, "*_16.pdf", SearchOption.AllDirectories);
+                fileContract.ToList().Sort();
+                FileInfo f = null;
+                using (StreamWriter sw = new StreamWriter(Directory.GetCurrentDirectory() + @"\config\ARQUPONT.txt", true, Encoding.ASCII))
+                {
+                    {
+                        fileContract.ToList().ForEach(w =>
+                        {
+                            f = new FileInfo(w);
+
+                            sw.WriteLine(f.Name.Split('_')[0]);
+                        });
+
+                    }
+
+                }
+                MessageBox.Show("Ponteiro Full criado com sucesso", "Ponteiro Full", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                panelSpinner.Enabled = !panelSpinner.Enabled;
+            }
+        }
     }
 }
+

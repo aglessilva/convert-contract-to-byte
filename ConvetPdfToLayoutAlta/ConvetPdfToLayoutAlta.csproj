@@ -9,7 +9,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ConvetPdfToLayoutAlta</RootNamespace>
-    <AssemblyName>ConvetPdfToLayoutAlta</AssemblyName>
+    <AssemblyName>EXTRATOR_PDF</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
@@ -208,6 +208,7 @@
     <Compile Include="Models\Ocorrencia.cs" />
     <Compile Include="Models\Parcela.cs" />
     <Compile Include="Models\BusinessParcelas.cs" />
+    <Compile Include="Models\RelaDamp.cs" />
     <Compile Include="Models\Tela18.cs" />
     <Compile Include="Models\Tela20.cs" />
     <Compile Include="Models\Tela25.cs" />
@@ -310,6 +311,7 @@
     <None Include="Resources\Save_icon-icons.com_73702.ico" />
     <None Include="Resources\back-left-arrow-circular-button-outline_icon-icons.com_73313.ico" />
     <None Include="Resources\back_12955.ico" />
+    <None Include="Resources\couple-of-arrows-changing-places_icon-icons.com_73608.ico" />
     <Content Include="Resources\txtdocument_text_tx_9804.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

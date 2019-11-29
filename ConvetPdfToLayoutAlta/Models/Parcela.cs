@@ -47,4 +47,12 @@ namespace ConvetPdfToLayoutAlta.Models
         public string Vencimento { get; set; }
         public string VencimentoCorrecao { get; set; }
     }
+
+
+    public class DampFgts
+    {
+        public string Contrato { get; set; }
+        public string ValidadeInicial { get; set; }
+        public string ValidadeFinal { get; set; }
+    }
 }

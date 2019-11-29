@@ -194,7 +194,8 @@ namespace ConvetPdfToLayoutAlta.Models
                         {
                             _case = "7 - Metodo: TrataCabecalho -  campo: DataEmicao";
 
-                            obj.DataEmicao = Regex.Replace(_arrayLinha[1].Trim(), @"[^0-9\/$]+", "").Substring(0, 10);
+                            if(!Regex.IsMatch(obj.DataEmicao, @"(^\d{2}\/\d{2}\/\d{4}$)"))
+                                obj.DataEmicao = Regex.Replace(_arrayLinha[1].Trim(), @"[^0-9\/$]+", "").Substring(0, 10);
                             break;
                         }
                     case 8:
@@ -538,7 +539,6 @@ namespace ConvetPdfToLayoutAlta.Models
             catch (Exception exOut)
             {
                 throw new ArgumentOutOfRangeException("Cabeçaho do PDF - Arquivo: BusinessCabecalho - case: " + _case, exOut.Message);
-                throw exOut;
             }
 
             return obj;
@@ -1113,7 +1113,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                                 strAlta = altaAnterior;
                                             }
 
-                                            strAlta += string.Format("{0}{1}{2}{3}", "0".PadLeft(54, '0'), "0".PadLeft(17, '0') + "+", o.SaldoDevedor.Trim().PadLeft(18, '0'), "TAXA JUROS".PadRight(30, ' '));
+                                            strAlta += string.Format("{0}{1}{2}{3}", "0".PadLeft(54, '0'), "0".PadLeft(17, '0') + "+", o.SaldoDevedor.Trim().PadLeft(18, '0'), "TAXA JUROS".PadRight(30, ' '));                                                 
                                             strAlta += string.Format("{0}{1}", _cabecalho.TaxaJuros.Trim().PadRight(30, ' '), _cabecalhoAnterior.TaxaJuros.Trim().PadRight(30, ' '));
 
                                             if (!_cabecalhoAnterior.Reajuste.Equals(_cabecalho.Reajuste))
@@ -1121,7 +1121,12 @@ namespace ConvetPdfToLayoutAlta.Models
                                             else
                                                 // Adicionado o valor '00010101' se houver uma ocorrencia de  TAXA DE JUROS sem parcelas
                                                 // Data: 30/07/2019 as 17:5
-                                                strAlta += string.Format("{0}", (o.NaoTemParcela ? "00010101" : Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd")).Trim().PadRight(30, ' '));
+                                                
+                                                // O Luis e a Camila pediu para pegar o REAJUSTE qunado for ocorrencia do tipo 10 e descrição 'TAXA DE JUTOS'e subistituir o campo 
+                                                //Data: 19/11/2019
+                                                //strAlta += string.Format("{0}", (o.NaoTemParcela ? "00010101" : Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd")).Trim().PadRight(30, ' '));
+
+                                                strAlta += string.Format("{0}", (o.NaoTemParcela ? "00010101" : _cabecalhoAnterior.Reajuste.Trim().PadRight(30, ' ')));
 
                                             strAlta = strAlta.PadRight(281, ' ');
                                             escreverOcorrencia.WriteLine(strAlta);
