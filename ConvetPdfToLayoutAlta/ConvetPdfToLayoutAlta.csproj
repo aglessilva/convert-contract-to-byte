@@ -108,6 +108,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FluentApi\FluentApiFgts.cs" />
     <Compile Include="FluentApi\FluentApiHistoricoParcelas.cs" />
     <Compile Include="FluentApi\FluentApiOcorrecias.cs" />
     <Compile Include="FluentApi\FluentApiParcelas.cs" />

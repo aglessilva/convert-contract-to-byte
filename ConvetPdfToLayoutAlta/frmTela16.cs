@@ -27,6 +27,8 @@ namespace ConvetPdfToLayoutAlta
         bool isErro = false, isFinal = false;
         IEnumerable<string> listContratoBlockPdf = null;
         IEnumerable<string> listDiretory = null;
+        List<ItensDamp> itensFgts = null;
+        BusinessParcelas businessParcelas = null;
         string diretorioOrigemPdf, diretorioDestinoLayout, tmp, tela;
 
         public FrmTela16(string _diretoioPdf, string _diretorioDestino, string _tela)
@@ -70,6 +72,10 @@ namespace ConvetPdfToLayoutAlta
                 lblQtd.Text = "Total: " + totalArquivo.ToString();
                 progressBarReaderPdf.Maximum = totalArquivo;
 
+                businessParcelas = new BusinessParcelas();
+
+                // Carrega os itens (Contrato, /DataVencimento)da Tela 18 para verificação de Damps(FGTS)
+                itensFgts = businessParcelas.GetParcelaFgts();
 
                 using (StreamReader lerTxt = new StreamReader(string.Format("{0}{1}", Directory.GetCurrentDirectory(), @"\config\SITU115A.TXT")))
                 {
@@ -152,7 +158,7 @@ namespace ConvetPdfToLayoutAlta
             StringBuilder strLayoutOcorrencia = new StringBuilder();
 
             BusinessCabecalho businessCabecalho = null;
-            BusinessParcelas businessParcelas = null;
+           
 
             Cabecalho objCabecalho = null;
             Parcela objParcelas = null;
@@ -185,7 +191,7 @@ namespace ConvetPdfToLayoutAlta
             lstParcelas = new List<Parcela>();
             lstOcorrencia = new List<Ocorrencia>();
 
-            List<DampFgts> itensFgts = null;
+          
 
             listDiretory.ToList().ForEach(d =>
             {
@@ -230,7 +236,7 @@ namespace ConvetPdfToLayoutAlta
                             isFinal = hasTaxa = hasIof = isParcelas = isCabecalhoParcela = isNotTela16 = false;
                             int numberLine;
 
-                            itensFgts = businessParcelas.GetDampFgts(reader.NumberOfPages, w);
+                          //  itensFgts = businessParcelas.GetDampFgts(reader.NumberOfPages, w);
 
                             pagina = string.Empty;
                             for (int i = 1; i <= reader.NumberOfPages; i++)
@@ -392,8 +398,12 @@ namespace ConvetPdfToLayoutAlta
                                                     continue;
                                                 }
                                                 // PEGA A LINHA DE BANCO E AGENCIA
-                                                if (arrayLinhaParcela.Any(g => Regex.IsMatch(g.Trim(), @"(^\d{6}.\d{1}$)")) || (Regex.IsMatch(line, @"(^?\d{2}\/\d{2}\/\d{4}\s\d{2}\/\d{2}\/\d{4}$?)") && arrayLinhaParcela.Length > 4))
+                                                if (arrayLinhaParcela.Any(g => Regex.IsMatch(g.Trim(), @"(^\d{6}.\d{1}$)")) || (Regex.IsMatch(line, @"(^?\d{2}\/\d{2}\/\d{4}\s\d{2}\/\d{2}\/\d{4}$?)") && arrayLinhaParcela.Length > 5))
                                                 {
+
+                                                    if(objParcelas.Proc_Emi_Pag != null)
+                                                        if (!objParcelas.Proc_Emi_Pag.Equals("0/00/0000"))
+                                                            continue;
 
                                                     if (arrayLinhaParcela.Count(u => Regex.IsMatch(u, @"(^\d{2}\/\d{2}\/\d{4}$)")) == 2 && arrayLinhaParcela.Length == 2)
                                                         objParcelas.Proc_Emi_Pag = Regex.Replace(string.Join(" ", arrayLinhaParcela), @"[^0-9\/$]", "");
@@ -502,7 +512,7 @@ namespace ConvetPdfToLayoutAlta
 
                                                 if (arrayLinhaParcela.Any(v => v.Trim().Equals("00/00/0000")))
                                                 {
-                                                    objParcelas = businessParcelas.TrataLinhaParcelas(objParcelas, arrayLinhaParcela, 4, /*hasTaxa, hasIof*/ objCabecalho, lstParcelas.LastOrDefault());
+                                                    objParcelas = businessParcelas.TrataLinhaParcelas(objParcelas, arrayLinhaParcela, 4, /*hasTaxa, hasIof*/ objCabecalho, lstParcelas.LastOrDefault(), lstDampFgts: itensFgts);
                                                     if (!lstParcelas.Any(p => p.Id == objParcelas.Id))
                                                         lstParcelas.Add(objParcelas);
                                                 }
@@ -558,6 +568,7 @@ namespace ConvetPdfToLayoutAlta
                                             {
                                                 cabecalho = businessCabecalho.TrataArray(line);
                                                 objCabecalho = businessCabecalho.TrataCabecalhoPadrao2(objCabecalho, cabecalho, 1);
+                                                //itensFgts = businessParcelas.GetParcelaFgts(objCabecalho.Carteira.Substring(3) + objCabecalho.Contrato.Trim());
                                                 continue;
                                             }
 
@@ -630,6 +641,7 @@ namespace ConvetPdfToLayoutAlta
                                         {
                                             cabecalho = businessCabecalho.TrataLinhaPDF(line, 8);
                                             objCabecalho = businessCabecalho.TrataCabecalho(objCabecalho, cabecalho, 8);
+                                           // itensFgts = businessParcelas.GetParcelaFgts(objCabecalho.Carteira.Substring(3)+ objCabecalho.Contrato.Trim());
                                             continue;
                                         }
                                         if (line.Contains("C.P.F.") || line.Contains("Nascimento"))
@@ -722,6 +734,8 @@ namespace ConvetPdfToLayoutAlta
                             var t2 = lstParcelas.RemoveAll(r => string.IsNullOrWhiteSpace(r.Vencimento) && !r.IsAnt);
                             var t3 = lstOcorrencia.RemoveAll(o => string.IsNullOrWhiteSpace(o.Vencimento));
 
+                            int ttl = itensFgts.RemoveAll(r => r.Contrato.Equals(objCabecalho.Contrato.Trim()));
+
                             userObject = new UserObject { Contrato = objCabecalho.Contrato, PdfInfo = arquivoPdf, TotalArquivoPorPasta = totalPorPasta };
                             objContratoPdf.Contrato = lstCabecalho.FirstOrDefault().Contrato;
                             objContratoPdf.Carteira = lstCabecalho.FirstOrDefault().Carteira;
@@ -748,7 +762,7 @@ namespace ConvetPdfToLayoutAlta
                             isNotiqual = false;
                             pagina = string.Empty;
                             its = null;
-                            itensFgts = null;
+                           // itensFgts = null;
 
                             padrao = 0;
                             contador++;

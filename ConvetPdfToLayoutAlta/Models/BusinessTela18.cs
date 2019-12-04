@@ -1,5 +1,7 @@
-﻿using System;
+﻿using ErikEJ.SqlCe;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -49,11 +51,14 @@ namespace ConvetPdfToLayoutAlta.Models
                 }
                 else
                 {
-                    parcelaFgts.ParcelaQuota = _ArrayLine[1].Trim().Length == 5 ? Regex.Replace(_ArrayLine[1].Trim(), @"[^0-9$]", "") : "0";
+                    parcelaFgts.TipoLinha = _ArrayLine[0].Trim();
+                    //parcelaFgts.ParcelaQuota = _ArrayLine[1].Trim().Length == 5 ? Regex.Replace(_ArrayLine[1].Trim(), @"[^0-9$]", "") : "0";
+                    parcelaFgts.ParcelaQuota = Regex.Replace(_ArrayLine[1].Trim(), @"[^0-9$]", "");
                     parcelaFgts.DataVencimento = Regex.Replace(_ArrayLine[2].Trim(), @"[^0-9\/$]", "");
                     parcelaFgts.SaldoFgtsQUO = Regex.Replace(_ArrayLine[4].Trim(), @"[^0-9\/$]", "");
                     parcelaFgts.SobraMes = Regex.Replace(_ArrayLine[5].Trim(), @"[^0-9\-$]", "");
                     parcelaFgts.SobraAcumulada = Regex.Replace(_ArrayLine[6].Trim(), @"[^0-9$]", "");
+                    parcelaFgts.ValorUtilizado = _ArrayLine.Length <= 8 ? "0" :   Regex.Replace(_ArrayLine[8].Trim(), @"[^0-9$]", "");
                 }
                 
             }
@@ -78,13 +83,14 @@ namespace ConvetPdfToLayoutAlta.Models
             {
                 string _contract ="", _sobraAcumulada = "", _sobraMesJam = "";
 
+                List<ParcelaFgts> parcelaFgts = new List<ParcelaFgts>();
+
                 lstTela18.ForEach(t18 =>
                 {
                     _contract = t18.Contrato;
                     try
                     {
                         t18.Damps.ForEach(dmp => {
-
 
                             strAlta = string.Format("{0}{1}", t18.Carteira.Substring(2), t18.Contrato);
                             strAlta += string.Format("{0}{1}", dmp.NumeroDamp, dmp.ValorDamp.PadLeft(12, '0')).PadRight(27, ' ');
@@ -102,9 +108,15 @@ namespace ConvetPdfToLayoutAlta.Models
                                 strAltaFgts += string.Format("{0}{1}", fgts.SaldoFgtsJAM.Trim().PadLeft(12,'0'),fgts.ParcelaQuota.Trim().PadLeft(5,'0'));
                                 strAltaFgts += string.Format("{0}{1}+", fgts.SaldoFgtsQUO.Trim().PadLeft(12, '0'), fgts.SobraAcumulada.Trim().PadLeft(11,'0'));
 
+                                fgts.SobraAcumuladaJAM = Convert.ToDecimal(fgts.SobraAcumuladaJAM) == 0 ? "0" : _sobraAcumulada;
+                                fgts.SobraMesJAM = Convert.ToDecimal(fgts.SobraMesJAM) == 0 ? "0" : _sobraMesJam;
+                                fgts.Contrato = t18.Carteira.Substring(3)+_contract;
 
                                 escreverTela18.WriteLine(strAltaFgts);
                                 strAltaFgts = _sobraAcumulada = _sobraMesJam = string.Empty;
+
+                                parcelaFgts.Add(fgts);
+
                             });
 
                         });
@@ -115,7 +127,87 @@ namespace ConvetPdfToLayoutAlta.Models
                         ExceptionError.TrataErros(exTela18, _contract, _err0, _diretorioDestino);
                     }
                 });
+
+                // Executa do BookInsert
+                DoBulkCopy(true, parcelaFgts);
+                parcelaFgts = null;
             }
+        }
+
+
+
+
+        public void DoBulkCopy(bool keepNulls, List<ParcelaFgts> _parcela)
+        {
+            DataTable dataTable = CriaTabelaFgts();
+            DataRow dataRow = null;
+
+            foreach (var item in _parcela)
+            {
+                if (!string.IsNullOrWhiteSpace(item.DataVencimento))
+                {
+                    dataRow = dataTable.NewRow();
+
+                    dataRow["Contrato"] = item.Contrato.Trim();
+                    dataRow["TipoLinha"] = item.TipoLinha.Trim();
+                    dataRow["DataVencimento"] = item.DataVencimento.Trim();
+                    dataRow["ParcelaQuota"] = item.ParcelaQuota.Trim();
+                    dataRow["QuotaNominal"] = Convert.ToDecimal(item.QuotaNominal.Trim()) == 0 ? "0" : item.QuotaNominal.Trim();
+                    dataRow["SaldoFgtsJAM"] = Convert.ToDecimal(item.SaldoFgtsJAM.Trim()) == 0 ? "0" : item.SaldoFgtsJAM.Trim();
+                    dataRow["SaldoFgtsQUO"] = Convert.ToDecimal(item.SaldoFgtsQUO.Trim()) == 0 ? "0" : item.SaldoFgtsQUO.Trim();
+                    dataRow["SobraMes"] = Convert.ToDecimal(item.SobraMes.Trim()) == 0 ? "0" : item.SobraMes.Trim();
+                    dataRow["SobraMesJAM"] = Convert.ToDecimal(item.SobraMesJAM.Trim()) == 0 ? "0" : item.SobraMesJAM.Trim();
+                    dataRow["SobraAcumulada"] = Convert.ToDecimal(item.SobraAcumulada.Trim()) == 0 ? "0" : item.SobraAcumulada.Trim();
+                    dataRow["ValorUtilizado"] = Convert.ToDecimal(item.ValorUtilizado.Trim()) == 0 ? "0" : item.ValorUtilizado.Trim();
+
+                    dataTable.Rows.Add(dataRow);
+                    dataRow = null;
+                }
+            }
+
+            SqlCeBulkCopyOptions options = new SqlCeBulkCopyOptions();
+            if (keepNulls)
+            {
+                options = options |= SqlCeBulkCopyOptions.KeepNulls;
+            }
+
+            try
+            {
+                using (DbConnEntity connEntity = new DbConnEntity())
+                {
+                    if (!connEntity.Database.Exists())
+                        connEntity.DampFgts.Create();
+
+                    using (SqlCeBulkCopy bc = new SqlCeBulkCopy(connEntity.Database.Connection.ConnectionString.ToString(), options))
+                    {
+                        bc.DestinationTableName = "DampFgts";
+                        bc.WriteToServer(dataTable);
+                    }
+                }
+            }
+            catch (Exception exEntity)
+            {
+                string erro = exEntity.Message;
+            }
+        }
+
+
+        public DataTable CriaTabelaFgts()
+        {
+            var table = new DataTable();
+            table.Columns.Add("Contrato", typeof(string));
+            table.Columns.Add("TipoLinha", typeof(string));
+            table.Columns.Add("DataVencimento", typeof(string));
+            table.Columns.Add("ParcelaQuota", typeof(string));
+            table.Columns.Add("QuotaNominal", typeof(string));
+            table.Columns.Add("SaldoFgtsJAM", typeof(string));
+            table.Columns.Add("SaldoFgtsQUO", typeof(string));
+            table.Columns.Add("SobraMes", typeof(string));
+            table.Columns.Add("SobraMesJAM", typeof(string));
+            table.Columns.Add("SobraAcumulada", typeof(string));
+            table.Columns.Add("ValorUtilizado", typeof(string));
+
+            return table;
         }
     }
 }

@@ -123,7 +123,7 @@ namespace ConvetPdfToLayoutAlta
                 MessageBox.Show(result, "Finalizado com Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
-            this.Close();
+            Close(); ;
         }
 
         private void BackgroundWorkerTela18_DoWork(object sender, DoWorkEventArgs e)

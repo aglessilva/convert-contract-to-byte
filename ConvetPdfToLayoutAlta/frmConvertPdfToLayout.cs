@@ -16,7 +16,7 @@ namespace ConvetPdfToLayoutAlta
         bool[] consistencia = { false, false, false, false };
         bool[] isProcessado = { false, false, false, false };
         bool[] orderExcute = { false, false, false, false };
-        List<string> telas = new List<string> { "TELA 16", "TELA 18", "TELA 20", "TELA 25" };
+        List<string> telas = new List<string> { "TELA 18", "TELA 16", "TELA 20", "TELA 25" };
 
         public FrmSelectFolder()
         {
@@ -100,35 +100,17 @@ namespace ConvetPdfToLayoutAlta
 
         private void BtnIniciarConvercao_Click(object sender, EventArgs e)
         {
-            //if (comboBoxTela.SelectedIndex.Equals(4))
-            //{
-            //    MessageBox.Show("Selecione uma tela para converção.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            //    return;
-            //}
-
-            //for (int i = (comboBoxTela.SelectedIndex - 1); i >= 0; i--)
-            //{
-            //    if (!orderExcute[i])
-            //    {
-            //        MessageBox.Show("A converção deve ser realizada em ordem crescente de tela.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-            //        return;
-            //    }
-            //}
-
-
-            //if (!isProcessado[comboBoxTela.SelectedIndex])
-            //{
             panelSpinner.Visible = !panelSpinner.Visible;
             telas.ForEach(t =>
             {
                 Text += "-" + t + $" - (V{Application.ProductVersion})"; ;
                 Form f = null;
 
-                if (t.Equals("TELA 16"))
-                    f = new FrmTela16(textOrigemContratosPdf.Text, textDestinoLayout.Text, t);
-
                 if (t.Equals("TELA 18"))
                     f = new FrmTela18(textOrigemContratosPdf.Text, textDestinoLayout.Text, t);
+
+                if (t.Equals("TELA 16"))
+                    f = new FrmTela16(textOrigemContratosPdf.Text, textDestinoLayout.Text, t);
 
                 if (t.Equals("TELA 20"))
                     f = new FrmTela20(textOrigemContratosPdf.Text, textDestinoLayout.Text, t);
@@ -136,20 +118,10 @@ namespace ConvetPdfToLayoutAlta
                 if (t.Equals("TELA 25"))
                     f = new FrmTela25(textOrigemContratosPdf.Text, textDestinoLayout.Text, t);
 
-
-                // orderExcute[comboBoxTela.SelectedIndex] = true;
-                // isProcessado[comboBoxTela.SelectedIndex] = true;
-
                 f.ShowDialog();
                 Text = Text.Split('-')[0].Trim();
             });
             panelSpinner.Visible = !panelSpinner.Visible;
-            //}
-            //else
-            //{
-            //    string msg = string.Format("A {0} já foi processada!", comboBoxTela.Text.ToUpper());
-            //    MessageBox.Show(msg, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            //}
         }
 
         private void Button1_Click(object sender, EventArgs e)
@@ -161,7 +133,6 @@ namespace ConvetPdfToLayoutAlta
 
         private void Button2_Click(object sender, EventArgs e)
         {
-            //FrmTela16 f = new FrmTela16(@"C:\TombTesteUnitarios", @"C:\TombTesteUnitarios\ALTA", "TELA16");
             FrmTela16 f = new FrmTela16(@"C:\@TombTesteUnitarios", @"C:\@TombTesteUnitarios\ALTA", "TELA16");
             f.ShowDialog();
 

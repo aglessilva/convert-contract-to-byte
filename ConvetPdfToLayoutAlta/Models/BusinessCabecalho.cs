@@ -1512,6 +1512,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                     p.Contrato = q.Contrato;
                                     p.DataBaseContrato = q.Cabecalhos[0].DataBase;
 
+                                   
                                     parcelas.Add(p);
 
                                     strAlta = string.Empty;

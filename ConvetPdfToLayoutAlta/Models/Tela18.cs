@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -48,18 +49,22 @@ namespace ConvetPdfToLayoutAlta.Models
     {
         public ParcelaFgts()
         {
+            Id = 0;
+            Contrato = "";
             TipoLinha = "";
-            ParcelaQuota = "";
-            QuotaNominal = "";
-            SaldoFgtsJAM = "";
-            SaldoFgtsQUO = "";
-            SobraMes = "";
+            ParcelaQuota = "0";
+            QuotaNominal = "0";
+            SaldoFgtsJAM = "0";
+            SaldoFgtsQUO = "0";
+            SobraMes = "0";
             SobraMesJAM = "0";
-            SobraAcumulada = "";
-            DataPagamento = "";
-            ValorUtilizado = "";
-            PercentualAbatimento = "";
+            SobraAcumulada = "0";
+            DataVencimento = "0";
+            ValorUtilizado = "0";
         }
+
+        public int Id { get; set; }
+        public string Contrato { get; set; }
         public string TipoLinha { get; set; }
         public string ParcelaQuota { get; set; }
         public string DataVencimento { get; set; }
@@ -69,11 +74,15 @@ namespace ConvetPdfToLayoutAlta.Models
         public string SobraMes { get; set; }
         public string SobraMesJAM { get; set; }
         public string SobraAcumulada { get; set; }
+        [NotMapped]
         public string SobraAcumuladaJAM { get; set; }
-        public string DataPagamento { get; set; }
         public string ValorUtilizado { get; set; }
-        public string PercentualAbatimento { get; set; }
     }
    
+    public class ItensDamp
+    {
+        public string Contrato { get; set; }
+        public string DataVencimento { get; set; }
+    }
 
 }
