@@ -148,6 +148,7 @@ namespace ConvetPdfToLayoutAlta
             List<string> lstSituacao = new List<string>();
             List<string> lstCronograma = new List<string>(); 
             List<string> lstGT = new List<string>();
+            List<ItensDamp> parcelaFgts =  null;
             List<Cabecalho> lstCabecalho = null;
             List<Parcela> lstParcelas = null;
             List<Ocorrencia> lstOcorrencia = null;
@@ -175,7 +176,7 @@ namespace ConvetPdfToLayoutAlta
             string pagina = string.Empty, readerContrato = string.Empty;
             string[] cabecalho = null;
             string[] arrayLinhaParcela = null;
-            bool isParcelas = false, isNotiqual = false, hasTaxa = false, hasIof = false, isCabecalhoParcela = false, isBody = false, isNotTela16 = false;
+            bool isParcelas = false, isNotiqual = false, hasIof = false, isCabecalhoParcela = false, isBody = false, isNotTela16 = false;
             int padrao = 0, _countPercent = 0;
 
             
@@ -190,7 +191,7 @@ namespace ConvetPdfToLayoutAlta
             lstCabecalho = new List<Cabecalho>();
             lstParcelas = new List<Parcela>();
             lstOcorrencia = new List<Ocorrencia>();
-
+            parcelaFgts = new List<ItensDamp>();
           
 
             listDiretory.ToList().ForEach(d =>
@@ -206,11 +207,12 @@ namespace ConvetPdfToLayoutAlta
                 //}
                 //listContratoBlockPdf.ToList().ForEach(w =>
                 //{
-
+                    
                     ITextExtractionStrategy its;
                     try
                     {
                         arquivoPdf = new FileInfo(w);
+                        parcelaFgts = itensFgts.Where(fgts => fgts.Contrato.Equals(arquivoPdf.Name.Split('_')[0].Trim())).ToList();
 
                         //Verifica o tamanho do arquivo
                         if(arquivoPdf.Length <= 10519)
@@ -233,10 +235,8 @@ namespace ConvetPdfToLayoutAlta
 
                         using (PdfReader reader = new PdfReader(w))
                         {
-                            isFinal = hasTaxa = hasIof = isParcelas = isCabecalhoParcela = isNotTela16 = false;
+                            isFinal = hasIof = isParcelas = isCabecalhoParcela = isNotTela16 = false;
                             int numberLine;
-
-                          //  itensFgts = businessParcelas.GetDampFgts(reader.NumberOfPages, w);
 
                             pagina = string.Empty;
                             for (int i = 1; i <= reader.NumberOfPages; i++)
@@ -413,7 +413,7 @@ namespace ConvetPdfToLayoutAlta
                                                         if (!Regex.IsMatch(lstValores[3].Trim(), @"(^\d{2}\/\d{2}\/\d{4}$)"))
                                                             lstValores.RemoveAt(3);
 
-                                                        objParcelas = businessParcelas.TrataLinhaParcelas(objParcelas, lstValores.ToArray(), 3, /*hasTaxa, hasIof*/ objCabecalho, lstDampFgts: itensFgts);
+                                                        objParcelas = businessParcelas.TrataLinhaParcelas(objParcelas, lstValores.ToArray(), 3, /*hasTaxa, hasIof*/ objCabecalho, lstDampFgts: parcelaFgts);
                                                     }
 
                                                     if (!lstParcelas.Any(j => j.Id == objParcelas.Id))
@@ -512,7 +512,7 @@ namespace ConvetPdfToLayoutAlta
 
                                                 if (arrayLinhaParcela.Any(v => v.Trim().Equals("00/00/0000")))
                                                 {
-                                                    objParcelas = businessParcelas.TrataLinhaParcelas(objParcelas, arrayLinhaParcela, 4, /*hasTaxa, hasIof*/ objCabecalho, lstParcelas.LastOrDefault(), lstDampFgts: itensFgts);
+                                                    objParcelas = businessParcelas.TrataLinhaParcelas(objParcelas, arrayLinhaParcela, 4, /*hasTaxa, hasIof*/ objCabecalho, lstParcelas.LastOrDefault(), lstDampFgts: parcelaFgts);
                                                     if (!lstParcelas.Any(p => p.Id == objParcelas.Id))
                                                         lstParcelas.Add(objParcelas);
                                                 }
@@ -568,7 +568,6 @@ namespace ConvetPdfToLayoutAlta
                                             {
                                                 cabecalho = businessCabecalho.TrataArray(line);
                                                 objCabecalho = businessCabecalho.TrataCabecalhoPadrao2(objCabecalho, cabecalho, 1);
-                                                //itensFgts = businessParcelas.GetParcelaFgts(objCabecalho.Carteira.Substring(3) + objCabecalho.Contrato.Trim());
                                                 continue;
                                             }
 
@@ -641,7 +640,6 @@ namespace ConvetPdfToLayoutAlta
                                         {
                                             cabecalho = businessCabecalho.TrataLinhaPDF(line, 8);
                                             objCabecalho = businessCabecalho.TrataCabecalho(objCabecalho, cabecalho, 8);
-                                           // itensFgts = businessParcelas.GetParcelaFgts(objCabecalho.Carteira.Substring(3)+ objCabecalho.Contrato.Trim());
                                             continue;
                                         }
                                         if (line.Contains("C.P.F.") || line.Contains("Nascimento"))
@@ -734,7 +732,10 @@ namespace ConvetPdfToLayoutAlta
                             var t2 = lstParcelas.RemoveAll(r => string.IsNullOrWhiteSpace(r.Vencimento) && !r.IsAnt);
                             var t3 = lstOcorrencia.RemoveAll(o => string.IsNullOrWhiteSpace(o.Vencimento));
 
-                            int ttl = itensFgts.RemoveAll(r => r.Contrato.Equals(objCabecalho.Contrato.Trim()));
+
+                            // remove da lista de fgts o contrato que ja foi extraido
+                            if (parcelaFgts.Count > 0)
+                                itensFgts.RemoveAll(r => r.Contrato.Equals(parcelaFgts[0].Contrato.Trim()));
 
                             userObject = new UserObject { Contrato = objCabecalho.Contrato, PdfInfo = arquivoPdf, TotalArquivoPorPasta = totalPorPasta };
                             objContratoPdf.Contrato = lstCabecalho.FirstOrDefault().Contrato;
@@ -754,15 +755,12 @@ namespace ConvetPdfToLayoutAlta
                             lstCabecalho.Clear();
                             lstOcorrencia.Clear();
                             lstCronograma.Clear();
+                            parcelaFgts.Clear();
                             objContratoPdf = null;
                             objCabecalho = null;
-                            objCabecalho = null;
-                            isParcelas = false;
-                            isFinal = false;
-                            isNotiqual = false;
-                            pagina = string.Empty;
                             its = null;
-                           // itensFgts = null;
+                            isParcelas = isFinal = isNotiqual = false;
+                            pagina = string.Empty;
 
                             padrao = 0;
                             contador++;
