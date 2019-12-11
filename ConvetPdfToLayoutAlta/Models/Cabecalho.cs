@@ -17,6 +17,7 @@ namespace ConvetPdfToLayoutAlta.Models
         public string Nome { get; set; }
         public string Cpf { get; set; }
         public string DataNascimento { get; set; }
+        public string DataTransferencia { get; set; } 
         public string EnderecoImovel { get; set; }
         public string BairroImovel { get; set; }
         public string CepImovel { get; set; }
@@ -75,11 +76,6 @@ namespace ConvetPdfToLayoutAlta.Models
         public string Agio { get; set; }
         public string Prorrogacao { get; set; }
         public string SeguroVista { get; set; }
-
-
-
-
-
 
     }
 }

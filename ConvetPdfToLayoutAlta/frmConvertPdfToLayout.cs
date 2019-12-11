@@ -441,6 +441,12 @@ namespace ConvetPdfToLayoutAlta
             Painel();
         }
 
+        private void consultaFgtsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FrmConsultaFgts f = new FrmConsultaFgts();
+            f.ShowDialog();
+        }
+
         private void consultarParcelasToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FrmParcelas frmParcelas = new FrmParcelas();
@@ -474,6 +480,7 @@ namespace ConvetPdfToLayoutAlta
             frmCabecalho.ShowDialog();
         }
 
+       
         private void gerarPonteiroFullToolStripMenuItem_Click(object sender, EventArgs e)
         {
             folderBrowserDialog1.Description = "Selecione o diretório das VM's que contém os PDFs";
@@ -501,6 +508,8 @@ namespace ConvetPdfToLayoutAlta
                 panelSpinner.Enabled = !panelSpinner.Enabled;
             }
         }
+
+        
     }
 }
 

@@ -28,6 +28,7 @@ namespace ConvetPdfToLayoutAlta
         IEnumerable<string> listContratoBlockPdf = null;
         IEnumerable<string> listDiretory = null;
         List<ItensDamp> itensFgts = null;
+        Dictionary<string, string> dicionario = new Dictionary<string, string>();
         BusinessParcelas businessParcelas = null;
         string diretorioOrigemPdf, diretorioDestinoLayout, tmp, tela;
 
@@ -77,11 +78,27 @@ namespace ConvetPdfToLayoutAlta
                 // Carrega os itens (Contrato, /DataVencimento)da Tela 18 para verificação de Damps(FGTS)
                 itensFgts = businessParcelas.GetParcelaFgts();
 
+
+                // Faz a Leitura do contratos em atraso
+                using (StreamReader streamReader = new StreamReader(Directory.GetCurrentDirectory() + @"\config\CFF00101.ARQ"))
+                {
+                    string[] _linha = { }; 
+                    streamReader.ReadLine();
+
+                    while (!streamReader.EndOfStream)
+                    {
+                        _linha = streamReader.ReadLine().Split(';');
+                        dicionario.Add(string.Join(";", _linha.Skip(1).Take(3)).Replace(";", "").Substring(1), _linha[10].Trim());
+                    }
+                }
+
+                // Faz a leitura do arquivo que contem as  sistuações dos contratos
                 using (StreamReader lerTxt = new StreamReader(string.Format("{0}{1}", Directory.GetCurrentDirectory(), @"\config\SITU115A.TXT")))
                 {
                     while (!lerTxt.EndOfStream)
                         _situacoesAtual.Add(lerTxt.ReadLine());
                 };
+
 
                 backgroundWorker1.RunWorkerAsync();
             }
@@ -143,7 +160,8 @@ namespace ConvetPdfToLayoutAlta
 
         private void BackgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
-            
+            string DatacontratoCreditoAtraso = string.Empty;
+            string _numeroContrato = string.Empty;
             int numberPage = 0,  countParcela = 0;
             List<string> lstSituacao = new List<string>();
             List<string> lstCronograma = new List<string>(); 
@@ -204,21 +222,26 @@ namespace ConvetPdfToLayoutAlta
                 foreach (string w in listContratoBlockPdf)
                 {
 
-                //}
-                //listContratoBlockPdf.ToList().ForEach(w =>
-                //{
-                    
                     ITextExtractionStrategy its;
                     try
                     {
                         arquivoPdf = new FileInfo(w);
-                        parcelaFgts = itensFgts.Where(fgts => fgts.Contrato.Equals(arquivoPdf.Name.Split('_')[0].Trim())).ToList();
+                        _numeroContrato = arquivoPdf.Name.Split('_')[0].Trim();
+
+                        parcelaFgts = itensFgts.Where(fgts => fgts.Contrato.Equals(_numeroContrato)).ToList();
+                        DatacontratoCreditoAtraso = dicionario.FirstOrDefault(s => s.Key.Equals(_numeroContrato)).Value;
+
+
+                        // apoós a consulta, se o contrato for localizado, remove da lista para facilitar a nova pesquisa
+                        if(!string.IsNullOrWhiteSpace(DatacontratoCreditoAtraso))
+                            dicionario.Remove(_numeroContrato);
+
 
                         //Verifica o tamanho do arquivo
                         if(arquivoPdf.Length <= 10519)
                         {
                             ExceptionError.RemoverTela(arquivoPdf, diretorioDestinoLayout);
-                            ExceptionError.TrataErros(arquivoPdf.Name.Split('_')[0],"Layout de Arquivo desconhecido", diretorioDestinoLayout);
+                            ExceptionError.TrataErros(_numeroContrato, "Layout de Arquivo desconhecido", diretorioDestinoLayout);
                             _countPercent++;
                             ExceptionError.countError++;
                             isErro = true;
@@ -227,11 +250,14 @@ namespace ConvetPdfToLayoutAlta
                             continue;
                         }
 
+
                         objContratoPdf = new ContratoPdf();
-                        objCabecalho = new Cabecalho() { Id = (lstCabecalho.Count + 1) };
+                        objCabecalho = new Cabecalho() { Id = (lstCabecalho.Count + 1), DataTransferencia = DatacontratoCreditoAtraso };
                         objParcelas = new Parcela() { IdCabecalho = objCabecalho.Id, Id = 0 };
                         objParcelas = businessParcelas.PreencheParcela(objParcelas);
                         objCabecalho = businessCabecalho.PreencheCabecalho(objCabecalho);
+
+                        _numeroContrato = string.Empty;
 
                         using (PdfReader reader = new PdfReader(w))
                         {
@@ -884,7 +910,6 @@ namespace ConvetPdfToLayoutAlta
                         contador++;
 
                     }
-               // });
                 }
 
             });

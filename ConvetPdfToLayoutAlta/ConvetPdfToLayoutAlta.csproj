@@ -124,6 +124,12 @@
     <Compile Include="FrmCarregaParcelas.Designer.cs">
       <DependentUpon>FrmCarregaParcelas.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmConsultaFgts.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmConsultaFgts.Designer.cs">
+      <DependentUpon>FrmConsultaFgts.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmConsultaHist.Parcelas.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -221,6 +227,9 @@
     <EmbeddedResource Include="FrmCarregaParcelas.resx">
       <DependentUpon>FrmCarregaParcelas.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FrmConsultaFgts.resx">
+      <DependentUpon>FrmConsultaFgts.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FrmConsultaHist.Parcelas.resx">
       <DependentUpon>FrmConsultaHist.Parcelas.cs</DependentUpon>
     </EmbeddedResource>
@@ -313,6 +322,7 @@
     <None Include="Resources\back-left-arrow-circular-button-outline_icon-icons.com_73313.ico" />
     <None Include="Resources\back_12955.ico" />
     <None Include="Resources\couple-of-arrows-changing-places_icon-icons.com_73608.ico" />
+    <None Include="Resources\ic_attach_money_128_28210.ico" />
     <Content Include="Resources\txtdocument_text_tx_9804.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

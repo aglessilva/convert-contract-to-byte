@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Configuration;
-using System.Text.RegularExpressions;
-using MalhaToByte.DAL;
+﻿using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
-using iTextSharp.text.pdf;
+using MalhaToByte.DAL;
+using System;
+using System.Collections.Generic;
 using System.Data;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace MalhaToByte
 {

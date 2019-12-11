@@ -43,20 +43,19 @@
             this.button9 = new System.Windows.Forms.Button();
             this.button10 = new System.Windows.Forms.Button();
             this.btnSelectDiretorioOrigem = new System.Windows.Forms.Button();
+            this.btnDuplicata = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.textDestinoLayout = new System.Windows.Forms.TextBox();
             this.textOrigemContratosPdf = new System.Windows.Forms.TextBox();
+            this.btnIniciarConvercao = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.pnlHistoricoParcela = new System.Windows.Forms.Panel();
             this.label4 = new System.Windows.Forms.Label();
+            this.button11 = new System.Windows.Forms.Button();
             this.btnLocalizarHistoricoParcela = new System.Windows.Forms.Button();
             this.textBoxHistoricoParcelas = new System.Windows.Forms.TextBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.menuToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.panelSpinner = new System.Windows.Forms.Panel();
-            this.button11 = new System.Windows.Forms.Button();
-            this.btnDuplicata = new System.Windows.Forms.Button();
-            this.btnIniciarConvercao = new System.Windows.Forms.Button();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.gravarOcorrênciaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.consultarOcorrênciaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -66,9 +65,11 @@
             this.menuItemSubHistoricoParcela = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuItemGravarHistoricoParcelas = new System.Windows.Forms.ToolStripMenuItem();
             this.consultarHistóricoDeParcelasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.consultaFgtsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.gerarPonteiroFullToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.gerarArquivoDeDamp3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.voltarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.panelSpinner = new System.Windows.Forms.Panel();
             this.groupBox1.SuspendLayout();
             this.pnlHistoricoParcela.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -225,6 +226,22 @@
             this.btnSelectDiretorioOrigem.UseVisualStyleBackColor = true;
             this.btnSelectDiretorioOrigem.Click += new System.EventHandler(this.BtnSelectDiretorioOrigem_Click);
             // 
+            // btnDuplicata
+            // 
+            this.btnDuplicata.BackColor = System.Drawing.SystemColors.Control;
+            this.btnDuplicata.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.btnDuplicata.Enabled = false;
+            this.btnDuplicata.Image = global::ConvetPdfToLayoutAlta.Properties.Resources._1490890032_24_82551;
+            this.btnDuplicata.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnDuplicata.Location = new System.Drawing.Point(127, 110);
+            this.btnDuplicata.Name = "btnDuplicata";
+            this.btnDuplicata.Size = new System.Drawing.Size(128, 40);
+            this.btnDuplicata.TabIndex = 10;
+            this.btnDuplicata.Text = "Filtrar Arquivos...";
+            this.btnDuplicata.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.btnDuplicata.UseVisualStyleBackColor = true;
+            this.btnDuplicata.Click += new System.EventHandler(this.BtnDuplicata_Click);
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -249,6 +266,21 @@
             this.textOrigemContratosPdf.ReadOnly = true;
             this.textOrigemContratosPdf.Size = new System.Drawing.Size(487, 20);
             this.textOrigemContratosPdf.TabIndex = 0;
+            // 
+            // btnIniciarConvercao
+            // 
+            this.btnIniciarConvercao.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.btnIniciarConvercao.Enabled = false;
+            this.btnIniciarConvercao.Image = global::ConvetPdfToLayoutAlta.Properties.Resources._1485477153_arrow_right_78596;
+            this.btnIniciarConvercao.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnIniciarConvercao.Location = new System.Drawing.Point(318, 110);
+            this.btnIniciarConvercao.Name = "btnIniciarConvercao";
+            this.btnIniciarConvercao.Size = new System.Drawing.Size(128, 40);
+            this.btnIniciarConvercao.TabIndex = 1;
+            this.btnIniciarConvercao.Text = "Iniciar Conversão";
+            this.btnIniciarConvercao.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.btnIniciarConvercao.UseVisualStyleBackColor = true;
+            this.btnIniciarConvercao.Click += new System.EventHandler(this.BtnIniciarConvercao_Click);
             // 
             // label2
             // 
@@ -280,6 +312,20 @@
             this.label4.Size = new System.Drawing.Size(10, 13);
             this.label4.TabIndex = 6;
             this.label4.Text = "-";
+            // 
+            // button11
+            // 
+            this.button11.Enabled = false;
+            this.button11.Image = global::ConvetPdfToLayoutAlta.Properties.Resources.txtdocument_text_tx_9804;
+            this.button11.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.button11.Location = new System.Drawing.Point(206, 67);
+            this.button11.Name = "button11";
+            this.button11.Size = new System.Drawing.Size(182, 40);
+            this.button11.TabIndex = 5;
+            this.button11.Text = "Gravar Histórico de Parcelas";
+            this.button11.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.button11.UseVisualStyleBackColor = true;
+            this.button11.Click += new System.EventHandler(this.button11_Click);
             // 
             // btnLocalizarHistoricoParcela
             // 
@@ -315,76 +361,13 @@
             this.toolStripMenuItem1,
             this.parcelasToolStripMenuItem,
             this.menuItemSubHistoricoParcela,
+            this.consultaFgtsToolStripMenuItem,
             this.gerarPonteiroFullToolStripMenuItem,
             this.gerarArquivoDeDamp3ToolStripMenuItem,
             this.voltarToolStripMenuItem});
             this.menuToolStripMenuItem.Name = "menuToolStripMenuItem";
             this.menuToolStripMenuItem.Size = new System.Drawing.Size(50, 20);
             this.menuToolStripMenuItem.Text = "Menu";
-            // 
-            // panelSpinner
-            // 
-            this.panelSpinner.BackColor = System.Drawing.SystemColors.Control;
-            this.panelSpinner.Controls.Add(this.groupBox1);
-            this.panelSpinner.Controls.Add(this.button8);
-            this.panelSpinner.Controls.Add(this.button1);
-            this.panelSpinner.Controls.Add(this.button7);
-            this.panelSpinner.Controls.Add(this.button4);
-            this.panelSpinner.Controls.Add(this.button5);
-            this.panelSpinner.Controls.Add(this.button3);
-            this.panelSpinner.Controls.Add(this.button2);
-            this.panelSpinner.Controls.Add(this.button6);
-            this.panelSpinner.Controls.Add(this.menuStrip1);
-            this.panelSpinner.Controls.Add(this.pnlHistoricoParcela);
-            this.panelSpinner.Location = new System.Drawing.Point(0, 0);
-            this.panelSpinner.Name = "panelSpinner";
-            this.panelSpinner.Size = new System.Drawing.Size(574, 199);
-            this.panelSpinner.TabIndex = 5;
-            // 
-            // button11
-            // 
-            this.button11.Enabled = false;
-            this.button11.Image = global::ConvetPdfToLayoutAlta.Properties.Resources.txtdocument_text_tx_9804;
-            this.button11.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button11.Location = new System.Drawing.Point(206, 67);
-            this.button11.Name = "button11";
-            this.button11.Size = new System.Drawing.Size(182, 40);
-            this.button11.TabIndex = 5;
-            this.button11.Text = "Gravar Histórico de Parcelas";
-            this.button11.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.button11.UseVisualStyleBackColor = true;
-            this.button11.Click += new System.EventHandler(this.button11_Click);
-            // 
-            // btnDuplicata
-            // 
-            this.btnDuplicata.BackColor = System.Drawing.SystemColors.Control;
-            this.btnDuplicata.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.btnDuplicata.Enabled = false;
-            this.btnDuplicata.Image = global::ConvetPdfToLayoutAlta.Properties.Resources._1490890032_24_82551;
-            this.btnDuplicata.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnDuplicata.Location = new System.Drawing.Point(127, 110);
-            this.btnDuplicata.Name = "btnDuplicata";
-            this.btnDuplicata.Size = new System.Drawing.Size(128, 40);
-            this.btnDuplicata.TabIndex = 10;
-            this.btnDuplicata.Text = "Filtrar Arquivos...";
-            this.btnDuplicata.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnDuplicata.UseVisualStyleBackColor = true;
-            this.btnDuplicata.Click += new System.EventHandler(this.BtnDuplicata_Click);
-            // 
-            // btnIniciarConvercao
-            // 
-            this.btnIniciarConvercao.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.btnIniciarConvercao.Enabled = false;
-            this.btnIniciarConvercao.Image = global::ConvetPdfToLayoutAlta.Properties.Resources._1485477153_arrow_right_78596;
-            this.btnIniciarConvercao.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnIniciarConvercao.Location = new System.Drawing.Point(318, 110);
-            this.btnIniciarConvercao.Name = "btnIniciarConvercao";
-            this.btnIniciarConvercao.Size = new System.Drawing.Size(128, 40);
-            this.btnIniciarConvercao.TabIndex = 1;
-            this.btnIniciarConvercao.Text = "Iniciar Conversão";
-            this.btnIniciarConvercao.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnIniciarConvercao.UseVisualStyleBackColor = true;
-            this.btnIniciarConvercao.Click += new System.EventHandler(this.BtnIniciarConvercao_Click);
             // 
             // toolStripMenuItem1
             // 
@@ -464,6 +447,14 @@
             this.consultarHistóricoDeParcelasToolStripMenuItem.Text = "Consultar Histórico de Parcelas";
             this.consultarHistóricoDeParcelasToolStripMenuItem.Click += new System.EventHandler(this.consultarHistóricoDeParcelasToolStripMenuItem_Click);
             // 
+            // consultaFgtsToolStripMenuItem
+            // 
+            this.consultaFgtsToolStripMenuItem.Image = global::ConvetPdfToLayoutAlta.Properties.Resources.ic_attach_money_128_28210;
+            this.consultaFgtsToolStripMenuItem.Name = "consultaFgtsToolStripMenuItem";
+            this.consultaFgtsToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.consultaFgtsToolStripMenuItem.Text = "Consulta Fgts";
+            this.consultaFgtsToolStripMenuItem.Click += new System.EventHandler(this.consultaFgtsToolStripMenuItem_Click);
+            // 
             // gerarPonteiroFullToolStripMenuItem
             // 
             this.gerarPonteiroFullToolStripMenuItem.Image = global::ConvetPdfToLayoutAlta.Properties.Resources.txtdocument_text_tx_9804;
@@ -488,6 +479,25 @@
             this.voltarToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.voltarToolStripMenuItem.Text = "Voltar";
             this.voltarToolStripMenuItem.Click += new System.EventHandler(this.voltarToolStripMenuItem_Click);
+            // 
+            // panelSpinner
+            // 
+            this.panelSpinner.BackColor = System.Drawing.SystemColors.Control;
+            this.panelSpinner.Controls.Add(this.pnlHistoricoParcela);
+            this.panelSpinner.Controls.Add(this.groupBox1);
+            this.panelSpinner.Controls.Add(this.button8);
+            this.panelSpinner.Controls.Add(this.button1);
+            this.panelSpinner.Controls.Add(this.button7);
+            this.panelSpinner.Controls.Add(this.button4);
+            this.panelSpinner.Controls.Add(this.button5);
+            this.panelSpinner.Controls.Add(this.button3);
+            this.panelSpinner.Controls.Add(this.button2);
+            this.panelSpinner.Controls.Add(this.button6);
+            this.panelSpinner.Controls.Add(this.menuStrip1);
+            this.panelSpinner.Location = new System.Drawing.Point(0, 0);
+            this.panelSpinner.Name = "panelSpinner";
+            this.panelSpinner.Size = new System.Drawing.Size(574, 199);
+            this.panelSpinner.TabIndex = 5;
             // 
             // FrmSelectFolder
             // 
@@ -557,6 +567,7 @@
         private System.Windows.Forms.ToolStripMenuItem gravarOcorrênciaToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem consultarOcorrênciaToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem gerarPonteiroFullToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem consultaFgtsToolStripMenuItem;
     }
 }
 

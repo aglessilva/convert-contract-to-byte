@@ -71,7 +71,6 @@ namespace ConvetPdfToLayoutAlta.Models
             return parcelaFgts;
         }
 
-
         public void PopulaTela18(object parametro)
         {
             List<Tela18> lstTela18 = (List<Tela18>)parametro.GetType().GetProperty("item1").GetValue(parametro, null);
@@ -110,7 +109,7 @@ namespace ConvetPdfToLayoutAlta.Models
 
                                 fgts.SobraAcumuladaJAM = Convert.ToDecimal(fgts.SobraAcumuladaJAM) == 0 ? "0" : _sobraAcumulada;
                                 fgts.SobraMesJAM = Convert.ToDecimal(fgts.SobraMesJAM) == 0 ? "0" : _sobraMesJam;
-                                fgts.Contrato = t18.Carteira.Substring(3)+_contract;
+                                fgts.Contrato = Convert.ToInt32(t18.Carteira) + _contract;
 
                                 escreverTela18.WriteLine(strAltaFgts);
                                 strAltaFgts = _sobraAcumulada = _sobraMesJam = string.Empty;
@@ -133,9 +132,6 @@ namespace ConvetPdfToLayoutAlta.Models
                 parcelaFgts = null;
             }
         }
-
-
-
 
         public void DoBulkCopy(bool keepNulls, List<ParcelaFgts> _parcela)
         {
@@ -191,7 +187,6 @@ namespace ConvetPdfToLayoutAlta.Models
             }
         }
 
-
         public DataTable CriaTabelaFgts()
         {
             var table = new DataTable();
@@ -208,6 +203,21 @@ namespace ConvetPdfToLayoutAlta.Models
             table.Columns.Add("ValorUtilizado", typeof(string));
 
             return table;
+        }
+
+        public List<ParcelaFgts> GetParcelaFgts(string _contrato)
+        {
+            try
+            {
+                using (DbConnEntity dbConn = new DbConnEntity())
+                {
+                    return dbConn.DampFgts.Where(c => c.Contrato.Equals(_contrato.Trim())).ToList();
+                }
+            }
+            catch (Exception exFgts)
+            {
+                throw exFgts;
+            }
         }
     }
 }

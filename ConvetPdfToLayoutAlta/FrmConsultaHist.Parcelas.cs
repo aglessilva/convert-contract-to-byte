@@ -18,8 +18,6 @@ namespace ConvetPdfToLayoutAlta
             tipo = _type;
         }
 
-       
-
         private void btnPesquisaContrato_Click(object sender, EventArgs e)
         {
             if(string.IsNullOrWhiteSpace(textBoxContrato.Text.Trim()))

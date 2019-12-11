@@ -763,6 +763,7 @@ namespace ConvetPdfToLayoutAlta.Models
                 DataEmicao = string.IsNullOrWhiteSpace(obj.DataEmicao) ? "" : obj.DataEmicao,
                 DataGarantia = string.IsNullOrWhiteSpace(obj.DataGarantia) ? "" : obj.DataGarantia,
                 DataInclusao = string.IsNullOrWhiteSpace(obj.DataInclusao) ? "" : obj.DataInclusao,
+                DataTransferencia = string.IsNullOrWhiteSpace(obj.DataTransferencia) ? "" : obj.DataTransferencia,
                 DataNascimento = string.IsNullOrWhiteSpace(obj.DataNascimento) ? "" : obj.DataNascimento,
                 DataPrimeiroVencimento = string.IsNullOrWhiteSpace(obj.DataPrimeiroVencimento) ? "" : obj.DataPrimeiroVencimento,
                 DataReinclusao = string.IsNullOrWhiteSpace(obj.DataReinclusao) ? "" : obj.DataReinclusao,
@@ -898,7 +899,7 @@ namespace ConvetPdfToLayoutAlta.Models
                             // COMENTAMOS A LINHA ACIMA, PORQUE FOI DEFINIDO PELA ANDREA QUE O DIA DE VENCIMENTO SERÁ SEMPRE O DIA DO ULTIMO CABEÇALHO
 
                             strAlta = string.Format("{0}{1}{2}{3}", c.Carteira.Trim().Substring(2), c.Contrato.Trim(), _diaVencimento, c.Agencia.Substring(2, 4)).PadRight(24, ' ');
-                            strAlta += string.Format("{0}{1}{2}{3}", (c.Nome.Trim().Length > 40 ? c.Nome.Trim().Substring(0, 40) : c.Nome.Trim()).PadRight(40, ' '), c.DataNascimento.Trim().PadRight(10, ' '), "".PadRight(14, ' '), c.EnderecoImovel.Trim().PadRight(80, ' '));
+                            strAlta += string.Format("{0}{1}{2}{3}", (c.Nome.Trim().Length > 40 ? c.Nome.Trim().Substring(0, 40) : c.Nome.Trim()).PadRight(40, ' '), c.DataNascimento.Trim().PadRight(10, ' '), c.DataTransferencia.PadRight(14, ' '), c.EnderecoImovel.Trim().PadRight(80, ' '));
                             strAlta += string.Format("{0}{1}{2}{3}", c.Cpf.Trim().PadRight(14, ' '), "".PadRight(3, ' '), _contratoGT.Trim().PadRight(20, ' '), "".PadRight(20, ' '));
                             strAlta += string.Format("{0}{1}", c.Modalidade.Trim().PadRight(40, ' '), (c.CidadeImovel.Trim().Length <= 31 ? c.CidadeImovel.Trim() : c.CidadeImovel.Trim().Substring(0, 31)).PadRight(31, ' '));
                             strAlta += string.Format("{0}{1}{2}", c.Plano.Trim().PadRight(10, ' '), c.DataContrato.Trim().PadRight(10, ' '), "".PadRight(2, ' '));
@@ -1509,7 +1510,7 @@ namespace ConvetPdfToLayoutAlta.Models
 
                                     p.Carteira = q.Carteira;
                                     p.Indicador = _sinal;
-                                    p.Contrato = q.Contrato;
+                                    p.Contrato = Convert.ToInt32(q.Carteira) + q.Contrato;
                                     p.DataBaseContrato = q.Cabecalhos[0].DataBase;
 
                                    

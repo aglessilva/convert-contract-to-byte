@@ -20,7 +20,7 @@ namespace ConvetPdfToLayoutAlta.Models
         {
 
             string _case = "VAZIO";
-            string _contrato = cabecalho.Carteira.Trim().Substring(3) + cabecalho.Contrato.Trim();
+            string _contrato = Convert.ToInt32(cabecalho.Carteira.Trim()) + cabecalho.Contrato.Trim();
 
             try
             {
@@ -854,7 +854,7 @@ namespace ConvetPdfToLayoutAlta.Models
                 dataRow = dataTable.NewRow();
 
                 dataRow["Carteira"] = item.Carteira.Trim();
-                dataRow["Contrato"] = item.Carteira.Trim().Substring(3) + item.Contrato.Trim();
+                dataRow["Contrato"] = item.Contrato.Trim();
                 dataRow["Agencia"] = item.Agencia.Trim();
                 dataRow["Vencimento"] = item.Vencimento.Trim();
                 dataRow["DataBaseContrato"] = item.DataBaseContrato.Trim();

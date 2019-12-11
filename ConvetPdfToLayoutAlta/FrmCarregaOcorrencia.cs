@@ -102,7 +102,7 @@ namespace ConvetPdfToLayoutAlta
                         if (linha.Length >= 281)
                         {
                             dataRow = dataTable.NewRow();
-                            dataRow["Contrato"] = linha.Substring(1, 14).Trim(); 
+                            dataRow["Contrato"] = linha.Substring(0, 15).Trim(); 
                             dataRow["DataVencimento"] = linha.Substring(15, 10).Trim();
                             dataRow["DataPagamento"] = linha.Substring(25, 10).Trim();
                             dataRow["Simbulo"] = linha.Substring(35, 3).Trim();
