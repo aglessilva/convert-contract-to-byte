@@ -52,6 +52,7 @@
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Contratos";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Frmpdf_FormClosing);
             this.Load += new System.EventHandler(this.frmpdf_Load);
             this.ResumeLayout(false);

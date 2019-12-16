@@ -34,13 +34,13 @@ namespace ConvetPdfToLayoutAlta
         {
             try
             {
-                using (StreamReader sr = new StreamReader(Directory.GetCurrentDirectory()+@"\config\RELADAMP.txt", true))
+                using (StreamReader sr = new StreamReader(Directory.GetCurrentDirectory()+@"\config\RELADAMP.txt", Encoding.Default, true))
                 {
                     string _linha = string.Empty;
                     List<string> _arrayLinha = sr.ReadToEnd().Split('\n').Where(i => !string.IsNullOrWhiteSpace(i)).ToList();
                     string[] _arrayItem = { };
 
-                    _arrayLinha.RemoveAt(0);
+                    //_arrayLinha.RemoveAt(0);
                     MaximumProgress = _arrayLinha.Count();
 
                     _arrayLinha.ForEach(p =>

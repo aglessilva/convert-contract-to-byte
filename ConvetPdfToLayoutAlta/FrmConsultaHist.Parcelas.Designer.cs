@@ -65,7 +65,7 @@
             this.btnLimpaFiltro.Size = new System.Drawing.Size(49, 40);
             this.btnLimpaFiltro.TabIndex = 2;
             this.btnLimpaFiltro.UseVisualStyleBackColor = true;
-            this.btnLimpaFiltro.Click += new System.EventHandler(this.btnLimpaFiltro_Click);
+            this.btnLimpaFiltro.Click += new System.EventHandler(this.BtnLimpaFiltro_Click);
             // 
             // textBoxContrato
             // 
@@ -96,7 +96,7 @@
             this.btnPesquisaContrato.Text = "Pesquisar";
             this.btnPesquisaContrato.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btnPesquisaContrato.UseVisualStyleBackColor = true;
-            this.btnPesquisaContrato.Click += new System.EventHandler(this.btnPesquisaContrato_Click);
+            this.btnPesquisaContrato.Click += new System.EventHandler(this.BtnPesquisaContrato_Click);
             // 
             // dataGridViewHistoricaParcelas
             // 

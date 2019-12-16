@@ -41,7 +41,12 @@ namespace ConvetPdfToLayoutAlta.Models
                         {
                             List<string> _pagamento = _linha.ToList();
                             _case = "Case 2 - Metodo: TrataLinhaParcelas - PEGA A LINHA DE PAGAMENTO";
-                            int count = 0;
+                            int count = (_pagamento.Count - 1);
+
+                            _obj.SaldoDevedor = Regex.Replace(_pagamento.Last(), @"[^0-9$]", ""); _pagamento.RemoveAt(count--);
+                            _obj.Amortizacao = Regex.Replace(_pagamento.Last(), @"[^0-9$]", ""); _pagamento.RemoveAt(count--);
+                            _obj.Juros = Regex.Replace(_pagamento.Last(), @"[^0-9$\-]", ""); _pagamento.RemoveAt(count--);
+                            _obj.Encargo = Regex.Replace(_pagamento.Last(), @"[^0-9$]", ""); _pagamento.RemoveAt(count--);
 
                             if (!_pagamento.Any(l => l.Contains("INCORP")))
                             {
@@ -52,20 +57,43 @@ namespace ConvetPdfToLayoutAlta.Models
                             if(!_pagamento.Any(f => Regex.IsMatch(_pagamento[3], @"(^\d{1},\d{6}$)")))
                                 _pagamento.Insert(3, "0");
 
-                            _linha = _pagamento.ToArray();
+                            _obj.Vencimento = Regex.Replace(_pagamento.FirstOrDefault(), @"[^0-9\/$]", ""); _pagamento.RemoveAt(0);
+                            _obj.Pagamento = Regex.Replace(_pagamento.FirstOrDefault(), @"[^0-9A-Z\/$]", ""); _pagamento.RemoveAt(0); 
+                            _obj.NumeroPrazo = Regex.Replace(_pagamento.FirstOrDefault(), @"[^0-9$]", ""); _pagamento.RemoveAt(0);
+                            _obj.Indice =  Regex.Replace(_pagamento.FirstOrDefault(), @"[^0-9$]", ""); _pagamento.RemoveAt(0);
+                            _obj.Prestacao = Regex.Replace(_pagamento.FirstOrDefault(), @"[^0-9$]", "");  _pagamento.RemoveAt(0);
+                            _obj.Seguro = Regex.Replace(_pagamento.FirstOrDefault(), @"[^0-9$]", ""); _pagamento.RemoveAt(0);
 
-                            _obj.Vencimento = Regex.Replace(_linha[count++], @"[^0-9\/$]", "");
-                            _obj.Pagamento = Regex.Replace(_linha[count++], @"[^0-9A-Z\/$]", "");
-                            _obj.NumeroPrazo = Regex.Replace(_linha[count++], @"[^0-9$]", "");
-                            _obj.Indice =  Regex.Replace(_linha[count++], @"[^0-9$]", "");
-                            _obj.Prestacao = Regex.Replace(_linha[count++], @"[^0-9$]", "");
-                            _obj.Seguro = Regex.Replace(_linha[count++], @"[^0-9$]", "");
-                            _obj.Taxa = _obj.Taxa != "0" ? _obj.Taxa :  _linha.Length > 11 ? Regex.Replace(_linha[count++], @"[^0-9$]", "") :  _linha.Length > 10 && cabecalho.Iof == "0" ? Regex.Replace(_linha[count++], @"[^0-9$]", "") : "0";
-                            _obj.Iof = Convert.ToInt32(cabecalho.Iof) != 0 ? Regex.Replace(_linha[count++], @"[^0-9$]", "") : _linha.Length > 11 ? Regex.Replace(_linha[count++], @"[^0-9$]", "") : "0";
-                            _obj.Encargo = Regex.Replace(_linha[count++], @"[^0-9.,$]", "");
-                            _obj.Juros = Regex.Replace(_linha[count++], @"[^0-9$]", "");
-                            _obj.Amortizacao = Regex.Replace(_linha[count++], @"[^0-9$\-]", "");
-                            _obj.SaldoDevedor = Regex.Replace(_linha[count++], @"[^0-9$]", "");
+
+                            if (_pagamento.Count == 1)
+                            {
+                                string valorTaxaOuIof = Regex.Replace(_pagamento[0], @"[^0-9$]", "").Trim();
+
+                                if (cabecalho.Taxa.Equals(valorTaxaOuIof))
+                                {
+                                    _obj.Taxa = valorTaxaOuIof;
+                                    break;
+                                }
+
+                                if (cabecalho.Iof.Equals(valorTaxaOuIof))
+                                {
+                                    _obj.Iof = valorTaxaOuIof;
+                                    break;
+                                }
+
+                                if (Convert.ToInt32(cabecalho.Taxa).Equals(0) && Convert.ToInt32(cabecalho.Iof).Equals(0))
+                                    _obj.Taxa = valorTaxaOuIof;
+                                else
+                                    _obj.Iof = valorTaxaOuIof;
+                            }   
+                            else
+                            {
+                                if (_pagamento.Count == 2)
+                                {
+                                    _obj.Taxa = Regex.Replace(_pagamento[0], @"[^0-9$]", "").Trim();
+                                    _obj.Iof = Regex.Replace(_pagamento[1], @"[^0-9$]", "").Trim();
+                                }
+                            }
 
                             break;
                         }

@@ -80,17 +80,17 @@ namespace ConvetPdfToLayoutAlta
 
 
                 // Faz a Leitura do contratos em atraso
-                using (StreamReader streamReader = new StreamReader(Directory.GetCurrentDirectory() + @"\config\CFF00101.ARQ"))
-                {
-                    string[] _linha = { }; 
-                    streamReader.ReadLine();
+                //using (StreamReader streamReader = new StreamReader(Directory.GetCurrentDirectory() + @"\config\CFF00101.ARQ"))
+                //{
+                //    string[] _linha = { }; 
+                //    streamReader.ReadLine();
 
-                    while (!streamReader.EndOfStream)
-                    {
-                        _linha = streamReader.ReadLine().Split(';');
-                        dicionario.Add(string.Join(";", _linha.Skip(1).Take(3)).Replace(";", "").Substring(1), _linha[10].Trim());
-                    }
-                }
+                //    while (!streamReader.EndOfStream)
+                //    {
+                //        _linha = streamReader.ReadLine().Split(';');
+                //        dicionario.Add(string.Join(";", _linha.Skip(1).Take(3)).Replace(";", "").Substring(1), _linha[10].Trim());
+                //    }
+                //}
 
                 // Faz a leitura do arquivo que contem as  sistuações dos contratos
                 using (StreamReader lerTxt = new StreamReader(string.Format("{0}{1}", Directory.GetCurrentDirectory(), @"\config\SITU115A.TXT")))
@@ -188,7 +188,7 @@ namespace ConvetPdfToLayoutAlta
             string[] arrayIgnoraOcorrencia = { "Portabilidade:", "BRADESCO","SAFRA", "ITAU","ITAÚ", "PACTUAL","BTG", "UNIBANCO","HSBC", "NORDESTE","SATNANDER","BNDS","CITIBANK","CITI", "CITY", "ECONOMICA", "FEDERAL" };
             string[] arrayIgnorParcelas = { "Encargo", "Índice", "Devedor", "Proc.Emi/Pag", "Mora", "Gerad", };
             string[] arrayIgnorCabecalho = { "End.Correspondência", "Demonstrativo", "Telefone", "Modalidade", "Nome" };
-            string[] arrayIgonorCampo = { "Nº", "CTFIN", "Emissão", "PRO","ANT", "SANTANDER", "Carteira", "Data","CTFIN","Carteira","Contrato","Seguro","TAXA", };
+            string[] arrayIgonorCampo = { "Nº", "CTFIN", "Emissão", "PRO","ANT", "SANTANDER", "Carteira","CTFIN","Carteira","Contrato","Seguro","TAXA", };
             string[] arrayFinalParcela = { "TOTAL","Aberto", "SEGURO", "CONTRATO LIQUIDADO", "FGTS/Prestação", "QTD" };
             string[] arrayGetCampos = { "Plano", "Sistema", "DFI", "Data Garanta", "Reajuste", "Prazo", "Razão", "Empreendimento", "1º", "Repactuação", "Ult.", "Re-", "Repactuação", "Correção", "Origem", "Carência", "Apólice", "Seguro", "Taxa Juros", "Data Inclusao", "Agência", "Garanta" };
             string pagina = string.Empty, readerContrato = string.Empty;
@@ -229,12 +229,12 @@ namespace ConvetPdfToLayoutAlta
                         _numeroContrato = arquivoPdf.Name.Split('_')[0].Trim();
 
                         parcelaFgts = itensFgts.Where(fgts => fgts.Contrato.Equals(_numeroContrato)).ToList();
-                        DatacontratoCreditoAtraso = dicionario.FirstOrDefault(s => s.Key.Equals(_numeroContrato)).Value;
+                        //DatacontratoCreditoAtraso = dicionario.FirstOrDefault(s => s.Key.Equals(_numeroContrato)).Value;
 
 
                         // apoós a consulta, se o contrato for localizado, remove da lista para facilitar a nova pesquisa
-                        if(!string.IsNullOrWhiteSpace(DatacontratoCreditoAtraso))
-                            dicionario.Remove(_numeroContrato);
+                        //if(!string.IsNullOrWhiteSpace(DatacontratoCreditoAtraso))
+                        //    dicionario.Remove(_numeroContrato);
 
 
                         //Verifica o tamanho do arquivo
@@ -252,7 +252,8 @@ namespace ConvetPdfToLayoutAlta
 
 
                         objContratoPdf = new ContratoPdf();
-                        objCabecalho = new Cabecalho() { Id = (lstCabecalho.Count + 1), DataTransferencia = DatacontratoCreditoAtraso };
+                      //  objCabecalho = new Cabecalho() { Id = (lstCabecalho.Count + 1), DataTransferencia = DatacontratoCreditoAtraso };
+                        objCabecalho = new Cabecalho() { Id = (lstCabecalho.Count + 1) };
                         objParcelas = new Parcela() { IdCabecalho = objCabecalho.Id, Id = 0 };
                         objParcelas = businessParcelas.PreencheParcela(objParcelas);
                         objCabecalho = businessCabecalho.PreencheCabecalho(objCabecalho);
@@ -310,7 +311,10 @@ namespace ConvetPdfToLayoutAlta
                                         if (line.Contains("Cronograma"))
                                             lstCronograma.Add(objCabecalho.Contrato);
 
-                                        if (i > 1 && line.Contains("C.P.F."))
+
+                                        string[] arrayCabecalho = businessCabecalho.TrataArray(line);
+
+                                        if (i > 1 && arrayCabecalho.Any(doc => Regex.IsMatch(doc, @"(^\d{3}.\d{3}.\d{3}\/\d{4}\-\d{2}$)") || Regex.IsMatch(doc, @"(^\d{3}.\d{3}.\d{3}\-\d{2}$)")))
                                         {
                                             var novoObj = objCabecalho;
 
@@ -328,6 +332,8 @@ namespace ConvetPdfToLayoutAlta
 
                                             objCabecalho = businessCabecalho.PreencheCabecalho(objCabecalho);
                                         }
+
+                                        // verifica se o contrato é do tipo TELA 16
                                         if(i == 1)
                                         if (line.Contains("Emissão"))
                                         {
@@ -576,7 +582,7 @@ namespace ConvetPdfToLayoutAlta
                                         {
 
                                             // array de Campos que são ignorados, pois nao trazem dados relevantes
-                                            string[] array2IgnorCampo = { "Nº", "Demonstrativo", "Emissão", "Carteira", "Nascimento", "Nome", "End.Imóvel", "Telefone", "Depósito", "Modalidade", "Bairro" };
+                                            string[] array2IgnorCampo = { "Nº", "Demonstrativo", "Emissão", "Carteira", "Nascimento", "Nome", "End.Imóvel", "Telefone", "Depósito", "Modalidade", "Bairro", "Page 1 of 1" };
                                             if (array2IgnorCampo.Where(k => line.Contains(k)).Count() > 0) continue;
 
                                             if (string.IsNullOrWhiteSpace(objCabecalho.Numero) || objCabecalho.Numero == "0")
@@ -597,7 +603,8 @@ namespace ConvetPdfToLayoutAlta
                                                 continue;
                                             }
 
-                                            if (line.Contains("C.P.F."))
+                                            //if (line.Contains("C.P.F."))
+                                            if(line.Split(' ').Any(c =>  Regex.IsMatch(c, @"(^\d{3}.\d{3}.\d{3}-\d{2}$)")))
                                             {
                                                 cabecalho = businessCabecalho.TrataLinhaPDFPadrao2(line, 2);
                                                 objCabecalho = businessCabecalho.TrataCabecalhoPadrao2(objCabecalho, cabecalho, 2);
@@ -668,12 +675,25 @@ namespace ConvetPdfToLayoutAlta
                                             objCabecalho = businessCabecalho.TrataCabecalho(objCabecalho, cabecalho, 8);
                                             continue;
                                         }
+
+
+                                        // se for um Cliente do Tipo CNPF (Juridico)
+                                        if(line.Split(' ').Any(y => Regex.IsMatch(y, @"(^\d{3}.\d{3}.\d{3}\/\d{4}\-\d{2}$)")))
+                                        {
+                                            cabecalho = businessCabecalho.TrataLinhaPDF(line, 90);
+                                            objCabecalho = businessCabecalho.TrataCabecalho(objCabecalho, cabecalho, 90);
+                                            continue;
+                                        }
+
+                                        // se for um Cliente do Tipo CPF (Fisica)
                                         if (line.Contains("C.P.F.") || line.Contains("Nascimento"))
                                         {
                                             cabecalho = businessCabecalho.TrataLinhaPDF(line, 9);
                                             objCabecalho = businessCabecalho.TrataCabecalho(objCabecalho, cabecalho, 9);
                                             continue;
                                         }
+
+
                                         if (line.Contains("End.Imóvel"))
                                         {
                                             cabecalho = businessCabecalho.TrataLinhaPDF(line, 10);

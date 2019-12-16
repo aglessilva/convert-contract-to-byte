@@ -18,7 +18,7 @@ namespace ConvetPdfToLayoutAlta
             tipo = _type;
         }
 
-        private void btnPesquisaContrato_Click(object sender, EventArgs e)
+        private void BtnPesquisaContrato_Click(object sender, EventArgs e)
         {
             if(string.IsNullOrWhiteSpace(textBoxContrato.Text.Trim()))
             {
@@ -43,7 +43,7 @@ namespace ConvetPdfToLayoutAlta
                 MessageBox.Show("Nenhum registro encontrado para o contrato " + textBoxContrato.Text, "Consulta", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
-        private void btnLimpaFiltro_Click(object sender, EventArgs e)
+        private void BtnLimpaFiltro_Click(object sender, EventArgs e)
         {
             textBoxContrato.Text = string.Empty;
             dataGridViewHistoricaParcelas.DataSource = null;

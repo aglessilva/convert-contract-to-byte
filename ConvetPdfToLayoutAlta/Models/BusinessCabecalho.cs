@@ -58,6 +58,21 @@ namespace ConvetPdfToLayoutAlta.Models
 
                         break;
                     }
+                case 90:
+                    {
+                        string _cnpj = string.Empty, _nome = string.Empty ;
+
+                        _arrayLinha = _linha.Split(' ');
+                        var x = TrataArray(_linha).ToList();
+
+                        _cnpj = x.FirstOrDefault(y => Regex.IsMatch(y, @"(^\d{3}.\d{3}.\d{3}\/\d{4}\-\d{2}$)"));
+                        x.Remove(_cnpj);
+
+                        _nome = string.Join(" ", x.Where(f => !string.IsNullOrWhiteSpace(f)));
+                        _arrayLinha = new string[] { _nome, _cnpj, "01/01/0001" };
+
+                        break;
+                    }
                 case 10:
                     {
                         // PADRÃO FACIL PARA PEGAR O ENDEREÇO
@@ -213,6 +228,15 @@ namespace ConvetPdfToLayoutAlta.Models
                             obj.Nome = Regex.Replace(_arrayLinha[0].Trim(), @"[^A-Z$]+", " ");
                             obj.Cpf = Regex.Replace(_arrayLinha[1].Trim(), @"[^0-9$]+", "");
                             obj.DataNascimento = Regex.Replace(_arrayLinha[2].Trim(), @"[^0-9\/$]+", "");
+                            break;
+                        }
+                    case 90:
+                        {
+                            _case = "9 - Metodo: TrataCabecalho -  campo: Nome, CPF, DataNascimento";
+
+                            obj.Nome = Regex.Replace(_arrayLinha[0].Trim(), @"[^A-Z$]+", " ");
+                            obj.Cpf = Regex.Replace(_arrayLinha[1].Trim(), @"[^0-9$]+", "");
+                            obj.DataNascimento = "01/01/0001";
                             break;
                         }
                     case 10:
@@ -556,10 +580,29 @@ namespace ConvetPdfToLayoutAlta.Models
                         {
                             _case = "2 - Metodo: TrataLinhaPDFPadrao2 -  campo: Nome, CPF...";
 
-                            _arrayLinha = _linha.Replace("C.P.F.", ":").Split(':').Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
-                            var arr = _arrayLinha[1].Split(' ').Where(x => !string.IsNullOrWhiteSpace(x)).ToList(); ;
-                            arr.Add(_arrayLinha[0]);
-                            _arrayLinha = arr.ToArray();
+                            if (_linha.Contains("C.P.F"))
+                            {
+                                _arrayLinha = _linha.Replace("C.P.F.", ":").Split(':').Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
+                                var arr = _arrayLinha[1].Split(' ').Where(x => !string.IsNullOrWhiteSpace(x)).ToList(); 
+                                arr.Add(_arrayLinha[0]);
+                                _arrayLinha = arr.ToArray();
+                            }
+                            else
+                            {
+                                List<string> lstArray = _linha.Split(' ').ToList();
+                                List<string> arr = new List<string>(3)
+                                {
+                                    lstArray.FirstOrDefault(x => Regex.IsMatch(x, @"(^\d{3}.\d{3}.\d{3}-\d{2}$)")),
+                                    lstArray.FirstOrDefault(x => Regex.IsMatch(x, @"(^\d{2}\/\d{2}\/\d{4}$)"))
+                                };
+
+                                lstArray.Remove(arr[0]);
+                                lstArray.Remove(arr[1]);
+                                lstArray.RemoveAt((lstArray.Count - 1));
+
+                                arr.Add(string.Join(" ", lstArray));
+                                _arrayLinha = arr.ToArray();
+                            }
                             break;
                         }
                     case 3:
@@ -569,7 +612,7 @@ namespace ConvetPdfToLayoutAlta.Models
                             string _bairro = string.Empty, _cep = string.Empty, _cidade = string.Empty, _endereco = string.Empty, _uf = string.Empty;
                             var arr = _linha.Trim().Split(' ').ToList();
 
-                            int p = arr.FindIndex(u => Regex.IsMatch(u, ("[0-9]{2}.[0-9]{3}-[0-9]{3}")));
+                            int p = arr.FindIndex(u => Regex.IsMatch(u, ("[0-9]{2,3}.[0-9]{3}-[0-9]{3}")));
 
                             List<string> lstBairo = new List<string>();
                             var j = arr.GetRange(0, p);
@@ -899,8 +942,8 @@ namespace ConvetPdfToLayoutAlta.Models
                             // COMENTAMOS A LINHA ACIMA, PORQUE FOI DEFINIDO PELA ANDREA QUE O DIA DE VENCIMENTO SERÁ SEMPRE O DIA DO ULTIMO CABEÇALHO
 
                             strAlta = string.Format("{0}{1}{2}{3}", c.Carteira.Trim().Substring(2), c.Contrato.Trim(), _diaVencimento, c.Agencia.Substring(2, 4)).PadRight(24, ' ');
-                            strAlta += string.Format("{0}{1}{2}{3}", (c.Nome.Trim().Length > 40 ? c.Nome.Trim().Substring(0, 40) : c.Nome.Trim()).PadRight(40, ' '), c.DataNascimento.Trim().PadRight(10, ' '), c.DataTransferencia.PadRight(14, ' '), c.EnderecoImovel.Trim().PadRight(80, ' '));
-                            strAlta += string.Format("{0}{1}{2}{3}", c.Cpf.Trim().PadRight(14, ' '), "".PadRight(3, ' '), _contratoGT.Trim().PadRight(20, ' '), "".PadRight(20, ' '));
+                            strAlta += string.Format("{0}{1}{2}{3}", (c.Nome.Trim().Length > 40 ? c.Nome.Trim().Substring(0, 40) : c.Nome.Trim()).PadRight(40, ' '), c.DataNascimento.Trim().PadRight(10, ' '), "".PadRight(14, ' '), c.EnderecoImovel.Trim().PadRight(80, ' '));
+                            strAlta += string.Format("{0}{1}{2}{3}", (c.Cpf.Trim().Length < 15 ? c.Cpf : c.Cpf.Substring(1)).PadRight(14, ' '), "".PadRight(3, ' '), _contratoGT.Trim().PadRight(20, ' '), "".PadRight(20, ' '));
                             strAlta += string.Format("{0}{1}", c.Modalidade.Trim().PadRight(40, ' '), (c.CidadeImovel.Trim().Length <= 31 ? c.CidadeImovel.Trim() : c.CidadeImovel.Trim().Substring(0, 31)).PadRight(31, ' '));
                             strAlta += string.Format("{0}{1}{2}", c.Plano.Trim().PadRight(10, ' '), c.DataContrato.Trim().PadRight(10, ' '), "".PadRight(2, ' '));
                             strAlta += string.Format("{0}{1}", c.Prestacao.Trim().PadLeft(18, '0'), c.Sistema.Trim().PadRight(2, ' '));
