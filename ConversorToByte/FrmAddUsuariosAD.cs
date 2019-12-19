@@ -23,7 +23,7 @@ namespace ConversorToByte
 
         private void FrmAddUsuariosAD_Load(object sender, EventArgs e)
         {
-            dataGridViewUsuario.AutoGenerateColumns = false;
+            DataGridViewUsuario.AutoGenerateColumns = false;
             Height = (Screen.PrimaryScreen.Bounds.Height - 30);
             BindGrid();
         }
@@ -131,33 +131,22 @@ namespace ConversorToByte
                 btnAdd.Enabled = false;
         }
 
-        private void dataGridViewUsuario_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-             var senderGrid = (DataGridView)sender;
-            if (senderGrid.Columns[e.ColumnIndex] is DataGridViewCheckBoxColumn && e.RowIndex >= 0)
-            {
-                Users obj = (Users)dataGridViewUsuario.Rows[e.RowIndex].DataBoundItem;
-                fso.UdtUser(obj.UserLogin);
-                lst = fso.GetUsers(string.IsNullOrWhiteSpace(textBoxPesquisa.Text) ? null : textBoxPesquisa.Text);
-                dataGridViewUsuario.DataSource = lst;
-            }
-        }
 
         private void textBoxPesquisa_TextChanged(object sender, EventArgs e)
         {
-            dataGridViewUsuario.AutoGenerateColumns = false;
+            DataGridViewUsuario.AutoGenerateColumns = false;
             if(textBoxPesquisa.Text.Length > 2)
             {
-                dataGridViewUsuario.DataSource = null;
+                DataGridViewUsuario.DataSource = null;
                 lst = fso.GetUsers(textBoxPesquisa.Text);
-                dataGridViewUsuario.DataSource = lst;
+                DataGridViewUsuario.DataSource = lst;
             }
 
             if (textBoxPesquisa.Text.Length == 0)
             {
-                dataGridViewUsuario.DataSource = null;
+                DataGridViewUsuario.DataSource = null;
                 lst = fso.GetUsers();
-                dataGridViewUsuario.DataSource = lst;
+                DataGridViewUsuario.DataSource = lst;
             }
         }
 
@@ -190,12 +179,46 @@ namespace ConversorToByte
         void BindGrid()
         {
             FileSafeOperations fso = new FileSafeOperations();
-            dataGridViewUsuario.DataSource = fso.GetUsers();   
+            DataGridViewUsuario.DataSource = fso.GetUsers();   
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             textBoxPesquisa.Text = string.Empty;
+        }
+
+        private void DataGridViewUsuario_CellContentClick_1(object sender, DataGridViewCellEventArgs e)
+        {
+            try
+            {
+                if (e.ColumnIndex < 3)
+                    return;
+
+                DataGridView dataGridUser = (DataGridView)sender;
+                if (dataGridUser.Columns[e.ColumnIndex] is DataGridViewCheckBoxColumn && e.RowIndex >= 0)
+                {
+                    Users obj = (Users)DataGridViewUsuario.Rows[e.RowIndex].DataBoundItem;
+                    fso.UdtUser(obj.UserLogin);
+                    lst = fso.GetUsers(string.IsNullOrWhiteSpace(textBoxPesquisa.Text) ? null : textBoxPesquisa.Text);
+                    DataGridViewUsuario.DataSource = lst;
+                }
+
+                if (dataGridUser.Columns[e.ColumnIndex] is DataGridViewImageColumn && e.RowIndex >= 0 && e.ColumnIndex == 4)
+                {
+                    Users obj = (Users)DataGridViewUsuario.Rows[e.RowIndex].DataBoundItem;
+                    if (MessageBox.Show($"Confirma a exclusão do usuário { obj.UserName } ?", "Confirmação de Exclusão", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                        return;
+
+                   fso.DltUser(obj.UserLogin);
+                    lst = fso.GetUsers(string.IsNullOrWhiteSpace(textBoxPesquisa.Text) ? null : textBoxPesquisa.Text);
+                    DataGridViewUsuario.DataSource = lst;
+                }
+            }
+            catch (Exception ex)
+            {
+                string erro = ex.Message;
+                throw;
+            }
         }
     }
 }

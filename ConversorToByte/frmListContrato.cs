@@ -65,7 +65,7 @@ namespace ConversorToByte
                 saveFile.Filter = "Contrato|*.pdf";
                    
                 fsf = new FileSafeOperations();
-                obj = fsf.GetFilesSafe(null,obj.Id.ToString()).First();
+                obj = fsf.GetFilesSafe(obj.NameContract);
                
                 saveFile.FileName = obj.NameContract;
 
@@ -86,7 +86,7 @@ namespace ConversorToByte
 
             if (senderGrid.Columns[e.ColumnIndex] is DataGridViewImageColumn && e.RowIndex >= 0 && e.ColumnIndex == 4)
              {
-                 string _idContract = senderGrid[0, e.RowIndex].Value.ToString();
+                 string _idContract = senderGrid[1, e.RowIndex].Value.ToString();
                  fsf = new FileSafeOperations();
                  FileSafe _file = fsf.GetFilesSafe(_idContract);
                  frmpdf _frmPdf = new frmpdf(_file);

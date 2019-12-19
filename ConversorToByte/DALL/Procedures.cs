@@ -52,6 +52,12 @@ namespace ConversorToByte.DALL
         /// <summary>
         /// checa e o usuario atual tem permissão de acesso ao sistema
         /// </summary>
-        SP_CHK_PERMICAO = 8
+        SP_CHK_PERMICAO = 8,
+
+        /// <summary>
+        /// Remove usuário do sistema
+        /// </summary>
+        SP_DLT_USERS = 9
+
     }
 }

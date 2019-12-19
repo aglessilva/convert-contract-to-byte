@@ -17,7 +17,7 @@ namespace ConversorToByte.DALL
         {
             cnx = new conn();
         }
-        public List<FileSafe> GetFileSafe(string _contratoCPF = null, string _id = null)
+        public List<FileSafe> GetFileSafe(string _contratoCPF = null)
         {
             List<FileSafe> lst = new List<FileSafe>();
             try
@@ -100,6 +100,19 @@ namespace ConversorToByte.DALL
             command.Connection.Open();
             command.ExecuteNonQuery();
             cnx.FecharConexao(command);
+        }
+
+        public int DltUser(string _login)
+        {
+            int ret = 0;
+            command = cnx.Parametriza(Procedures.SP_DLT_USERS);
+            command.Parameters.Add(new SqlParameter("@LOGIN", string.IsNullOrWhiteSpace(_login) ? null : _login));
+            command.Connection = command.Connection;
+            command.Connection.Open();
+            ret = command.ExecuteNonQuery();
+            cnx.FecharConexao(command);
+
+            return ret;
         }
 
         public int AddUser(Users _user)

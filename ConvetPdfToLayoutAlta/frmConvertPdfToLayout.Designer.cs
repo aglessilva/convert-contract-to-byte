@@ -512,7 +512,7 @@
             this.MinimizeBox = false;
             this.Name = "FrmSelectFolder";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Converter contratos para formato sequencial ";
+            this.Text = "Extração de Contratos de Credito Imobiliario (pdf -> txt)";
             this.Load += new System.EventHandler(this.FrmSelectFolder_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

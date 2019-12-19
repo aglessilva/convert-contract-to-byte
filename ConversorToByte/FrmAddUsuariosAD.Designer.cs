@@ -39,20 +39,22 @@
             this.label1 = new System.Windows.Forms.Label();
             this.textBoxLogin = new System.Windows.Forms.TextBox();
             this.btnPesquisar = new System.Windows.Forms.Button();
-            this.dataGridViewUsuario = new System.Windows.Forms.DataGridView();
+            this.DataGridViewUsuario = new System.Windows.Forms.DataGridView();
             this.Login = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Usuario = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Email = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.IsGestorApp = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.Excluir = new System.Windows.Forms.DataGridViewImageColumn();
             this.textBoxPesquisa = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.pnlSpinner = new System.Windows.Forms.Panel();
             this.label5 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.dataGridViewImageColumn1 = new System.Windows.Forms.DataGridViewImageColumn();
             this.button1 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.pnlUser.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewUsuario)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.DataGridViewUsuario)).BeginInit();
             this.pnlSpinner.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -165,62 +167,81 @@
             this.btnPesquisar.UseVisualStyleBackColor = true;
             this.btnPesquisar.Click += new System.EventHandler(this.btnPesquisar_Click);
             // 
-            // dataGridViewUsuario
+            // DataGridViewUsuario
             // 
-            this.dataGridViewUsuario.AllowUserToAddRows = false;
-            this.dataGridViewUsuario.AllowUserToDeleteRows = false;
-            this.dataGridViewUsuario.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.DataGridViewUsuario.AllowUserToAddRows = false;
+            this.DataGridViewUsuario.AllowUserToDeleteRows = false;
+            this.DataGridViewUsuario.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.dataGridViewUsuario.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewUsuario.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.DataGridViewUsuario.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.DataGridViewUsuario.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Login,
             this.Usuario,
             this.Email,
-            this.IsGestorApp});
-            this.dataGridViewUsuario.Location = new System.Drawing.Point(12, 191);
-            this.dataGridViewUsuario.Name = "dataGridViewUsuario";
-            this.dataGridViewUsuario.ReadOnly = true;
-            this.dataGridViewUsuario.RowHeadersVisible = false;
-            this.dataGridViewUsuario.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridViewUsuario.Size = new System.Drawing.Size(451, 312);
-            this.dataGridViewUsuario.TabIndex = 3;
-            this.dataGridViewUsuario.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewUsuario_CellContentClick);
+            this.IsGestorApp,
+            this.Excluir});
+            this.DataGridViewUsuario.Location = new System.Drawing.Point(12, 191);
+            this.DataGridViewUsuario.Name = "DataGridViewUsuario";
+            this.DataGridViewUsuario.ReadOnly = true;
+            this.DataGridViewUsuario.RowHeadersVisible = false;
+            this.DataGridViewUsuario.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.DataGridViewUsuario.Size = new System.Drawing.Size(451, 312);
+            this.DataGridViewUsuario.TabIndex = 3;
+            this.DataGridViewUsuario.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridViewUsuario_CellContentClick_1);
             // 
             // Login
             // 
             this.Login.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.Login.DataPropertyName = "UserLogin";
+            this.Login.Frozen = true;
             this.Login.HeaderText = "Login";
             this.Login.Name = "Login";
             this.Login.ReadOnly = true;
             this.Login.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.Login.Width = 80;
+            this.Login.Width = 65;
             // 
             // Usuario
             // 
-            this.Usuario.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Usuario.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.Usuario.DataPropertyName = "UserName";
+            this.Usuario.Frozen = true;
             this.Usuario.HeaderText = "Usuário";
             this.Usuario.Name = "Usuario";
             this.Usuario.ReadOnly = true;
+            this.Usuario.Width = 160;
             // 
             // Email
             // 
-            this.Email.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Email.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.Email.DataPropertyName = "UserEmail";
+            this.Email.Frozen = true;
             this.Email.HeaderText = "E-Mail";
             this.Email.Name = "Email";
             this.Email.ReadOnly = true;
+            this.Email.Width = 175;
             // 
             // IsGestorApp
             // 
             this.IsGestorApp.DataPropertyName = "IsAtivo";
+            this.IsGestorApp.Frozen = true;
             this.IsGestorApp.HeaderText = "A";
             this.IsGestorApp.Name = "IsGestorApp";
             this.IsGestorApp.ReadOnly = true;
             this.IsGestorApp.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.IsGestorApp.ToolTipText = "Ativar / Desativar Usuarios";
-            this.IsGestorApp.Width = 30;
+            this.IsGestorApp.Width = 25;
+            // 
+            // Excluir
+            // 
+            this.Excluir.Description = "Remover usuario";
+            this.Excluir.Frozen = true;
+            this.Excluir.HeaderText = "";
+            this.Excluir.Image = global::ConversorToByte.Properties.Resources.seo_social_web_network_internet_262_icon_icons_com_61518;
+            this.Excluir.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
+            this.Excluir.Name = "Excluir";
+            this.Excluir.ReadOnly = true;
+            this.Excluir.ToolTipText = "Excluir usuário";
+            this.Excluir.Width = 25;
             // 
             // textBoxPesquisa
             // 
@@ -272,6 +293,16 @@
             this.pictureBox1.TabStop = false;
             this.pictureBox1.UseWaitCursor = true;
             // 
+            // dataGridViewImageColumn1
+            // 
+            this.dataGridViewImageColumn1.Description = "Remover usuario";
+            this.dataGridViewImageColumn1.Frozen = true;
+            this.dataGridViewImageColumn1.HeaderText = "X";
+            this.dataGridViewImageColumn1.Image = global::ConversorToByte.Properties.Resources.delete_delete_deleteusers_delete_male_user_maleclient_2348;
+            this.dataGridViewImageColumn1.Name = "dataGridViewImageColumn1";
+            this.dataGridViewImageColumn1.ReadOnly = true;
+            this.dataGridViewImageColumn1.Width = 20;
+            // 
             // button1
             // 
             this.button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
@@ -292,7 +323,7 @@
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.textBoxPesquisa);
-            this.Controls.Add(this.dataGridViewUsuario);
+            this.Controls.Add(this.DataGridViewUsuario);
             this.Controls.Add(this.groupBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.MaximizeBox = false;
@@ -306,7 +337,7 @@
             this.groupBox1.PerformLayout();
             this.pnlUser.ResumeLayout(false);
             this.pnlUser.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewUsuario)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.DataGridViewUsuario)).EndInit();
             this.pnlSpinner.ResumeLayout(false);
             this.pnlSpinner.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -327,16 +358,18 @@
         private System.Windows.Forms.TextBox textBoxPesquisa;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Login;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Usuario;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Email;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn IsGestorApp;
-        private System.Windows.Forms.DataGridView dataGridViewUsuario;
+        private System.Windows.Forms.DataGridView DataGridViewUsuario;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox textBoxLogin;
         private System.Windows.Forms.Button btnPesquisar;
         private System.Windows.Forms.Panel pnlSpinner;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.DataGridViewImageColumn dataGridViewImageColumn1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Login;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Usuario;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Email;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn IsGestorApp;
+        private System.Windows.Forms.DataGridViewImageColumn Excluir;
     }
 }

@@ -103,7 +103,7 @@ namespace ConvetPdfToLayoutAlta
             panelSpinner.Visible = !panelSpinner.Visible;
             telas.ForEach(t =>
             {
-                Text += "-" + t + $" - (V{Application.ProductVersion})"; ;
+                Text += "-" + t + $" - (V{Application.ProductVersion})"; 
                 Form f = null;
 
                 if (t.Equals("TELA 18"))
@@ -168,7 +168,7 @@ namespace ConvetPdfToLayoutAlta
         {
             //UpdateApp();
 
-            // comboBoxTela.SelectedIndex = 4;
+            Text +=  $" - (V{Application.ProductVersion})";
             ToolTip toolTip = new ToolTip();
             toolTip.SetToolTip(btnDuplicata, "Filtra os arquivos com base no PONTEIRO e remove duplicidade de pdfs das VM's.");
 #if DEBUG

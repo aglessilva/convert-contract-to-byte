@@ -33,9 +33,6 @@ namespace ConversorToByte
             _pathFilePdf = Path.ChangeExtension(Path.GetTempFileName(), "pdf");
             File.WriteAllBytes(_pathFilePdf, _file.FileEncryption);
             webBrowser1.Navigate(_pathFilePdf);
-
-        
-
         }
 
         private void Frmpdf_FormClosing(object sender, FormClosingEventArgs e)

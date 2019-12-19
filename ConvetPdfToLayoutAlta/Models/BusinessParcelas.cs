@@ -44,9 +44,9 @@ namespace ConvetPdfToLayoutAlta.Models
                             int count = (_pagamento.Count - 1);
 
                             _obj.SaldoDevedor = Regex.Replace(_pagamento.Last(), @"[^0-9$]", ""); _pagamento.RemoveAt(count--);
-                            _obj.Amortizacao = Regex.Replace(_pagamento.Last(), @"[^0-9$]", ""); _pagamento.RemoveAt(count--);
-                            _obj.Juros = Regex.Replace(_pagamento.Last(), @"[^0-9$\-]", ""); _pagamento.RemoveAt(count--);
-                            _obj.Encargo = Regex.Replace(_pagamento.Last(), @"[^0-9$]", ""); _pagamento.RemoveAt(count--);
+                            _obj.Amortizacao = Regex.Replace(_pagamento.Last(), @"[^0-9$\-]", ""); _pagamento.RemoveAt(count--);
+                            _obj.Juros = Regex.Replace(_pagamento.Last(), @"[^0-9$]", ""); _pagamento.RemoveAt(count--);
+                            _obj.Encargo = Regex.Replace(_pagamento.Last(), @"[^0-9.,$]", ""); _pagamento.RemoveAt(count--);
 
                             if (!_pagamento.Any(l => l.Contains("INCORP")))
                             {

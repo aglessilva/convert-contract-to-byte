@@ -19,19 +19,19 @@ namespace ConversorToByte.BLL
         public List<FileSafe> GetFilesSafe(string _contractCpf = null, string _id = null)
         {
             FileSafeData fs = new FileSafeData();
-            List<FileSafe> lst = fs.GetFileSafe(_contractCpf,_id);
+            List<FileSafe> lst = fs.GetFileSafe(_contractCpf);
             return lst;
         }
 
         /// <summary>
         /// Retorna um objeto Preenchido, é obrigatorio a passagem de para de paramentro ID do registro
         /// </summary>
-        /// <param name="_id">codigo do registro</param>
+        /// <param name="_contrato">codigo do registro</param>
         /// <returns>retorna um objeto preenchido</returns>
-        public FileSafe GetFilesSafe(string _id = null)
+        public FileSafe GetFilesSafe(string _contrato = null)
         {
              FileSafeData fs = new FileSafeData();
-             FileSafe obj = fs.GetFileSafe(null, _id).First();
+             FileSafe obj = fs.GetFileSafe(_contrato).First();
             return obj;
         }
 
@@ -46,6 +46,12 @@ namespace ConversorToByte.BLL
         {
             FileSafeData fs = new FileSafeData();
             fs.UdtUser(_login);
+        }
+
+        public int DltUser(string _login)
+        {
+            FileSafeData fs = new FileSafeData();
+            return fs.DltUser(_login);
         }
 
         public int AddUser(Users _user)

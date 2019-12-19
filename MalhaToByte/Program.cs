@@ -51,9 +51,9 @@ namespace MalhaToByte
 
                                        while ((line = strReader.ReadLine()) != null)
                                        {
-                                           if (!line.Contains("C.P.F")) continue;
+                                           if (!line.Split(' ').Any(c => Regex.IsMatch(c, @"(^\d{3}.\d{3}.\d{3}\-\d{2}$)") || Regex.IsMatch(c, @"(^\d{3}.\d{3}.\d{3}\/\d{4}\-\d{2}$)"))) continue;
 
-                                           _cpf = line.Split(' ').FirstOrDefault(c => Regex.IsMatch(c, @"(^\d{3}.\d{3}.\d{3}\-\d{2}$)"));
+                                           _cpf = line.Split(' ').FirstOrDefault(c => Regex.IsMatch(c, @"(^\d{3}.\d{3}.\d{3}\-\d{2}$)") || Regex.IsMatch(c, @"(^\d{3}.\d{3}.\d{3}\/\d{4}\-\d{2}$)"));
                                            _cpf = Regex.Replace(_cpf, "[^0-9$]", string.Empty);
 
                                            break;
