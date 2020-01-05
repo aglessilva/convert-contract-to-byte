@@ -67,6 +67,13 @@ namespace ConvetPdfToLayoutAlta
                     return;
                 }
 
+                if(!File.Exists(Directory.GetCurrentDirectory() + @"\config\CFF00101.ARQ"))
+                {
+                    MessageBox.Show(@"Não foi encontrado o arquivo config\CFF00101.ARQ", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Close();
+                    return;
+                }
+
                 lblContrato.Text = "-";
                 lblTempo.Text = "";
                 lblPendente.Text = "";
@@ -79,18 +86,21 @@ namespace ConvetPdfToLayoutAlta
                 itensFgts = businessParcelas.GetParcelaFgts();
 
 
-                // Faz a Leitura do contratos em atraso
-                //using (StreamReader streamReader = new StreamReader(Directory.GetCurrentDirectory() + @"\config\CFF00101.ARQ"))
-                //{
-                //    string[] _linha = { }; 
-                //    streamReader.ReadLine();
+                #region FAZ A LEITURA DOS CONTRATOS EM ATRASO
+                //Faz a Leitura do contratos em atraso
+                using (StreamReader streamReader = new StreamReader(Directory.GetCurrentDirectory() + @"\config\CFF00101.ARQ"))
+                {
+                    string[] _linha = { };
+                    streamReader.ReadLine();
 
-                //    while (!streamReader.EndOfStream)
-                //    {
-                //        _linha = streamReader.ReadLine().Split(';');
-                //        dicionario.Add(string.Join(";", _linha.Skip(1).Take(3)).Replace(";", "").Substring(1), _linha[10].Trim());
-                //    }
-                //}
+                    while (!streamReader.EndOfStream)
+                    {
+                        _linha = streamReader.ReadLine().Split(';');
+                        dicionario.Add(string.Join(";", _linha.Skip(1).Take(3)).Replace(";", "").Substring(1), _linha[10].Trim());
+                    }
+                }
+
+                #endregion
 
                 // Faz a leitura do arquivo que contem as  sistuações dos contratos
                 using (StreamReader lerTxt = new StreamReader(string.Format("{0}{1}", Directory.GetCurrentDirectory(), @"\config\SITU115A.TXT")))
@@ -229,16 +239,16 @@ namespace ConvetPdfToLayoutAlta
                         _numeroContrato = arquivoPdf.Name.Split('_')[0].Trim();
 
                         parcelaFgts = itensFgts.Where(fgts => fgts.Contrato.Equals(_numeroContrato)).ToList();
-                        //DatacontratoCreditoAtraso = dicionario.FirstOrDefault(s => s.Key.Equals(_numeroContrato)).Value;
 
-
-                        // apoós a consulta, se o contrato for localizado, remove da lista para facilitar a nova pesquisa
-                        //if(!string.IsNullOrWhiteSpace(DatacontratoCreditoAtraso))
-                        //    dicionario.Remove(_numeroContrato);
+                        DatacontratoCreditoAtraso = dicionario.FirstOrDefault(s => s.Key.Equals(_numeroContrato)).Value;
+                        
+                        //apoós a consulta, se o contrato for localizado, remove da lista para facilitar a nova pesquisa
+                        if (!string.IsNullOrWhiteSpace(DatacontratoCreditoAtraso))
+                                dicionario.Remove(_numeroContrato);
 
 
                         //Verifica o tamanho do arquivo
-                        if(arquivoPdf.Length <= 10519)
+                        if (arquivoPdf.Length <= 10519)
                         {
                             ExceptionError.RemoverTela(arquivoPdf, diretorioDestinoLayout);
                             ExceptionError.TrataErros(_numeroContrato, "Layout de Arquivo desconhecido", diretorioDestinoLayout);
@@ -250,10 +260,8 @@ namespace ConvetPdfToLayoutAlta
                             continue;
                         }
 
-
                         objContratoPdf = new ContratoPdf();
-                      //  objCabecalho = new Cabecalho() { Id = (lstCabecalho.Count + 1), DataTransferencia = DatacontratoCreditoAtraso };
-                        objCabecalho = new Cabecalho() { Id = (lstCabecalho.Count + 1) };
+                        objCabecalho = new Cabecalho() { Id = (lstCabecalho.Count + 1), DataTransferencia = DatacontratoCreditoAtraso };
                         objParcelas = new Parcela() { IdCabecalho = objCabecalho.Id, Id = 0 };
                         objParcelas = businessParcelas.PreencheParcela(objParcelas);
                         objCabecalho = businessCabecalho.PreencheCabecalho(objCabecalho);
@@ -295,7 +303,8 @@ namespace ConvetPdfToLayoutAlta
 
                                         numberLine++;
 
-                                        if (line.Trim().Equals("a") || line.Trim().Equals("v") || line.Trim().Equals("***") || line.Length < 2) continue;
+                                        if (line.Trim().Equals("a") || line.Trim().Equals("v") || line.Trim().Equals("***") || line.Length < 2)
+                                            continue;
                                         if (string.IsNullOrWhiteSpace(line)) continue;
                                         if (Regex.IsMatch(line, @"(^\d{1,2}:\d{1,2}:\d{1,2}$)"))
                                             continue;
@@ -350,7 +359,6 @@ namespace ConvetPdfToLayoutAlta
                                                         ExceptionError.countError++;
                                                         ExceptionError.TrataErros(arquivoPdf.Name, "O Arquivo não é do tipo CTFIN/O016A", diretorioDestinoLayout);
                                                         break;
-                                                        //continue;
                                                     }
                                                 }
                                             }
@@ -961,7 +969,7 @@ namespace ConvetPdfToLayoutAlta
             }
 
             // ATUALIZA O AQUIVO DE SITUAÇÕES SE HOUVER ALGUMA SITUAÇÃO DE CONTRATO QUE NAO ESTEJA NO ARQUIVO SITU115A.TXT
-            using (StreamWriter escrever = new StreamWriter(Directory.GetCurrentDirectory() + @"\config\SITU115A.TXT", true, Encoding.UTF8))
+            using (StreamWriter escrever = new StreamWriter(Directory.GetCurrentDirectory() + @"\config\SITU115A.TXT", true, Encoding.Default))
             {
                 lstSituacao.ForEach(f =>
                 {

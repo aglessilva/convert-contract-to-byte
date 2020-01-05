@@ -942,7 +942,7 @@ namespace ConvetPdfToLayoutAlta.Models
                             // COMENTAMOS A LINHA ACIMA, PORQUE FOI DEFINIDO PELA ANDREA QUE O DIA DE VENCIMENTO SERÁ SEMPRE O DIA DO ULTIMO CABEÇALHO
 
                             strAlta = string.Format("{0}{1}{2}{3}", c.Carteira.Trim().Substring(2), c.Contrato.Trim(), _diaVencimento, c.Agencia.Substring(2, 4)).PadRight(24, ' ');
-                            strAlta += string.Format("{0}{1}{2}{3}", (c.Nome.Trim().Length > 40 ? c.Nome.Trim().Substring(0, 40) : c.Nome.Trim()).PadRight(40, ' '), c.DataNascimento.Trim().PadRight(10, ' '), "".PadRight(14, ' '), c.EnderecoImovel.Trim().PadRight(80, ' '));
+                            strAlta += string.Format("{0}{1}{2}{3}", (c.Nome.Trim().Length > 40 ? c.Nome.Trim().Substring(0, 40) : c.Nome.Trim()).PadRight(40, ' '), c.DataNascimento.Trim().PadRight(10, ' '), c.DataTransferencia.PadRight(14, ' '), c.EnderecoImovel.Trim().PadRight(80, ' '));
                             strAlta += string.Format("{0}{1}{2}{3}", (c.Cpf.Trim().Length < 15 ? c.Cpf : c.Cpf.Substring(1)).PadRight(14, ' '), "".PadRight(3, ' '), _contratoGT.Trim().PadRight(20, ' '), "".PadRight(20, ' '));
                             strAlta += string.Format("{0}{1}", c.Modalidade.Trim().PadRight(40, ' '), (c.CidadeImovel.Trim().Length <= 31 ? c.CidadeImovel.Trim() : c.CidadeImovel.Trim().Substring(0, 31)).PadRight(31, ' '));
                             strAlta += string.Format("{0}{1}{2}", c.Plano.Trim().PadRight(10, ' '), c.DataContrato.Trim().PadRight(10, ' '), "".PadRight(2, ' '));
@@ -1139,12 +1139,14 @@ namespace ConvetPdfToLayoutAlta.Models
                                 // TIPO DE OCORRENCIA: 004", "005", "010"
                                 if (lstTipoOcorrencia.Any(t => t.Equals(o.CodigoOcorrencia.Trim()))) // Alteração Contratual, Alteração de garantia, Mudança dia vencimento
                                 {
-                                    if (o.CodigoOcorrencia.Equals("010"))
-                                    { 
-                                       // bool hasDiferenca = false; //  variavel que setada como true caso entre nos blocos de IF de taxa de juros, apolice e prazo
+                                    bool hasTypeOccurrence = false;
 
-                                        if (!_cabecalhoAnterior.TaxaJuros.Equals(_cabecalho.TaxaJuros)) // TAXA DE JUROS")
+                                    if (o.CodigoOcorrencia.Equals("010"))
+                                    {
+                                        #region TAXA DE JUROS
+                                        if (!_cabecalhoAnterior.TaxaJuros.Equals(_cabecalho.TaxaJuros)) 
                                         {
+                                            hasTypeOccurrence = true;
                                             //  hasDiferenca = true;
                                             if (o.NaoTemParcela)
                                             {
@@ -1176,6 +1178,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                             escreverOcorrencia.WriteLine(strAlta);
                                             strAlta = string.Empty;
                                         }
+                                        #endregion
 
                                         Cabecalho item = q.Cabecalhos.SingleOrDefault(k => k.Id == o.IdCabecalho); 
                                         Cabecalho item1 = q.Cabecalhos.SingleOrDefault(k => k.Id == (o.IdCabecalho + 1));
@@ -1183,8 +1186,10 @@ namespace ConvetPdfToLayoutAlta.Models
                                         if (item1 == null)
                                             item1 = item;
 
-                                        if (!item.Repactuacao.Equals(item1.Repactuacao)) // REPACTUAÇÃO")
+                                        #region REPACTUAÇÃO
+                                        if (!item.Repactuacao.Equals(item1.Repactuacao)) 
                                         {
+                                            hasTypeOccurrence = true;
                                             _repactuacao = item1.Repactuacao;
 
                                             if (!_repactuacao.Equals("0"))
@@ -1205,12 +1210,12 @@ namespace ConvetPdfToLayoutAlta.Models
                                                 strAlta = _repactuacao = string.Empty;
                                             }
                                         }
+                                        #endregion
 
-
-
-                                        if (!_cabecalhoAnterior.Apolice.Equals(_cabecalho.Apolice)) // APOLICE
+                                        #region APOLICE
+                                        if (!_cabecalhoAnterior.Apolice.Equals(_cabecalho.Apolice)) 
                                         {
-                                           // hasDiferenca = true;
+                                            hasTypeOccurrence = true;
                                             strAlta = _novaOcorrencia;
 
                                             strAlta += string.Format("{0}{1}{2}{3}", "0".PadLeft(54, '0'), "0".PadLeft(17, '0') + "+", o.SaldoDevedor.Trim().PadLeft(18, '0'), "APOLICE".PadRight(30, ' '));
@@ -1225,7 +1230,9 @@ namespace ConvetPdfToLayoutAlta.Models
                                             escreverOcorrencia.WriteLine(strAlta);
                                             strAlta = string.Empty;
                                         }
+                                        #endregion
 
+                                        #region PRAZO
                                         if (!_cabecalhoAnterior.Prazo.Equals(_cabecalho.Prazo)) // PRAZO
                                         {
                                             
@@ -1262,7 +1269,18 @@ namespace ConvetPdfToLayoutAlta.Models
                                             escreverOcorrencia.WriteLine(strAlta);
                                             strAlta = string.Empty;
                                         }
+                                        #endregion
 
+
+                                        // SE A OCORRENCIA 010 NÃO FOR DO TIPO [TAXA DE JUTOS, PRAZO, APOLICE, REPACTUAÇÃO], ESCREVE SOMENTE O CONTRATO E O TIPO DA OCORRENCIA
+                                        if (!hasTypeOccurrence)
+                                        {
+                                            strAlta = strAlta.PadRight(281, ' ');
+                                            escreverOcorrencia.WriteLine(strAlta);
+                                            strAlta = string.Empty;
+                                        }
+
+                                        #region DATA 1º VENCIMENTO 
 
                                         // Usando o contrato 72189230001887, foi definido com o Agles e Luiz, que dentro da ocorrencia 010, não é necessario validar a Data de Primeiro Vencimento
                                         // DATA: 08/20/2019
@@ -1290,7 +1308,10 @@ namespace ConvetPdfToLayoutAlta.Models
                                         //    strAlta += string.Format("{0}{1}","".PadRight(30, ' '), _cabecalhoAnterior.Prazo.Trim().PadRight(30, ' '));
                                         //    strAlta += string.Format("{0}", "00010101".PadRight(30, ' '));
                                         //}
+
+                                        #endregion
                                     }
+
 
                                     if (o.CodigoOcorrencia.Equals("005")) // Alteração de garantia
                                     {
@@ -1534,7 +1555,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                 {
                                     strAlta = string.Empty;
 
-                                    _sinal = Convert.ToInt32(p.Amortizacao) < 0 ? "-" : "+";
+                                    _sinal = Convert.ToInt64(p.Amortizacao) < 0 ? "-" : "+";
                                     
                                     bool hasOcorrencia = q.Ocorrencias.Any(x => x.IdParcela == p.Id);
                                     strAlta = string.Format("{0}", (q.Carteira.Substring(2, 2) + q.Contrato).PadRight(15, '0'));

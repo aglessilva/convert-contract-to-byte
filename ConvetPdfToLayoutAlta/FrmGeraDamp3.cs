@@ -99,8 +99,8 @@ namespace ConvetPdfToLayoutAlta
         {
             lblPendente.Text = "";
             IncrementaRegistroDamp();
-            stopwatch.Restart();
-            backgroundWorkerDamp3.RunWorkerAsync();
+           // stopwatch.Restart();
+           // backgroundWorkerDamp3.RunWorkerAsync();
 
         }
 

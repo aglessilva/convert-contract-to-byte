@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.329
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConversorToByte", "ConversorToByte\ConversorToByte.csproj", "{A854DB4F-49C0-410F-A5C9-92E03FAC2418}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MalhaToByte", "MalhaToByte\MalhaToByte.csproj", "{650F4116-E46C-4983-AC46-4634ED9B6B08}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConvetPdfToLayoutAlta", "ConvetPdfToLayoutAlta\ConvetPdfToLayoutAlta.csproj", "{FE906407-531F-47B9-B4A2-39C52B438066}"
 EndProject
 Global
@@ -16,18 +12,6 @@ Global
 		Produção|Any CPU = Produção|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A854DB4F-49C0-410F-A5C9-92E03FAC2418}.Desenvolvimento|Any CPU.ActiveCfg = Debug|Any CPU
-		{A854DB4F-49C0-410F-A5C9-92E03FAC2418}.Desenvolvimento|Any CPU.Build.0 = Debug|Any CPU
-		{A854DB4F-49C0-410F-A5C9-92E03FAC2418}.Homologação|Any CPU.ActiveCfg = Homolog|Any CPU
-		{A854DB4F-49C0-410F-A5C9-92E03FAC2418}.Homologação|Any CPU.Build.0 = Homolog|Any CPU
-		{A854DB4F-49C0-410F-A5C9-92E03FAC2418}.Produção|Any CPU.ActiveCfg = Release|Any CPU
-		{A854DB4F-49C0-410F-A5C9-92E03FAC2418}.Produção|Any CPU.Build.0 = Release|Any CPU
-		{650F4116-E46C-4983-AC46-4634ED9B6B08}.Desenvolvimento|Any CPU.ActiveCfg = Debug|Any CPU
-		{650F4116-E46C-4983-AC46-4634ED9B6B08}.Desenvolvimento|Any CPU.Build.0 = Debug|Any CPU
-		{650F4116-E46C-4983-AC46-4634ED9B6B08}.Homologação|Any CPU.ActiveCfg = Homolog|Any CPU
-		{650F4116-E46C-4983-AC46-4634ED9B6B08}.Homologação|Any CPU.Build.0 = Homolog|Any CPU
-		{650F4116-E46C-4983-AC46-4634ED9B6B08}.Produção|Any CPU.ActiveCfg = Release|Any CPU
-		{650F4116-E46C-4983-AC46-4634ED9B6B08}.Produção|Any CPU.Build.0 = Release|Any CPU
 		{FE906407-531F-47B9-B4A2-39C52B438066}.Desenvolvimento|Any CPU.ActiveCfg = Debug|Any CPU
 		{FE906407-531F-47B9-B4A2-39C52B438066}.Desenvolvimento|Any CPU.Build.0 = Debug|Any CPU
 		{FE906407-531F-47B9-B4A2-39C52B438066}.Homologação|Any CPU.ActiveCfg = Homolog|Any CPU
