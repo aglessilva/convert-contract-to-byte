@@ -192,7 +192,7 @@ namespace ConvetPdfToLayoutAlta
 
         private void button6_Click(object sender, EventArgs e)
         {
-            FrmTela18 f = new FrmTela18(@"C:\TombamentoV1_01\SIMULADOS\SIMULADO2019-11-20", @"C:\TombTesteUnitarios\ALTA", "TELA18");
+            FrmTela18 f = new FrmTela18(@"C:\@TombamentoV1_01\TOMBAMENTOS\TOMBAMENTO2019-12-20", @"C:\@TombTesteUnitarios\ALTA", "TELA18");
             f.ShowDialog();
         }
 
@@ -283,43 +283,97 @@ namespace ConvetPdfToLayoutAlta
         }
 
 
-        //private void comboBoxTela_SelectedIndexChanged(object sender, EventArgs e)
-        //{
-        //    if (comboBoxTela.SelectedIndex.Equals(4))
-        //        btnDuplicata.Enabled = false;
-        //    else
-        //        btnDuplicata.Enabled = true;
-        //}
+
 
         private void button9_Click(object sender, EventArgs e)
         {
+            List<string> lstArquiPoint = new List<string>();
+            // Faz a leitura do arquivo que contem as  sistuações dos contratos
+            using (StreamReader lerTxt = new StreamReader(string.Format("{0}{1}", Directory.GetCurrentDirectory(), @"\config\ARQUPONT.TXT")))
+            {
+                while (!lerTxt.EndOfStream)
+                    lstArquiPoint.Add(lerTxt.ReadLine());
+            };
 
-            //bool[] x = { true, false, false, false };
+            string diretorioOrigemPdf = @"C:\@TombamentoV1_01\TOMBAMENTOS\TOMBAMENTO2019-12-20";
 
-            //for (int i = (comboBoxTela.SelectedIndex - 1); i > 0; i--)
-            //{
-            //    if (!x[i])
-            //    {
-            //        break;
-            //    }
-            //}
+            var lst16 = Directory.GetFiles(diretorioOrigemPdf, "*_16.pdf", SearchOption.AllDirectories).ToList();
+            FileInfo f = null;
 
-            //List<string> lstArquiPoint = new List<string>();
-            //using (StreamReader sw = new StreamReader(@"D:\HomologacaoFerramenta\config\ARQUPONT.TXT", Encoding.UTF8))
-            //{
-            //    while (!sw.EndOfStream)
-            //        lstArquiPoint.Add(sw.ReadLine());
-            //}
+            // VERIFICA SE OS CONTRATOS DO PONTEIRO TEM DAMP 
+            // SE HOUVER DAMP E NAO EXISTIR A TELA 18, ENTÃO RENOMEIA OS ARQUISO 16,20,25
+            if (Regex.Replace("18", @"[^0-9$]", "").Equals("18"))
+            {
 
-            //List<string> lst16 = Directory.GetFiles(@"D:\HomologacaoFerramenta", "*_16.pdf", SearchOption.AllDirectories).ToList();
-            //    List<string> listaTela16 = new List<string>();
-            //    lst16.ForEach(h => { listaTela16.Add(new FileInfo(h).Name.Split('_')[0].Trim()); });
+                List<string> result = lstDamp3.Join(lstArquiPoint, dmp => dmp.Trim(), pont => pont, (dmp, pont) => pont).ToList();
 
-            ////string[] l1 = { "1", "2", "3", "4", "5", "6","7", "9", "10", "11" };
-            ////string[] l2 = { "1", "2", "3", "4", "5", "8" };
+                List<string> lstTela18 = Directory.GetFiles(diretorioOrigemPdf, string.Format("*_{0}.pdf", Regex.Replace("18", @"[^0-9$]", "")), SearchOption.AllDirectories).ToList();
+                List<string> lst20 = Directory.GetFiles(diretorioOrigemPdf, "*_20.pdf", SearchOption.AllDirectories).ToList();
+                List<string> lst25 = Directory.GetFiles(diretorioOrigemPdf, "*_25.pdf", SearchOption.AllDirectories).ToList();
+                string strTela = string.Empty;
 
-            ////var result = l1.GroupJoin(l2, k => k, y => y, (k, y) => new { t1 = k, t2 = y.FirstOrDefault()}).ToList();
-            //var result1 = lstArquiPoint.GroupJoin(listaTela16, k => k, y => y, (k, y) => new { t1 = k, t2 = y.FirstOrDefault()}).Where(g => string.IsNullOrWhiteSpace(g.t1)).ToList();
+
+                Dictionary<string, string> dicionario16 = new Dictionary<string, string>(); 
+                Dictionary<string, string> dicionario18 = new Dictionary<string, string>(); 
+                Dictionary<string, string> dicionario20 = new Dictionary<string, string>(); 
+                Dictionary<string, string> dicionario25 = new Dictionary<string, string>();
+
+                lstTela18.ForEach(t18 => {
+                    f = new FileInfo(t18);
+                    dicionario18.Add(f.Name.Split('_')[0].Trim(), t18);
+                });
+
+                lstTela18 = null;
+
+                lst16.ForEach(t16 => {
+                    f = new FileInfo(t16);
+                    dicionario16.Add(f.Name.Split('_')[0].Trim(), t16);
+                });
+
+                lst16 = null;
+
+                lst20.ForEach(t20 => {
+                    f = new FileInfo(t20);
+                    dicionario20.Add(f.Name.Split('_')[0].Trim(), t20);
+                });
+
+                lst20 = null;
+
+                lst25.ForEach(t25 => {
+                    f = new FileInfo(t25);
+                    dicionario25.Add(f.Name.Split('_')[0].Trim(), t25);
+                });
+
+                lst25 = null;
+
+                result.ForEach(dmp =>
+                {
+                    var o = new UserObject() { Contrato = dmp, PdfInfo = f };
+                    if (!dicionario18.Any(gg => gg.Key.Equals(dmp)))
+                    {
+                        strTela = dicionario16.FirstOrDefault(c => c.Key.Equals(dmp)).Value;
+                        if (!string.IsNullOrWhiteSpace(strTela))
+                        {
+                            f = new FileInfo(strTela);
+                            if (!string.IsNullOrWhiteSpace(strTela))
+                                File.Move(strTela, System.IO.Path.ChangeExtension(strTela, ".damp"));
+
+                            strTela = dicionario20.FirstOrDefault(c => c.Key.Equals(dmp)).Value;
+                            if (!string.IsNullOrWhiteSpace(strTela))
+                                File.Move(strTela, System.IO.Path.ChangeExtension(strTela, ".damp"));
+
+                            strTela = dicionario25.FirstOrDefault(c => c.Key.Equals(dmp)).Value;
+                            if (!string.IsNullOrWhiteSpace(strTela))
+                                File.Move(strTela, System.IO.Path.ChangeExtension(strTela, ".damp"));
+
+                        }
+                    }
+                });
+
+                strTela = string.Empty;
+
+
+            }
         }
 
         private void button10_Click(object sender, EventArgs e)

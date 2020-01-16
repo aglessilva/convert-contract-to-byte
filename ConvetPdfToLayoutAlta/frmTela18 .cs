@@ -35,6 +35,8 @@ namespace ConvetPdfToLayoutAlta
 #endif
             try
             {
+                ExceptionError.countError = 0;
+
                 listDiretory = Directory.GetDirectories(string.Format(@"{0}", diretorioOrigemPdf), tela, SearchOption.AllDirectories);
 
                 if (listDiretory.Count() == 0)
@@ -156,6 +158,7 @@ namespace ConvetPdfToLayoutAlta
                         {
                             ParcelaFgts parcelaFgts = new ParcelaFgts();
                             arquivoPdf = new FileInfo(w);
+                            damp = new Damp();
                             using (PdfReader reader = new PdfReader(w))
                             {
                                 ITextExtractionStrategy its;
@@ -217,8 +220,8 @@ namespace ConvetPdfToLayoutAlta
 
                                                     if (_ArrayLinha[0].Trim().Equals("UTI"))
                                                     {
-                                                        _ArrayLinha = _ArrayLinha.Where(x => Regex.IsMatch(x, @"[0-9]")).ToArray();
                                                         damp = new Damp();
+                                                        _ArrayLinha = _ArrayLinha.Where(x => Regex.IsMatch(x, @"[0-9]")).ToArray();
                                                         damp = bussinessTela18.GetDamp(_ArrayLinha);
                                                         tela18.Damps.Add(damp);
 
@@ -257,20 +260,33 @@ namespace ConvetPdfToLayoutAlta
                                                     StringBuilder strErro = new StringBuilder();
                                                     strErro.AppendLine(string.Format("ARQUIVO: {0}", arquivoPdf.Name))
                                                             .AppendLine(string.Format("PAGINA DO ERRO: {0}", numberPage))
-                                                            .AppendLine(string.Format("DESCRIÇÃO DO ERRO: {0}", ex.Message))
+                                                            .AppendLine(string.Format("DESCRIÇÃO DO ERRO: {0}", ex.Message + " [ou Contrato com número de DAMP ausente]"))
                                                             .AppendLine(string.Format("DIRETORIO DO ARQUIVO: {0}", arquivoPdf.DirectoryName));
                                                     sw.Write(strErro);
                                                     sw.WriteLine("================================================================================================================================================");
                                                 }
 
                                                 ExceptionError.RemoverTela(arquivoPdf, diretorioOrigemPdf);
+                                                break;
                                             }
 
                                         }
+
+                                        if (ExceptionError.countError > 0)
+                                            break;
                                     }
 
                                     if (isNotTela18)
                                         return;
+                                }
+
+                                if (tela18.Damps.Count == 0)
+                                {
+                                    isErro = true;
+                                    ExceptionError.countError++;
+                                    reader.Dispose();
+                                    ExceptionError.SemNumeroDamp(arquivoPdf, diretorioDestinoLayout , diretorioOrigemPdf);
+                                    return;
                                 }
                                 obj = new UserObject { Contrato = tela18.Contrato, PdfInfo = arquivoPdf, TotalArquivoPorPasta = totalPorPasta };
                                 lstTela18.Add(tela18);

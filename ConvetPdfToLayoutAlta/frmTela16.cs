@@ -110,6 +110,7 @@ namespace ConvetPdfToLayoutAlta
                 };
 
 
+                ExceptionError.countError = 0;
                 backgroundWorker1.RunWorkerAsync();
             }
             catch (Exception ex)

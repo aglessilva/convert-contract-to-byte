@@ -64,6 +64,7 @@ namespace ConvetPdfToLayoutAlta
                 lblQtd.Text = "Total: " + totalArquivo.ToString();
                 progressBarReaderPdf.Maximum = totalArquivo;
 
+                ExceptionError.countError = 0;
                 BackgroundWorkerTela25.RunWorkerAsync();
             }
             catch (Exception ex)

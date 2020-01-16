@@ -1180,11 +1180,8 @@ namespace ConvetPdfToLayoutAlta.Models
                                         }
                                         #endregion
 
-                                        Cabecalho item = q.Cabecalhos.SingleOrDefault(k => k.Id == o.IdCabecalho); 
-                                        Cabecalho item1 = q.Cabecalhos.SingleOrDefault(k => k.Id == (o.IdCabecalho + 1));
-
-                                        if (item1 == null)
-                                            item1 = item;
+                                        Cabecalho item = q.Cabecalhos.FirstOrDefault(k => k.Contrato.Equals(o.Contrato)); 
+                                        Cabecalho item1 = q.Cabecalhos.LastOrDefault(k => k.Contrato.Equals(o.Contrato));
 
                                         #region REPACTUAÇÃO
                                         if (!item.Repactuacao.Equals(item1.Repactuacao)) 
@@ -1275,8 +1272,11 @@ namespace ConvetPdfToLayoutAlta.Models
                                         // SE A OCORRENCIA 010 NÃO FOR DO TIPO [TAXA DE JUTOS, PRAZO, APOLICE, REPACTUAÇÃO], ESCREVE SOMENTE O CONTRATO E O TIPO DA OCORRENCIA
                                         if (!hasTypeOccurrence)
                                         {
-                                            strAlta = strAlta.PadRight(281, ' ');
-                                            escreverOcorrencia.WriteLine(strAlta);
+                                            if (strAlta.Length > 15)
+                                            {
+                                                strAlta = strAlta.PadRight(281, ' ');
+                                                escreverOcorrencia.WriteLine(strAlta);
+                                            }
                                             strAlta = string.Empty;
                                         }
 

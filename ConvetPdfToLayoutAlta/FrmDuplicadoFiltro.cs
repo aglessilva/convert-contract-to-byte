@@ -196,40 +196,68 @@ namespace ConvetPdfToLayoutAlta
                 // SE HOUVER DAMP E NAO EXISTIR A TELA 18, ENTÃO RENOMEIA OS ARQUISO 16,20,25
                 if (Regex.Replace(tela, @"[^0-9$]", "").Equals("18"))
                 {
-                  
-                    List<string> result = lstDamp3.Join(lstArquiPoint, dmp => dmp.Trim(), pont => pont, (dmp, pont) => pont).ToList();
-                    BackgroundWorkerDuplicadoFiltro.ReportProgress(0, null);
-                    MaximumProgress = result.Count;
 
-                    List<string> lstTela18 = Directory.GetFiles(diretorioOrigemPdf, string.Format("*_{0}.pdf", Regex.Replace(tela, @"[^0-9$]", "")), SearchOption.AllDirectories).ToList();
+                    List<string> result = lstDamp3.Join(lstArquiPoint, dmp => dmp.Trim(), pont => pont, (dmp, pont) => pont).ToList();
+
+                    List<string> lstTela18 = Directory.GetFiles(diretorioOrigemPdf, string.Format("*_{0}.pdf", Regex.Replace("18", @"[^0-9$]", "")), SearchOption.AllDirectories).ToList();
                     List<string> lst20 = Directory.GetFiles(diretorioOrigemPdf, "*_20.pdf", SearchOption.AllDirectories).ToList();
                     List<string> lst25 = Directory.GetFiles(diretorioOrigemPdf, "*_25.pdf", SearchOption.AllDirectories).ToList();
                     string strTela = string.Empty;
 
-                    countpercent = 0;
-                    _descricao = "Verificação de DAMPs...";
+
+                    Dictionary<string, string> dicionario16 = new Dictionary<string, string>();
+                    Dictionary<string, string> dicionario18 = new Dictionary<string, string>();
+                    Dictionary<string, string> dicionario20 = new Dictionary<string, string>();
+                    Dictionary<string, string> dicionario25 = new Dictionary<string, string>();
+
+                    lstTela18.ForEach(t18 => {
+                        f = new FileInfo(t18);
+                        dicionario18.Add(f.Name.Split('_')[0].Trim(), t18);
+                    });
+
+                    lstTela18 = null;
+
+                    lst16.ForEach(t16 => {
+                        f = new FileInfo(t16);
+                        dicionario16.Add(f.Name.Split('_')[0].Trim(), t16);
+                    });
+
+                    lst16 = null;
+
+                    lst20.ForEach(t20 => {
+                        f = new FileInfo(t20);
+                        dicionario20.Add(f.Name.Split('_')[0].Trim(), t20);
+                    });
+
+                    lst20 = null;
+
+                    lst25.ForEach(t25 => {
+                        f = new FileInfo(t25);
+                        dicionario25.Add(f.Name.Split('_')[0].Trim(), t25);
+                    });
+
+                    lst25 = null;
+
                     result.ForEach(dmp =>
                     {
                         var o = new UserObject() { Contrato = dmp, PdfInfo = f };
-                        if (!lstTela18.Any(gg => gg.Contains(dmp)))
+                        if (!dicionario18.Any(gg => gg.Key.Equals(dmp)))
                         {
-                            strTela = lst16.FirstOrDefault(c => c.Contains(dmp));
+                            strTela = dicionario16.FirstOrDefault(c => c.Key.Equals(dmp)).Value;
                             if (!string.IsNullOrWhiteSpace(strTela))
                             {
-                                countpercent++;
                                 f = new FileInfo(strTela);
                                 if (!string.IsNullOrWhiteSpace(strTela))
                                     File.Move(strTela, System.IO.Path.ChangeExtension(strTela, ".damp"));
 
-                                strTela = lst20.FirstOrDefault(c => c.Contains(dmp));
+                                strTela = dicionario20.FirstOrDefault(c => c.Key.Equals(dmp)).Value;
                                 if (!string.IsNullOrWhiteSpace(strTela))
                                     File.Move(strTela, System.IO.Path.ChangeExtension(strTela, ".damp"));
 
-                                strTela = lst25.FirstOrDefault(c => c.Contains(dmp));
+                                strTela = dicionario25.FirstOrDefault(c => c.Key.Equals(dmp)).Value;
                                 if (!string.IsNullOrWhiteSpace(strTela))
                                     File.Move(strTela, System.IO.Path.ChangeExtension(strTela, ".damp"));
 
-                                BackgroundWorkerDuplicadoFiltro.ReportProgress(countpercent, o);
                             }
                         }
                     });

@@ -962,7 +962,7 @@ namespace ConvetPdfToLayoutAlta.Models
             {
                 using (DbConnEntity dbConn = new DbConnEntity())
                 {
-                    listaParcelasFgts = dbConn.DampFgts.Select(p => new ItensDamp(){ Contrato = p.Contrato, DataVencimento = p.DataVencimento }).ToList();
+                    listaParcelasFgts = dbConn.DampFgts.Where(z => z.QuotaNominal != "0" || z.SobraMes != "0").Select(p => new ItensDamp(){ Contrato = p.Contrato, DataVencimento = p.DataVencimento }).ToList();
                 }
             }
             catch (Exception exefgts)

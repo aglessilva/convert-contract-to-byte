@@ -43,6 +43,44 @@ namespace ConvetPdfToLayoutAlta.Models
 
         }
 
+        public static void SemNumeroDamp(FileInfo fileInfo, string _path, string _diretorioOrigemPdf)
+        {
+            using (StreamWriter sw = new StreamWriter(_path + @"\LogErroContratos.txt", true, Encoding.UTF8))
+            {
+
+                StringBuilder strErro = new StringBuilder();
+                strErro.AppendLine(string.Format("CONTRATO: {0}", fileInfo.Name.Split('_')[0]))
+                        .AppendLine("DETALHES: Tela 18 não possui número de DAMP, favor informar ao gestor");
+                sw.Write(strErro);
+                sw.WriteLine("================================================================================================================================================");
+            }
+
+            List<string> tela = null;
+
+            string filtro = $"*{fileInfo.Name.Split('_')[0]}*.pdf";
+            tela = Directory.EnumerateFiles(_diretorioOrigemPdf, filtro, SearchOption.AllDirectories).ToList();
+
+            foreach (string itemTela in tela)
+            {
+
+                try
+                {
+                    if (!string.IsNullOrWhiteSpace(itemTela))
+                    {
+                        fileInfo = new FileInfo(itemTela);
+                        if (fileInfo.Exists)
+                            File.Move(fileInfo.FullName, Path.ChangeExtension(fileInfo.FullName, ".damp"));
+                    }
+
+                }
+                catch (Exception ese)
+                {
+
+                    throw;
+                }
+            }
+        }
+
         public static void NovoContratoGT(string _contrato, string _path)
         {
             using (StreamWriter sw = new StreamWriter(_path + @"\ARQ_GARANTIA.arq", true, Encoding.UTF8))
@@ -57,28 +95,19 @@ namespace ConvetPdfToLayoutAlta.Models
         {
             string _pathContratoError = string.Empty;
             List<string> tela = null;
-            string[] _arraTelas = { "TELA16", "TELA18", "TELA20", "TELA25" };
 
-            // Renomeia o contrato da tela atual para extensão .err
-            if (fileInfoPdf.Exists)
-                File.Move(fileInfoPdf.FullName, System.IO.Path.ChangeExtension(fileInfoPdf.FullName, ".err"));
+            string filtro = $"*{fileInfoPdf.Name.Split('_')[0]}*.pdf";
+            tela = Directory.EnumerateFiles(_diretorioOrigemPdf, filtro, SearchOption.AllDirectories).ToList();
 
-
-            foreach (string itemTela in _arraTelas)
+            foreach (string itemTela in tela)
             {
-                string filtro = string.Format("*_{0}.pdf", Regex.Replace(itemTela, @"[^0-9$]", ""));
-                tela = Directory.EnumerateFiles(_diretorioOrigemPdf, filtro, SearchOption.AllDirectories).ToList();
-                string _contratoPedf = string.Format("{0}{1}", fileInfoPdf.Name.Split('_')[0], filtro).Replace("*", string.Empty);
-                _pathContratoError = tela.FirstOrDefault(p => p.Contains(_contratoPedf.ToUpper()));
-
-                if (!string.IsNullOrWhiteSpace(_pathContratoError))
+                if (!string.IsNullOrWhiteSpace(itemTela))
                 {
-                    fileInfoPdf = new FileInfo(_pathContratoError);
+                    fileInfoPdf = new FileInfo(itemTela);
                     if (fileInfoPdf.Exists)
                         File.Move(fileInfoPdf.FullName, System.IO.Path.ChangeExtension(fileInfoPdf.FullName, ".err"));
                 }
             }
-
         }
 
 
