@@ -1359,7 +1359,7 @@ namespace ConvetPdfToLayoutAlta.Models
 
                                             // Alteramos o campo data de Vencimento, no trecho [o.NaoTemParcela ? "" : Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd")]
                                             //Quando não houver parcela de vencimento para ocorrencia, colocar a data de vencimento vazia 
-                                            // Data: 30/30/2019 - ajustado em acordo com o Luis e Emerson
+                                            // Data: 30/06/2019 - ajustado em acordo com o Luis e Emerson
                                             strAlta += string.Format("{0}{1}{2}{3}{4}", "0".PadLeft(54, '0'),"0".PadLeft(17,'0')+"+", o.SaldoDevedor.Trim().PadLeft(18, '0'), o.NaoTemParcela ? "".PadLeft(8,' ') : Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd"),"".PadRight(22, ' '));
                                             strAlta += string.Format("{0}{1}", _cabecalho.DataPrimeiroVencimento.Trim().PadRight(30, ' '), _cabecalhoAnterior.DataPrimeiroVencimento.Trim().PadRight(30, ' '));
                                             strAlta += string.Format("{0}", "".PadLeft(30, ' '));
@@ -1406,6 +1406,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                     strAlta += string.Format("{0}{1}{2}", "0".PadLeft(54, '0'), o.Amortizacao.Replace("-", "").Trim().PadLeft(17, '0')+_sinalOcorrencia, o.SaldoDevedor.Trim().PadLeft(18, '0'));
                                     //strAlta += string.Format("{0}", Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd").Trim().PadRight(30, ' '));
                                     strAlta += string.Format("{0}", (o.NaoTemParcela ? "" : Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd")).Trim().PadRight(30, ' '), "".PadRight(90, ' '));
+                                    strAlta += q.Cabecalhos.SingleOrDefault(repac => repac.Id.Equals(o.IdCabecalho + 1)).Repactuacao.Split('/')[1];
                                 }
 
                                 if (o.CodigoOcorrencia.Equals("031")) // Consolidação da divida
