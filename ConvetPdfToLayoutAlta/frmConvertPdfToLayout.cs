@@ -133,7 +133,7 @@ namespace ConvetPdfToLayoutAlta
 
         private void Button2_Click(object sender, EventArgs e)
         {
-            FrmTela16 f = new FrmTela16(@"C:\@TombTesteUnitarios", @"C:\@TombTesteUnitarios\ALTA", "TELA16");
+            FrmTela16 f = new FrmTela16(@"C:\@TombamentoV1_01\ENSARIOS\ENSARIO2020-01-17", @"C:\@TombamentoV1_01\ENSARIOS\ENSARIO2020-01-17\ALTA", "TELA16");
             f.ShowDialog();
 
         }
@@ -192,13 +192,13 @@ namespace ConvetPdfToLayoutAlta
 
         private void button6_Click(object sender, EventArgs e)
         {
-            FrmTela18 f = new FrmTela18(@"C:\@TombamentoV1_01\TOMBAMENTOS\TOMBAMENTO2019-12-20", @"C:\@TombTesteUnitarios\ALTA", "TELA18");
+            FrmTela18 f = new FrmTela18(@"C:\@TombamentoV1_01\TOMBAMENTOS\TOMBAMENTO2019-12-20", @"C:\@TombamentoV1_01\ENSARIOS\ENSARIO2020-01-17\ALTA", "TELA18");
             f.ShowDialog();
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            FrmTela20 f = new FrmTela20(@"D:\PDFSTombamento\Exceptions20", @"D:\PDFSTombamento\txt", "TELA20");
+            FrmTela20 f = new FrmTela20(@"C:\@TombamentoV1_01\TOMBAMENTOS\TOMBAMENTO2019-12-20", @"C:C:\@TombamentoV1_01\ENSARIOS\ENSARIO2020-01-17\ALTA", "TELA20");
             f.ShowDialog();
         }
 
@@ -210,13 +210,13 @@ namespace ConvetPdfToLayoutAlta
 
         private void button7_Click(object sender, EventArgs e)
         {
-            FrmTela25 f = new FrmTela25(@"D:\PDFSTombamento\Exceptions25", @"D:\PDFSTombamento\txt", "TELA25");
+            FrmTela25 f = new FrmTela25(@"C:\@TombamentoV1_01\TOMBAMENTOS\TOMBAMENTO2019-12-20", @"C:\@TombamentoV1_01\ENSARIOS\ENSARIO2020-01-17\ALTA", "TELA25");
             f.ShowDialog();
         }
 
         private void button8_Click(object sender, EventArgs e)
         {
-            FrmTela25 f = new FrmTela25(@"C:\TombamentoV1_01\ENSAIO2019-10-04\", @"D:\PDFSTombamento\txt", "TELA25");
+            FrmTela25 f = new FrmTela25(@"C:\@TombamentoV1_01\TOMBAMENTOS\TOMBAMENTO2019-12-20", @"C:\@TombamentoV1_01\ENSARIOS\ENSARIO2020-01-17\ALTA", "TELA25");
             f.ShowDialog();
         }
 

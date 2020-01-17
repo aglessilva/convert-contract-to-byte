@@ -99,8 +99,8 @@ namespace ConvetPdfToLayoutAlta
         {
             lblPendente.Text = "";
             IncrementaRegistroDamp();
-            stopwatch.Restart();
-            backgroundWorkerDamp3.RunWorkerAsync();
+          //  stopwatch.Restart();
+         //   backgroundWorkerDamp3.RunWorkerAsync();
 
         }
 
@@ -147,6 +147,8 @@ namespace ConvetPdfToLayoutAlta
                     while (!streamReader.EndOfStream)
                     {
                         linha = streamReader.ReadLine().Split(';');
+                        if (linha.Length < 11)
+                            continue;
 
                         objDamp = new RelaDamp()
                         {

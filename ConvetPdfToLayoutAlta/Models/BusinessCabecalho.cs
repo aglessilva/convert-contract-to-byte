@@ -1525,7 +1525,6 @@ namespace ConvetPdfToLayoutAlta.Models
                             catch (Exception exOc)
                             {
                                 ExceptionError.TrataErros(exOc, q.Contrato, "Metodo: PopulaContrato - Classe: BusinessCabecalho - Ação: Erro gerado ao tentar escrever a Ocorrencia no arquivo TL16OCOR.txt", _diretorioDestino);
-                                throw exOc;
                             }
                         }
                     });
