@@ -1402,11 +1402,14 @@ namespace ConvetPdfToLayoutAlta.Models
                                 if (o.CodigoOcorrencia.Equals("030")) // Incorporação no saldo
                                 {
                                     isOcorrenciaWrite = true;
+                                    string _reptc  = q.Cabecalhos.SingleOrDefault(repac => repac.Id.Equals(o.IdCabecalho + 1 > q.Cabecalhos.Count ? o.IdCabecalho : o.IdCabecalho + 1)).Repactuacao;
+
                                     string _sinalOcorrencia = Convert.ToInt32(o.Amortizacao) < 0 ? "-" : "+";
                                     strAlta += string.Format("{0}{1}{2}", "0".PadLeft(54, '0'), o.Amortizacao.Replace("-", "").Trim().PadLeft(17, '0')+_sinalOcorrencia, o.SaldoDevedor.Trim().PadLeft(18, '0'));
                                     //strAlta += string.Format("{0}", Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd").Trim().PadRight(30, ' '));
                                     strAlta += string.Format("{0}", (o.NaoTemParcela ? "" : Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd")).Trim().PadRight(30, ' '), "".PadRight(90, ' '));
-                                    strAlta += q.Cabecalhos.SingleOrDefault(repac => repac.Id.Equals(o.IdCabecalho + 1)).Repactuacao.Split('/')[1];
+                                    if (!_reptc.Equals("0"))
+                                        strAlta += _reptc.Split('/')[1];
                                 }
 
                                 if (o.CodigoOcorrencia.Equals("031")) // Consolidação da divida

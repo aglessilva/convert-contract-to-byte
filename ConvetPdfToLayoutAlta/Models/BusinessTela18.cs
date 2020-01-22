@@ -88,6 +88,7 @@ namespace ConvetPdfToLayoutAlta.Models
                 lstTela18.ForEach(t18 =>
                 {
                     _contract = t18.Contrato;
+
                     try
                     {
                         t18.Damps.ForEach(dmp => {
@@ -128,6 +129,7 @@ namespace ConvetPdfToLayoutAlta.Models
                     }
                 });
 
+               
                 // Executa do BookInsert
                 DoBulkCopy(true, parcelaFgts);
                 parcelaFgts = null;
@@ -141,6 +143,7 @@ namespace ConvetPdfToLayoutAlta.Models
 
             foreach (var item in _parcela)
             {
+               
                 if (!string.IsNullOrWhiteSpace(item.DataVencimento))
                 {
                     dataRow = dataTable.NewRow();
@@ -160,6 +163,7 @@ namespace ConvetPdfToLayoutAlta.Models
                     dataTable.Rows.Add(dataRow);
                     dataRow = null;
                 }
+                
             }
 
             SqlCeBulkCopyOptions options = new SqlCeBulkCopyOptions();

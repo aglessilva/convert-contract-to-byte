@@ -27,6 +27,7 @@ namespace ConvetPdfToLayoutAlta
 
         string diretorioOrigemPdf, diretorioDestinoLayout, tmp, tela;
 
+      
         private void FrmTela18_Load(object sender, EventArgs e)
         {
 #if !DEBUG
@@ -35,7 +36,7 @@ namespace ConvetPdfToLayoutAlta
 #endif
             try
             {
-                ExceptionError.countError = 0;
+               // ExceptionError.countError = 0;
 
                 listDiretory = Directory.GetDirectories(string.Format(@"{0}", diretorioOrigemPdf), tela, SearchOption.AllDirectories);
 
@@ -68,7 +69,8 @@ namespace ConvetPdfToLayoutAlta
             }
             catch (Exception ex)
             {
-                throw new Exception("Erro ao tentar iniciar o processo de leitura de contrato: " + ex.Message);
+                // throw new Exception("Erro ao tentar iniciar o processo de leitura de contrato: " + ex.Message);
+                MessageBox.Show("Erro ao tentar iniciar o processo de leitura de contrato: " + ex.Message);
             }
 
             stopwatch.Restart();
@@ -104,28 +106,30 @@ namespace ConvetPdfToLayoutAlta
 
         private void BackgroundWorkerTela18_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            int err = Directory.EnumerateFiles(string.Format(@"{0}\", diretorioOrigemPdf), "*_18.err", SearchOption.TopDirectoryOnly).Count();
-            if (isErro)
-            {
-                string result = string.Format("Resultado\n\n");
-                result += string.Format("Total de Contratos: {0}\n", totalArquivo);
-                result += string.Format("Total Processados: {0}\n", (totalArquivo - ExceptionError.countError));
-                result += string.Format("Total Erros: {0}\n", ExceptionError.countError);
-                result += string.Format("Total Arq. Rejeitado: {0}\n", err);
-                result += string.Format("{0}", lblTempo.Text);
-                MessageBox.Show(result, "Erro de Converção", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            else
-            {
-                string result = string.Format("Resultado\n\n");
-                result += string.Format("Total de Contratos: {0}\n", totalArquivo);
-                result += string.Format("Total Processados: {0}\n", totalArquivo - err);
-                result += string.Format("Total Arq. Rejeitado: {0}\n", err);
-                result += string.Format("{0}", lblTempo.Text);
-                MessageBox.Show(result, "Finalizado com Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
+            //string result = "";
+            //int err = Directory.EnumerateFiles(string.Format(@"{0}\", diretorioOrigemPdf), "*_18.err", SearchOption.TopDirectoryOnly).Count();
+            //if (isErro)
+            //{
+            //    result = string.Format("Resultado\n\n");
+            //    result += string.Format("Total de Contratos: {0}\n", totalArquivo);
+            //    result += string.Format("Total Processados: {0}\n", (totalArquivo - err));
+            //    result += string.Format("Total Erros: {0}\n", err);
+            //    result += string.Format("Total Arq. Rejeitado: {0}\n", err);
+            //    result += string.Format("{0}", lblTempo.Text);
+            //    MessageBox.Show(result, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //}
+            //else
+            //{
+            //    result = string.Format("Resultado\n\n");
+            //    result += string.Format("Total de Contratos: {0}\n", totalArquivo);
+            //    result += string.Format("Total Processados: {0}\n", totalArquivo - err);
+            //    result += string.Format("Total Arq. Rejeitado: {0}\n", err);
+            //    result += string.Format("{0}", lblTempo.Text);
+            //    MessageBox.Show(result, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            //}
 
-            Close(); ;
+            Thread.Sleep(2000);
+            Close(); 
         }
 
         private void BackgroundWorkerTela18_DoWork(object sender, DoWorkEventArgs e)
@@ -135,6 +139,7 @@ namespace ConvetPdfToLayoutAlta
             string[] _ArrayLinha = { };
             string pagina = string.Empty, readerContrato = string.Empty;
             int numberPage = 0;
+
             BusinessTela18 bussinessTela18 = new BusinessTela18();
 
             List<Tela18> lstTela18 = new List<Tela18>();
@@ -158,6 +163,7 @@ namespace ConvetPdfToLayoutAlta
                         {
                             ParcelaFgts parcelaFgts = new ParcelaFgts();
                             arquivoPdf = new FileInfo(w);
+                           
                             damp = new Damp();
                             using (PdfReader reader = new PdfReader(w))
                             {
@@ -166,6 +172,10 @@ namespace ConvetPdfToLayoutAlta
                                 tela18 = new Tela18();
                                 isBody = false;
                                 isNotTela18 = false;
+
+                                countPercent++;
+                                obj = new UserObject { Contrato = arquivoPdf.Name.Split('_')[0], PdfInfo = arquivoPdf, TotalArquivoPorPasta = totalPorPasta };
+                                BackgroundWorkerTela18.ReportProgress(countPercent, obj);
 
                                 for (int i = 1; i <= reader.NumberOfPages; i++)
                                 {
@@ -191,7 +201,7 @@ namespace ConvetPdfToLayoutAlta
                                                         {
                                                             isNotTela18 = true;
                                                             isErro = true;
-                                                            ExceptionError.countError++;
+                                                           // ExceptionError.countError++;
                                                             ExceptionError.TrataErros(null, arquivoPdf.Name, "O Arquivo não é do tipo CTFIN/O018A", diretorioDestinoLayout);
                                                             break;
                                                         }
@@ -224,7 +234,7 @@ namespace ConvetPdfToLayoutAlta
                                                         _ArrayLinha = _ArrayLinha.Where(x => Regex.IsMatch(x, @"[0-9]")).ToArray();
                                                         damp = bussinessTela18.GetDamp(_ArrayLinha);
                                                         tela18.Damps.Add(damp);
-
+                                                       
                                                         continue;
                                                     }
                                                     if (_ArrayLinha.Any(t => _campo.Any(c => t.Equals(c))))
@@ -243,10 +253,11 @@ namespace ConvetPdfToLayoutAlta
                                                 }
                                             }
 
+
                                             catch (Exception ex)
                                             {
                                                 reader.Dispose();
-                                                ExceptionError.countError++;
+                                               // ExceptionError.countError++;
                                                 BackgroundWorkerTela18.ReportProgress(countPercent, null);
 
                                                 isErro = true;
@@ -266,33 +277,38 @@ namespace ConvetPdfToLayoutAlta
                                                     sw.WriteLine("================================================================================================================================================");
                                                 }
 
+                                                lstTela18.RemoveAll(c => c.Contrato.Equals(tela18.Contrato));
                                                 ExceptionError.RemoverTela(arquivoPdf, diretorioOrigemPdf);
                                                 break;
                                             }
 
                                         }
 
-                                        if (ExceptionError.countError > 0)
+                                        if (isErro)
+                                        {
+                                            BackgroundWorkerTela18.ReportProgress(countPercent, null);
                                             break;
+                                        }
                                     }
 
                                     if (isNotTela18)
                                         return;
+                                  
                                 }
 
                                 if (tela18.Damps.Count == 0)
                                 {
                                     isErro = true;
-                                    ExceptionError.countError++;
+                                    BackgroundWorkerTela18.ReportProgress(countPercent, null);
                                     reader.Dispose();
                                     ExceptionError.SemNumeroDamp(arquivoPdf, diretorioDestinoLayout , diretorioOrigemPdf);
                                     return;
                                 }
-                                obj = new UserObject { Contrato = tela18.Contrato, PdfInfo = arquivoPdf, TotalArquivoPorPasta = totalPorPasta };
+                                
                                 lstTela18.Add(tela18);
                                 tela18 = null;
+                                isErro = false;
                                 contador++;
-                                countPercent++;
 
                                 if (contador == 1000)
                                 {
@@ -310,13 +326,13 @@ namespace ConvetPdfToLayoutAlta
                                     lstTela18 = new List<Tela18>();
                                     contador = 0;
                                 }
-                                else
-                                    BackgroundWorkerTela18.ReportProgress(countPercent, obj);
+                               
+                                 
                             }
                         }
                         catch (iTextSharp.text.exceptions.InvalidPdfException pdfExeception)
                         {
-                            ExceptionError.countError++;
+                           // ExceptionError.countError++;
                             BackgroundWorkerTela18.ReportProgress(countPercent, null);
 
                             isErro = true;

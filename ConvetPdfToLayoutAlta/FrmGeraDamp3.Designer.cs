@@ -134,7 +134,7 @@
             // 
             this.backgroundWorkerDamp3.WorkerReportsProgress = true;
             this.backgroundWorkerDamp3.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorkerDamp3_DoWork);
-            this.backgroundWorkerDamp3.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorkerDamp3_ProgressChanged);
+            this.backgroundWorkerDamp3.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BackgroundWorkerDamp3_ProgressChanged);
             this.backgroundWorkerDamp3.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorkerDamp3_RunWorkerCompleted);
             // 
             // FrmGeraDamp3

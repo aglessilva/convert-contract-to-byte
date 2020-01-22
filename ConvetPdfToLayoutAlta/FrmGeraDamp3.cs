@@ -19,7 +19,9 @@ namespace ConvetPdfToLayoutAlta
         string tmp = string.Empty;
         Stopwatch stopwatch = new Stopwatch();
         UserObject obj = null;
-        int countpercent = 0, MaximumProgress = 0, countDamp = 0;
+        int countpercent = 0, MaximumProgress = 0;
+        List<RelaDamp> lstRelaDamp = null;
+
         List<string> listContratoDamp = new List<string>();
 
         public FrmGeraDamp3(string _arquivoCTO068A, List<string> lstDamp3)
@@ -27,67 +29,46 @@ namespace ConvetPdfToLayoutAlta
             InitializeComponent();
             arquivoCTO068A = _arquivoCTO068A;
             listContratoDamp = lstDamp3;
-            countDamp = lstDamp3.Count;
         }
 
         private void backgroundWorkerDamp3_DoWork(object sender, DoWorkEventArgs e)
         {
             try
             {
-                using (StreamReader sr = new StreamReader(Directory.GetCurrentDirectory()+@"\config\RELADAMP.txt", Encoding.Default, true))
+                countpercent = 0;
+                listContratoDamp.OrderBy(o => o).ToList();
+                obj = new UserObject() { DescricaoPercentural = "Ordenando Lista de contratos filtrados....aguarde!", TotalArquivoPorPasta = 0 };
+                backgroundWorkerDamp3.ReportProgress(countpercent, obj);
+
+                List<RelaDamp> lstNewsDamps = lstRelaDamp.Where(n => n.MIECDAMP_AMB_OPER.Equals("PGTO PARTE PRESTAÇÕES DE FINANCIAMENTO NO SFH") && n.MIECDAMP_TP_REQUS.Equals("ABERTURA")).ToList();
+
+               
+                FileInfo f = new FileInfo(Directory.GetCurrentDirectory() + @"\config\DAMP03.TXT");
+
+                if (f.Exists)
+                    f.Delete();
+
+                lstNewsDamps.ForEach(n =>
                 {
-                    string _linha = string.Empty;
-                    List<string> _arrayLinha = sr.ReadToEnd().Split('\n').Where(i => !string.IsNullOrWhiteSpace(i)).ToList();
-                    string[] _arrayItem = { };
+                    if (!listContratoDamp.Any(s => s.Equals(n.MIECDAMP_CONTRATO.Substring(1))))
+                        listContratoDamp.Add(n.MIECDAMP_CONTRATO.Substring(1));
 
-                    //_arrayLinha.RemoveAt(0);
-                    MaximumProgress = _arrayLinha.Count();
+                });
 
-                    _arrayLinha.ForEach(p =>
+                using (StreamWriter sw = new StreamWriter(Directory.GetCurrentDirectory() + @"\config\DAMP03.TXT"))
+                {
+                    MaximumProgress = listContratoDamp.Count();
+
+                    listContratoDamp.ForEach(d =>
                     {
-                        _linha = Encoding.ASCII.GetString(Encoding.Convert(Encoding.ASCII, Encoding.ASCII, Encoding.ASCII.GetBytes(p)));
-                        _arrayItem = _linha.Split(';').Where(l => !string.IsNullOrWhiteSpace(l)).ToArray();
-
-                        if (_arrayItem.Any(t => t.Contains("PGTO")))
-                            if (_arrayItem.Any(t => t.Contains("ABERTURA")))
-                                if (!listContratoDamp.Any(c => c.Equals(_arrayItem[0].Split('-')[0].Trim())))
-                                    listContratoDamp.Add(_arrayItem[0].Split('-')[0].Trim());
-
                         countpercent++;
-                        obj = new UserObject() { DescricaoPercentural = "Realizando leitura de arquivo e consistindo filtro  -  Contrato: " + _arrayItem[0].Split('-')[0].Trim(), TotalArquivoPorPasta = MaximumProgress };
+                        obj = new UserObject() { DescricaoPercentural = $"Atualizando Arquivo de Damp - Contratos: {d}", TotalArquivoPorPasta = MaximumProgress };
                         backgroundWorkerDamp3.ReportProgress(countpercent, obj);
+                        sw.WriteLine(d);
                         Thread.Sleep(1);
                     });
                 }
-
-                obj = new UserObject() { DescricaoPercentural = "Ordenando Lista de contratos filtrados....aguarde!", TotalArquivoPorPasta = MaximumProgress };
-                backgroundWorkerDamp3.ReportProgress(countpercent, obj);
-
-                Thread.Sleep(2000);
-                countpercent = 0;
-                MaximumProgress = listContratoDamp.Count();
-                listContratoDamp.OrderBy(o => o).ToList();
-
-                // se entrar um novo contrado na lista de Damp atual, então atualiza o arquivo de damp
-                if (listContratoDamp.Count != countDamp)
-                {
-                    FileInfo f = new FileInfo(Directory.GetCurrentDirectory() + @"\config\DAMP03.TXT");
-
-                    if (f.Exists)
-                        f.Delete();
-
-                    using (StreamWriter sw = new StreamWriter(Directory.GetCurrentDirectory() + @"\config\DAMP03.TXT"))
-                    {
-                        listContratoDamp.ForEach(n =>
-                        {
-                            sw.WriteLine(n);
-                            countpercent++;
-                            obj = new UserObject() { DescricaoPercentural = $"Atualizando Arquivo de Damp - Contratos: {n}", TotalArquivoPorPasta = MaximumProgress };
-                            backgroundWorkerDamp3.ReportProgress(countpercent, obj);
-                            Thread.Sleep(1);
-                        });
-                    }
-                }
+                
             }
             catch (Exception ex)
             {
@@ -98,13 +79,25 @@ namespace ConvetPdfToLayoutAlta
         private void FrmGeraDamp3_Load(object sender, EventArgs e)
         {
             lblPendente.Text = "";
-            IncrementaRegistroDamp();
-          //  stopwatch.Restart();
-         //   backgroundWorkerDamp3.RunWorkerAsync();
+
+            FileInfo fileInfo = new FileInfo(Directory.GetCurrentDirectory() + @"\config\CTO068A.txt");
+            FileInfo fileInfoUpadte = new FileInfo(arquivoCTO068A);
+
+            if (fileInfo.Length != fileInfoUpadte.Length)
+            {
+                IncrementaRegistroDamp();
+                stopwatch.Restart();
+                backgroundWorkerDamp3.RunWorkerAsync();
+            }
+            else
+            {
+                MessageBox.Show("Versão atual do arquivo RELADAMP já está atualizado!!!", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                Close();
+            }
 
         }
 
-        private void backgroundWorkerDamp3_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void BackgroundWorkerDamp3_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             try
             {
@@ -127,8 +120,8 @@ namespace ConvetPdfToLayoutAlta
 
         private void backgroundWorkerDamp3_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            
             MessageBox.Show("Arquivo de Damp Atualizado!!!", "Finalizado com Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            File.Copy(arquivoCTO068A, Directory.GetCurrentDirectory() + @"\config\CTO068A.txt", true);
             Close();
         }
 
@@ -137,7 +130,7 @@ namespace ConvetPdfToLayoutAlta
         {
             try
             {
-                List<RelaDamp> lstRelaDamp = new List<RelaDamp>();
+                lstRelaDamp = new List<RelaDamp>();
                 using (StreamReader streamReader = new StreamReader(arquivoCTO068A, Encoding.Default))
                 {
                     streamReader.ReadLine();
@@ -153,7 +146,7 @@ namespace ConvetPdfToLayoutAlta
                         objDamp = new RelaDamp()
                         {
                             MIECDAMP_CONTRATO = linha[3].Trim(),
-                            MIECDAMP_DT_ABERT = Convert.ToDateTime(linha[1].Trim()).ToString("yyyy-MM-dd"),
+                            MIECDAMP_DT_ABERT = Convert.ToDateTime(linha[1].Trim()).ToString("yyyy -MM-dd"),
                             MIECDAMP_TP_OPER = linha[2].Trim(),
                             MIECDAMP_TT_FGTS = Regex.Replace(linha[4].Trim(), @"[^0-9$]", ""),
                             MIECDAMP_AMB_OPER = linha[5].Trim(),
@@ -174,11 +167,12 @@ namespace ConvetPdfToLayoutAlta
                 }
 
 
-                using (StreamWriter streamWriter = new StreamWriter(Directory.GetCurrentDirectory()+@"\config\RELADAMP.txt", true, Encoding.Default))
+                using (StreamWriter streamWriter = new StreamWriter(Directory.GetCurrentDirectory() + @"\config\RELADAMP.txt", true, Encoding.Default))
                 {
                     string linhaFormatada = string.Empty;
 
-                    lstRelaDamp.ForEach(g => {
+                    lstRelaDamp.ForEach(g =>
+                    {
 
                         linhaFormatada += g.MIECDAMP_CONTRATO.Trim() + g.MIECDAMP_DT_ABERT.Trim() + g.MIECDAMP_TP_OPER.Trim().PadRight(50, ' ');
                         linhaFormatada += g.MIECDAMP_TT_FGTS.Trim().PadLeft(18, '0') + g.MIECDAMP_AMB_OPER.Trim().PadRight(50, ' ');

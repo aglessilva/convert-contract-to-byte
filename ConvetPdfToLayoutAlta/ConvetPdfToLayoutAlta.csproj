@@ -323,6 +323,8 @@
     <None Include="Resources\back_12955.ico" />
     <None Include="Resources\couple-of-arrows-changing-places_icon-icons.com_73608.ico" />
     <None Include="Resources\ic_attach_money_128_28210.ico" />
+    <None Include="Resources\ok_exceptapplicable_or_1090.png" />
+    <None Include="Resources\8_122645.ico" />
     <Content Include="Resources\txtdocument_text_tx_9804.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

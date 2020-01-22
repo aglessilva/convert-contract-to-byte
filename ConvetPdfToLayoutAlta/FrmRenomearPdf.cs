@@ -48,7 +48,6 @@ namespace ConvetPdfToLayoutAlta
 
         private void backgroundWorkerRenomearPdf_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            label1.Text = "Iniciando processo de fitragem de Contratos....";
             Thread.Sleep(2000);
             Close();
         }

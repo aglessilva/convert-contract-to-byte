@@ -166,6 +166,7 @@ namespace ConvetPdfToLayoutAlta
                 MessageBox.Show(result,"Finalizado com Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
+            Thread.Sleep(3000);
             this.Close();
         }
 

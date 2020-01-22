@@ -98,7 +98,7 @@ namespace ConvetPdfToLayoutAlta
             return result;
         }
 
-        private void BtnIniciarConvercao_Click(object sender, EventArgs e)
+        private void IniciarConvercao()
         {
             panelSpinner.Visible = !panelSpinner.Visible;
             telas.ForEach(t =>
@@ -133,7 +133,7 @@ namespace ConvetPdfToLayoutAlta
 
         private void Button2_Click(object sender, EventArgs e)
         {
-            FrmTela16 f = new FrmTela16(@"C:\@TombamentoV1_01\ENSARIOS\ENSARIO2020-01-17", @"C:\@TombamentoV1_01\ENSARIOS\ENSARIO2020-01-17\ALTA", "TELA16");
+            FrmTela16 f = new FrmTela16(@"C:\@TombTesteUnitarios", @"C:\@TombTesteUnitarios\ALTA", "TELA16");
             f.ShowDialog();
 
         }
@@ -172,7 +172,7 @@ namespace ConvetPdfToLayoutAlta
             ToolTip toolTip = new ToolTip();
             toolTip.SetToolTip(btnDuplicata, "Filtra os arquivos com base no PONTEIRO e remove duplicidade de pdfs das VM's.");
 #if DEBUG
-            button1.Visible = button10.Visible = button9.Visible = button2.Visible = button3.Visible = button4.Visible = button5.Visible = button6.Visible = button7.Visible = button8.Visible = true;
+            button1.Visible = button10.Visible = button9.Visible = button2.Visible =  button3.Visible  = button4.Visible = button5.Visible = button6.Visible = button7.Visible = button8.Visible = true;
 #endif
 
             string _pathDamp = string.Format("{0}{1}", Directory.GetCurrentDirectory(), @"\config\DAMP03.TXT");
@@ -186,13 +186,13 @@ namespace ConvetPdfToLayoutAlta
 
         private void Button3_Click(object sender, EventArgs e)
         {
-            FrmTela18 f = new FrmTela18(@"C:\@TombTesteUnitarios\", @"C:\@TombTesteUnitarios\ALTA", "TELA18");
+            FrmTela18 f = new FrmTela18(@"C:\@TombamentoV1_01\ENSARIOS\ENSARIO2020-01-17\", @"C:\@TombamentoV1_01\ENSARIOS\ENSARIO2020-01-17\ALTA\", "TELA 18");
             f.ShowDialog();
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
-            FrmTela18 f = new FrmTela18(@"C:\@TombamentoV1_01\TOMBAMENTOS\TOMBAMENTO2019-12-20", @"C:\@TombamentoV1_01\ENSARIOS\ENSARIO2020-01-17\ALTA", "TELA18");
+            FrmTela18 f = new FrmTela18(@"C:\@TombamentoV1_01\TOMBAMENTOS\TOMBAMENTO2019-12-20", @"C:\@TombamentoV1_01\ENSARIOS\ENSARIO2020-01-17\ALTA", "TELA 18");
             f.ShowDialog();
         }
 
@@ -222,14 +222,7 @@ namespace ConvetPdfToLayoutAlta
 
         private void BtnDuplicata_Click(object sender, EventArgs e)
         {
-            //bool isFilter = false;
-            //if (comboBoxTela.SelectedIndex == 4)
-            //{
-            //    MessageBox.Show("Selecione um tipo de tela.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            //    return;
-            //}
-
-            // Inicia o processo para renomear os arquivos antes de filtrar
+            
             FileInfo ffRename = new FileInfo(Directory.GetCurrentDirectory() + @"\config\ARQUPONT.txt");
 
             if (!ffRename.Exists)
@@ -256,19 +249,11 @@ namespace ConvetPdfToLayoutAlta
                     {
                         FrmRenomearPdf frmRenomear = new FrmRenomearPdf(textOrigemContratosPdf.Text, _tela);
                         frmRenomear.ShowDialog();
-                        //panelSpinner.Visible = !panelSpinner.Visible;
-                        // break;
                     }
                 }
 
-                // panelSpinner.Visible = !panelSpinner.Visible;
-                //Text = Text.Split('-')[0];
                 FrmDuplicadoFiltro f = new FrmDuplicadoFiltro(textOrigemContratosPdf.Text, t, lstDamp3);
                 f.ShowDialog();
-
-                //consistencia[comboBoxTela.SelectedIndex] = true;
-
-                // btnIniciarConvercao.Enabled = consistencia.ToList().TrueForAll(iis => iis);
 
                 Text = Text.Split('-')[0].Trim(); ;
             });
@@ -279,7 +264,10 @@ namespace ConvetPdfToLayoutAlta
                 fileInfo.Delete();
 
             btnDuplicata.Enabled = false;
-            btnIniciarConvercao.Enabled = true;
+
+
+            // INICIA O PROCESSO DE CONVERSÃO DOS PDFS DAS TELAS(16, 18, 20, 25) PARA O FORMATO TXT (LAYOUT - MAINFRAME)
+            IniciarConvercao();
         }
 
 
@@ -461,7 +449,6 @@ namespace ConvetPdfToLayoutAlta
                 else
                 {
                     f = new FrmGeraDamp3(textBoxHistoricoParcelas.Text, lstDamp3);
-                    Painel(true);
                 }
             }
 
@@ -563,7 +550,10 @@ namespace ConvetPdfToLayoutAlta
             }
         }
 
-        
+        private void MenuFolderConfig_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(Directory.GetCurrentDirectory() + @"\config");
+        }
     }
 }
 

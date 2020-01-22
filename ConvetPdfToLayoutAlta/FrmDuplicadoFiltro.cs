@@ -167,19 +167,19 @@ namespace ConvetPdfToLayoutAlta
 
         private void BackgroundWorkerDuplicadoFiltro_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            lbltotalDuplicado.Text = "Concluído!";
-            // TOTAL DE ARQUIVOS DUPLICADO
-            int _totalDup = Directory.GetFiles(diretorioOrigemPdf, string.Format("*_{0}.dup", Regex.Replace(tela, @"[^0-9$]", "")), SearchOption.AllDirectories).Count();
+            //lbltotalDuplicado.Text = "Concluído!";
+            //// TOTAL DE ARQUIVOS DUPLICADO
+            //int _totalDup = Directory.GetFiles(diretorioOrigemPdf, string.Format("*_{0}.dup", Regex.Replace(tela, @"[^0-9$]", "")), SearchOption.AllDirectories).Count();
 
-            // TOTAL DE ARQUIVOS FILTRADOS , CONTRATOS QUE NAO ESTÃO NO ARQUIVO DE PONTEIRO
-            int _totalFiltro = Directory.GetFiles(diretorioOrigemPdf, string.Format("*_{0}.fil", Regex.Replace(tela, @"[^0-9$]", "")), SearchOption.AllDirectories).Count();
+            //// TOTAL DE ARQUIVOS FILTRADOS , CONTRATOS QUE NAO ESTÃO NO ARQUIVO DE PONTEIRO
+            //int _totalFiltro = Directory.GetFiles(diretorioOrigemPdf, string.Format("*_{0}.fil", Regex.Replace(tela, @"[^0-9$]", "")), SearchOption.AllDirectories).Count();
 
-            string result = string.Format("Resultado\n\n");
-            result += string.Format("Total Filtrado: {0}{1}\n", _totalFiltro, " arquivo(s)");
-            result += string.Format("Total Duplicado: {0}{1}", _totalDup, " arquivo(s)");
+            //string result = string.Format("Resultado\n\n");
+            //result += string.Format("Total Filtrado: {0}{1}\n", _totalFiltro, " arquivo(s)");
+            //result += string.Format("Total Duplicado: {0}{1}", _totalDup, " arquivo(s)");
 
-            MessageBox.Show(result, "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
+            //MessageBox.Show(result, "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            Thread.Sleep(300);
             Close();
         }
 

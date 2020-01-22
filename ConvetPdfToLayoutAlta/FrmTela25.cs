@@ -103,27 +103,28 @@ namespace ConvetPdfToLayoutAlta
 
         private void BackgroundWorkerTela25_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            int err = Directory.EnumerateFiles(string.Format(@"{0}\", diretorioOrigemPdf), "*_25.err", SearchOption.TopDirectoryOnly).Count();
-            if (isErro)
-            {
-                string result = string.Format("Resultado\n\n");
-                result += string.Format("Total de Contratos: {0}\n", totalArquivo);
-                result += string.Format("Total Processados: {0}\n", (totalArquivo - ExceptionError.countError));
-                result += string.Format("Total Erros: {0}\n", ExceptionError.countError);
-                result += string.Format("Total Arq. Rejeitado: {0}\n", err);
-                result += string.Format("{0}", lblTempo.Text);
-                MessageBox.Show(result, "Erro de Converção", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            else
-            {
-                string result = string.Format("Resultado\n\n");
-                result += string.Format("Total de Contratos: {0}\n", totalArquivo);
-                result += string.Format("Total Processados: {0}\n", totalArquivo - err);
-                result += string.Format("Total Arq. Rejeitado: {0}\n", err);
-                result += string.Format("{0}", lblTempo.Text);
-                MessageBox.Show(result, "Finalizado com Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
+            //int err = Directory.EnumerateFiles(string.Format(@"{0}\", diretorioOrigemPdf), "*_25.err", SearchOption.TopDirectoryOnly).Count();
+            //if (isErro)
+            //{
+            //    string result = string.Format("Resultado\n\n");
+            //    result += string.Format("Total de Contratos: {0}\n", totalArquivo);
+            //    result += string.Format("Total Processados: {0}\n", (totalArquivo - ExceptionError.countError));
+            //    result += string.Format("Total Erros: {0}\n", ExceptionError.countError);
+            //    result += string.Format("Total Arq. Rejeitado: {0}\n", err);
+            //    result += string.Format("{0}", lblTempo.Text);
+            //    MessageBox.Show(result, "Erro de Converção", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //}
+            //else
+            //{
+            //    string result = string.Format("Resultado\n\n");
+            //    result += string.Format("Total de Contratos: {0}\n", totalArquivo);
+            //    result += string.Format("Total Processados: {0}\n", totalArquivo - err);
+            //    result += string.Format("Total Arq. Rejeitado: {0}\n", err);
+            //    result += string.Format("{0}", lblTempo.Text);
+            //    MessageBox.Show(result, "Finalizado com Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            //}
 
+            Thread.Sleep(3000);
             Close();
           
             FrmConsolidacaoAlta f = new FrmConsolidacaoAlta(diretorioDestinoLayout, diretorioOrigemPdf);
