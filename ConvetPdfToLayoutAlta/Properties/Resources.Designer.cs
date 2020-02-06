@@ -153,6 +153,36 @@ namespace ConvetPdfToLayoutAlta.Properties {
         /// <summary>
         ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap download_arrow_14460 {
+            get {
+                object obj = ResourceManager.GetObject("download_arrow_14460", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap folder_my_documents_22605 {
+            get {
+                object obj = ResourceManager.GetObject("folder_my_documents_22605", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap home_243 {
+            get {
+                object obj = ResourceManager.GetObject("home_243", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap ic_attach_money_128_28210 {
             get {
                 object obj = ResourceManager.GetObject("ic_attach_money_128_28210", resourceCulture);

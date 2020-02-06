@@ -453,7 +453,7 @@ namespace ConvetPdfToLayoutAlta.Models
                         }
                     case "028": // Amortização s/recalculo 
                         {
-
+                            _case = "028 - Metodo: TrataOcorrencia -  Situação: - Amortização s/recalculo";
                             int count = 0;
                             _obj.Vencimento = _linhaOcorrencia[count++].Trim();
                             _obj.Pagamento = Regex.IsMatch(_linhaOcorrencia[count].Trim(), @"[0-9]{2}/[0-9]{2}/[0-9]{4}") ? _linhaOcorrencia[count++].Trim() : "01/01/0001".PadLeft(10, ' ');
@@ -466,6 +466,23 @@ namespace ConvetPdfToLayoutAlta.Models
                             _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[(_linhaOcorrencia.Length - 2)].Trim(), @"[^0-9$\/-]", "");
                             _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[_linhaOcorrencia.Length - 1].Trim(), @"[^0-9$]", "");
                             _obj.Descricao = "***028Amortização s/recalculo";
+                            break;
+                        }
+                    case "029": // Amortização Residuo
+                        {
+                            _case = "029 - Metodo: TrataOcorrencia -  Situação: - Amortização Residuo";
+                            int count = 0;
+                            _obj.Vencimento = _linhaOcorrencia[count++].Trim();
+                            _obj.Pagamento = Regex.IsMatch(_linhaOcorrencia[count].Trim(), @"[0-9]{2}/[0-9]{2}/[0-9]{4}") ? _linhaOcorrencia[count++].Trim() : "01/01/0001".PadLeft(10, ' ');
+                            _obj.CodigoOcorrencia = _codigoOcorrencia; count++;
+                            if (hasMora)
+                                _obj.Juros = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
+                            else
+                                _obj.Juros = "0";
+
+                            _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[(_linhaOcorrencia.Length - 2)].Trim(), @"[^0-9$\/-]", "");
+                            _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[_linhaOcorrencia.Length - 1].Trim(), @"[^0-9$]", "");
+                            _obj.Descricao = "***029Amortização Residuo";
                             break;
                         }
                     case "030": // Incorporação no Saldo
@@ -592,6 +609,24 @@ namespace ConvetPdfToLayoutAlta.Models
                             _obj.Descricao = "***052Sinistro Total";
                             break;
                         }
+                    case "053": //053-Liq.Adjudicação/Arrematação
+                        {
+                            _case = "053 - Metodo: TrataOcorrencia -  Situação: - Liq.Adjudicação/Arrematação";
+
+                            int count = 0;
+                            _obj.Vencimento = _linhaOcorrencia[count++].Trim();
+                            _obj.Pagamento = _linhaOcorrencia[count++].Trim();
+                            _obj.CodigoOcorrencia = _codigoOcorrencia; count++;
+                            if (hasMora)
+                                _obj.Juros = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
+                            else
+                                _obj.Juros = "0";
+
+                            _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$\/-]", "");
+                            _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
+                            _obj.Descricao = "***053Liq.Adjudicação/Arrematação";
+                            break;
+                        }
                     case "054": // 054-Liquidação Coobrigado
                         {
                             _case = "054 - Metodo: TrataOcorrencia -  Situação: -Liquidação Coobrigado";
@@ -608,6 +643,24 @@ namespace ConvetPdfToLayoutAlta.Models
                             _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$\/-]", "");
                             _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
                             _obj.Descricao = "***054Liquidação Coobrigado";
+                            break;
+                        }
+                    case "055": // 055 Liquidação Antecipada
+                        {
+                            _case = "055 - Metodo: TrataOcorrencia -  Situação: - Liquidação Antecipada";
+
+                            int count = 0;
+                            _obj.Vencimento = _linhaOcorrencia[count++].Trim();
+                            _obj.Pagamento = _linhaOcorrencia[count++].Trim();
+                            _obj.CodigoOcorrencia = _codigoOcorrencia; count++;
+                            if (hasMora)
+                                _obj.Juros = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
+                            else
+                                _obj.Juros = "0";
+
+                            _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$\/-]", "");
+                            _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[count++].Trim(), @"[^0-9$]", "");
+                            _obj.Descricao = "***055Liquidação Antecipada";
                             break;
                         }
                     case "058": // 058-Liquidação Interveniência
@@ -962,7 +1015,7 @@ namespace ConvetPdfToLayoutAlta.Models
             {
                 using (DbConnEntity dbConn = new DbConnEntity())
                 {
-                    listaParcelasFgts = dbConn.DampFgts.Where(z => z.QuotaNominal != "0" || z.SobraMes != "0").Select(p => new ItensDamp(){ Contrato = p.Contrato, DataVencimento = p.DataVencimento }).ToList();
+                    listaParcelasFgts = dbConn.DampFgts.Where(z => z.SaldoFgtsJAM !="0" || z.SaldoFgtsQUO != "0" || z.QuotaNominal != "0" || z.SobraMes != "0").Select(p => new ItensDamp(){ Contrato = p.Contrato, DataVencimento = p.DataVencimento }).ToList();
                 }
             }
             catch (Exception exefgts)

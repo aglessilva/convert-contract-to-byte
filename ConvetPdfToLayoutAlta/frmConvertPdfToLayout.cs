@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 
@@ -16,11 +17,17 @@ namespace ConvetPdfToLayoutAlta
         bool[] consistencia = { false, false, false, false };
         bool[] isProcessado = { false, false, false, false };
         bool[] orderExcute = { false, false, false, false };
+        string pdfOrigem = string.Empty;
+        bool isNewExtract;
         List<string> telas = new List<string> { "TELA 18", "TELA 16", "TELA 20", "TELA 25" };
 
-        public FrmSelectFolder()
+
+
+        public FrmSelectFolder(string _diretorioOrigemArquivoPdf, bool _isNewExtract = false)
         {
             InitializeComponent();
+            pdfOrigem = _diretorioOrigemArquivoPdf;
+            isNewExtract = _isNewExtract;
         }
 
         private void BtnSelectDiretorioOrigem_Click(object sender, EventArgs e)
@@ -100,6 +107,9 @@ namespace ConvetPdfToLayoutAlta
 
         private void IniciarConvercao()
         {
+            if (!Directory.Exists(textOrigemContratosPdf.Text + @"\ALTA"))
+                Directory.CreateDirectory(textOrigemContratosPdf.Text + @"\ALTA");
+
             panelSpinner.Visible = !panelSpinner.Visible;
             telas.ForEach(t =>
             {
@@ -180,13 +190,13 @@ namespace ConvetPdfToLayoutAlta
             {
                 while (!sw.EndOfStream)
                     lstDamp3.Add(sw.ReadLine());
-
             }
+
         }
 
         private void Button3_Click(object sender, EventArgs e)
         {
-            FrmTela18 f = new FrmTela18(@"C:\@TombamentoV1_01\ENSARIOS\ENSARIO2020-01-17\", @"C:\@TombamentoV1_01\ENSARIOS\ENSARIO2020-01-17\ALTA\", "TELA 18");
+            FrmTela18 f = new FrmTela18(@"C:\@TombTesteUnitarios\", @"C:\@TombTesteUnitarios\ALTA\", "TELA 18");
             f.ShowDialog();
         }
 
@@ -222,7 +232,6 @@ namespace ConvetPdfToLayoutAlta
 
         private void BtnDuplicata_Click(object sender, EventArgs e)
         {
-            
             FileInfo ffRename = new FileInfo(Directory.GetCurrentDirectory() + @"\config\ARQUPONT.txt");
 
             if (!ffRename.Exists)
@@ -238,25 +247,12 @@ namespace ConvetPdfToLayoutAlta
             string _tela = string.Empty;
             panelSpinner.Visible = !panelSpinner.Visible;
 
-            telas.ForEach(t =>
-            {
-                Text += " - " + t;
-                _tela = Regex.Replace(t, @"[^0-9$]", "");
-                var extencao = new List<string>() { $"*_{_tela}.dup", $"*_{_tela}.damp", $"*_{_tela}.fil", $"*_{_tela}.err", $"*_{_tela}.rej" };
-                foreach (var item in extencao)
-                {
-                    if (Directory.EnumerateFiles(textOrigemContratosPdf.Text, item, SearchOption.AllDirectories).Count() > 0)
-                    {
-                        FrmRenomearPdf frmRenomear = new FrmRenomearPdf(textOrigemContratosPdf.Text, _tela);
-                        frmRenomear.ShowDialog();
-                    }
-                }
+            FrmRenomearPdf frmRenomear = new FrmRenomearPdf(textOrigemContratosPdf.Text);
+            frmRenomear.ShowDialog();
 
-                FrmDuplicadoFiltro f = new FrmDuplicadoFiltro(textOrigemContratosPdf.Text, t, lstDamp3);
-                f.ShowDialog();
+            FrmDuplicadoFiltro f = new FrmDuplicadoFiltro(textOrigemContratosPdf.Text, lstDamp3);
+            f.ShowDialog();
 
-                Text = Text.Split('-')[0].Trim(); ;
-            });
 
             panelSpinner.Visible = !panelSpinner.Visible;
             FileInfo fileInfo = new FileInfo(Directory.GetCurrentDirectory() + @"\DbTombamento.sdf");
@@ -265,7 +261,11 @@ namespace ConvetPdfToLayoutAlta
 
             btnDuplicata.Enabled = false;
 
-
+            Ambiente.dicionario16.Clear();
+            Ambiente.dicionario18.Clear();
+            Ambiente.dicionario20.Clear();
+            Ambiente.dicionario25.Clear();
+            
             // INICIA O PROCESSO DE CONVERSÃO DOS PDFS DAS TELAS(16, 18, 20, 25) PARA O FORMATO TXT (LAYOUT - MAINFRAME)
             IniciarConvercao();
         }
@@ -275,93 +275,9 @@ namespace ConvetPdfToLayoutAlta
 
         private void button9_Click(object sender, EventArgs e)
         {
-            List<string> lstArquiPoint = new List<string>();
-            // Faz a leitura do arquivo que contem as  sistuações dos contratos
-            using (StreamReader lerTxt = new StreamReader(string.Format("{0}{1}", Directory.GetCurrentDirectory(), @"\config\ARQUPONT.TXT")))
-            {
-                while (!lerTxt.EndOfStream)
-                    lstArquiPoint.Add(lerTxt.ReadLine());
-            };
+            FrmDuplicadoFiltro f = new FrmDuplicadoFiltro(@"C:\hbt", lstDamp3);
+            f.ShowDialog();
 
-            string diretorioOrigemPdf = @"C:\@TombamentoV1_01\TOMBAMENTOS\TOMBAMENTO2019-12-20";
-
-            var lst16 = Directory.GetFiles(diretorioOrigemPdf, "*_16.pdf", SearchOption.AllDirectories).ToList();
-            FileInfo f = null;
-
-            // VERIFICA SE OS CONTRATOS DO PONTEIRO TEM DAMP 
-            // SE HOUVER DAMP E NAO EXISTIR A TELA 18, ENTÃO RENOMEIA OS ARQUISO 16,20,25
-            if (Regex.Replace("18", @"[^0-9$]", "").Equals("18"))
-            {
-
-                List<string> result = lstDamp3.Join(lstArquiPoint, dmp => dmp.Trim(), pont => pont, (dmp, pont) => pont).ToList();
-
-                List<string> lstTela18 = Directory.GetFiles(diretorioOrigemPdf, string.Format("*_{0}.pdf", Regex.Replace("18", @"[^0-9$]", "")), SearchOption.AllDirectories).ToList();
-                List<string> lst20 = Directory.GetFiles(diretorioOrigemPdf, "*_20.pdf", SearchOption.AllDirectories).ToList();
-                List<string> lst25 = Directory.GetFiles(diretorioOrigemPdf, "*_25.pdf", SearchOption.AllDirectories).ToList();
-                string strTela = string.Empty;
-
-
-                Dictionary<string, string> dicionario16 = new Dictionary<string, string>(); 
-                Dictionary<string, string> dicionario18 = new Dictionary<string, string>(); 
-                Dictionary<string, string> dicionario20 = new Dictionary<string, string>(); 
-                Dictionary<string, string> dicionario25 = new Dictionary<string, string>();
-
-                lstTela18.ForEach(t18 => {
-                    f = new FileInfo(t18);
-                    dicionario18.Add(f.Name.Split('_')[0].Trim(), t18);
-                });
-
-                lstTela18 = null;
-
-                lst16.ForEach(t16 => {
-                    f = new FileInfo(t16);
-                    dicionario16.Add(f.Name.Split('_')[0].Trim(), t16);
-                });
-
-                lst16 = null;
-
-                lst20.ForEach(t20 => {
-                    f = new FileInfo(t20);
-                    dicionario20.Add(f.Name.Split('_')[0].Trim(), t20);
-                });
-
-                lst20 = null;
-
-                lst25.ForEach(t25 => {
-                    f = new FileInfo(t25);
-                    dicionario25.Add(f.Name.Split('_')[0].Trim(), t25);
-                });
-
-                lst25 = null;
-
-                result.ForEach(dmp =>
-                {
-                    var o = new UserObject() { Contrato = dmp, PdfInfo = f };
-                    if (!dicionario18.Any(gg => gg.Key.Equals(dmp)))
-                    {
-                        strTela = dicionario16.FirstOrDefault(c => c.Key.Equals(dmp)).Value;
-                        if (!string.IsNullOrWhiteSpace(strTela))
-                        {
-                            f = new FileInfo(strTela);
-                            if (!string.IsNullOrWhiteSpace(strTela))
-                                File.Move(strTela, System.IO.Path.ChangeExtension(strTela, ".damp"));
-
-                            strTela = dicionario20.FirstOrDefault(c => c.Key.Equals(dmp)).Value;
-                            if (!string.IsNullOrWhiteSpace(strTela))
-                                File.Move(strTela, System.IO.Path.ChangeExtension(strTela, ".damp"));
-
-                            strTela = dicionario25.FirstOrDefault(c => c.Key.Equals(dmp)).Value;
-                            if (!string.IsNullOrWhiteSpace(strTela))
-                                File.Move(strTela, System.IO.Path.ChangeExtension(strTela, ".damp"));
-
-                        }
-                    }
-                });
-
-                strTela = string.Empty;
-
-
-            }
         }
 
         private void button10_Click(object sender, EventArgs e)
@@ -394,7 +310,9 @@ namespace ConvetPdfToLayoutAlta
 
         private void btnLocalizarHistoricoParcela_Click(object sender, EventArgs e)
         {
-            openFileDialog1.Filter = "08 Hist Parcelas|*.txt|Ocorrência|*.txt";
+            openFileDialog1.Filter = "08 Hist Parcelas|*.txt|Ocorrência|*.txt|CTO068A|*.txt";
+            openFileDialog1.Title = "Historico de parcelas, Ocorrências, CTO068A";
+            openFileDialog1.FileName = "";
             if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 textBoxHistoricoParcelas.Text = openFileDialog1.FileName;
@@ -403,12 +321,20 @@ namespace ConvetPdfToLayoutAlta
         }
 
 
-
         private void gerarArquivoDeDamp3ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             label4.Text = "68 - Selecione o arquivo CTO068A.txt";
             button11.Text = "Atualizar Arquivo RelaDamp";
             Painel();
+        }
+
+
+        void AtualizaRelaDamp()
+        {
+            panelSpinner.Visible = !panelSpinner.Visible;
+            FrmGeraDamp3 f = new FrmGeraDamp3($@"\\bsbrsp1010\apps\MI\EXCEL\CTO068A.txt", lstDamp3, true);
+            f.ShowDialog();
+            panelSpinner.Visible = !panelSpinner.Visible;
         }
 
         private void button11_Click(object sender, EventArgs e)
@@ -455,6 +381,7 @@ namespace ConvetPdfToLayoutAlta
             if (f != null)
                 f.ShowDialog();
 
+            fileInfo = null;
             panelSpinner.Visible = !panelSpinner.Visible;
         }
 
@@ -538,13 +465,13 @@ namespace ConvetPdfToLayoutAlta
                         fileContract.ToList().ForEach(w =>
                         {
                             f = new FileInfo(w);
-
                             sw.WriteLine(f.Name.Split('_')[0]);
                         });
 
                     }
 
                 }
+                fileContract = null;
                 MessageBox.Show("Ponteiro Full criado com sucesso", "Ponteiro Full", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 panelSpinner.Enabled = !panelSpinner.Enabled;
             }
@@ -553,6 +480,88 @@ namespace ConvetPdfToLayoutAlta
         private void MenuFolderConfig_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start(Directory.GetCurrentDirectory() + @"\config");
+        }
+
+
+        void AtualizaPonteiro(string _arquivoPonteiro)
+        {
+            try
+            {
+                Cursor.Current = Cursors.WaitCursor;
+
+                string _contrato = string.Empty;
+                List<string> lstPonteiro = new List<string>();
+                using (StreamReader sreader = new StreamReader(_arquivoPonteiro))
+                {
+                    while (!sreader.EndOfStream)
+                    {
+                        _contrato = sreader.ReadLine().Trim();
+
+                        if (!string.IsNullOrWhiteSpace(_contrato))
+                            if (!lstPonteiro.Any(p => p.Equals(_contrato)))
+                                lstPonteiro.Add(_contrato);
+                    }
+                }
+
+                lstPonteiro.OrderBy(pont => pont);
+
+                if (File.Exists($@"{Directory.GetCurrentDirectory()}\config\ARQUPONT.txt"))
+                    File.Delete($@"{Directory.GetCurrentDirectory()}\config\ARQUPONT.txt");
+
+                using (StreamWriter streamWriter = new StreamWriter($@"{Directory.GetCurrentDirectory()}\config\ARQUPONT.txt", false, Encoding.Default))
+                {
+                    lstPonteiro.ForEach(x => { streamWriter.WriteLine(x); });
+                }
+
+                lstPonteiro = null;
+                Cursor.Current = Cursors.Default;
+            }
+            catch (Exception exPonteito)
+            {
+                MessageBox.Show("Erro ao tentar atualizar o PONTEIRO: " + exPonteito.Message);
+            }
+        }
+
+        private void novoPonteiroToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.Filter = "Arquivo ARQUEPONT|*.txt";
+            openFileDialog1.Title = "Selecione o arquivo de Ponteiro";
+            openFileDialog1.FileName = "ARQUPONT.txt";
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                AtualizaPonteiro(openFileDialog1.FileName);
+                MessageBox.Show("Ponteiro registrado para extração de contratos", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void FrmSelectFolder_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void FrmSelectFolder_Shown(object sender, EventArgs e)
+        {
+            if (isNewExtract)
+            {
+                bool hasFile = Directory.GetFiles(pdfOrigem, "*_16.PDF", SearchOption.AllDirectories).Count() > 0;
+
+                if (!hasFile)
+                    return;
+
+                textOrigemContratosPdf.Text = pdfOrigem;
+                textDestinoLayout.Text = pdfOrigem + @"\ALTA";
+
+                AtualizaPonteiro(@"\\bsbrsp1010\apps\MI\EXCEL\ARQUPONT.txt");
+                AtualizaRelaDamp();
+                BtnDuplicata_Click(null, null);
+            }
+        }
+
+        private void inicioToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Close();
+            FrmFoders frm = new FrmFoders();
+            frm.ShowDialog();
         }
     }
 }

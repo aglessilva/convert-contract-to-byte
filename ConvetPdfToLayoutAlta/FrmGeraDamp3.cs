@@ -21,14 +21,16 @@ namespace ConvetPdfToLayoutAlta
         UserObject obj = null;
         int countpercent = 0, MaximumProgress = 0;
         List<RelaDamp> lstRelaDamp = null;
+        bool isnewExtact = false;
 
         List<string> listContratoDamp = new List<string>();
 
-        public FrmGeraDamp3(string _arquivoCTO068A, List<string> lstDamp3)
+        public FrmGeraDamp3(string _arquivoCTO068A, List<string> lstDamp3, bool _isnewExtact =  false)
         {
             InitializeComponent();
             arquivoCTO068A = _arquivoCTO068A;
             listContratoDamp = lstDamp3;
+            isnewExtact = _isnewExtact;
         }
 
         private void backgroundWorkerDamp3_DoWork(object sender, DoWorkEventArgs e)
@@ -91,7 +93,8 @@ namespace ConvetPdfToLayoutAlta
             }
             else
             {
-                MessageBox.Show("Versão atual do arquivo RELADAMP já está atualizado!!!", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                if (!isnewExtact)
+                    MessageBox.Show("Versão atual do arquivo RELADAMP já está atualizado!!!", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 Close();
             }
 
@@ -174,7 +177,7 @@ namespace ConvetPdfToLayoutAlta
                     lstRelaDamp.ForEach(g =>
                     {
 
-                        linhaFormatada += g.MIECDAMP_CONTRATO.Trim() + g.MIECDAMP_DT_ABERT.Trim() + g.MIECDAMP_TP_OPER.Trim().PadRight(50, ' ');
+                        linhaFormatada += g.MIECDAMP_CONTRATO.Trim() + Regex.Replace(g.MIECDAMP_DT_ABERT.Trim(), @"[^0-9\-$]", "") + g.MIECDAMP_TP_OPER.Trim().PadRight(50, ' ');
                         linhaFormatada += g.MIECDAMP_TT_FGTS.Trim().PadLeft(18, '0') + g.MIECDAMP_AMB_OPER.Trim().PadRight(50, ' ');
                         linhaFormatada += g.MIECDAMP_CTA_EMPR.Trim().PadLeft(16, '0') + g.MIECDAMP_PIS_PASEP.Trim().PadLeft(11, '0');
                         linhaFormatada += g.MIECDAMP_CTA_TRAB.Trim().Substring(3) + g.MIECDAMP_VL_UTILZ.Trim().PadLeft(18, '0');

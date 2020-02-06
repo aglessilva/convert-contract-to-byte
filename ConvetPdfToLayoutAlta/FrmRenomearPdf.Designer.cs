@@ -82,9 +82,9 @@
             this.label1.ForeColor = System.Drawing.Color.Blue;
             this.label1.Location = new System.Drawing.Point(11, 52);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(208, 18);
+            this.label1.Size = new System.Drawing.Size(180, 18);
             this.label1.TabIndex = 11;
-            this.label1.Text = "Renomeando Contratos  pdf...";
+            this.label1.Text = "Renomeando Contratos...";
             this.label1.UseWaitCursor = true;
             // 
             // lblArquivo

@@ -108,6 +108,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Ambiente.cs" />
     <Compile Include="FluentApi\FluentApiFgts.cs" />
     <Compile Include="FluentApi\FluentApiHistoricoParcelas.cs" />
     <Compile Include="FluentApi\FluentApiOcorrecias.cs" />
@@ -148,11 +149,23 @@
     <Compile Include="frmConvertPdfToLayout.Designer.cs">
       <DependentUpon>frmConvertPdfToLayout.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmDownload.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmDownload.Designer.cs">
+      <DependentUpon>FrmDownload.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmDuplicadoFiltro.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FrmDuplicadoFiltro.Designer.cs">
       <DependentUpon>FrmDuplicadoFiltro.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmFoders.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmFoders.Designer.cs">
+      <DependentUpon>FrmFoders.cs</DependentUpon>
     </Compile>
     <Compile Include="FrmGeraDamp3.cs">
       <SubType>Form</SubType>
@@ -239,8 +252,14 @@
     <EmbeddedResource Include="frmConvertPdfToLayout.resx">
       <DependentUpon>frmConvertPdfToLayout.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FrmDownload.resx">
+      <DependentUpon>FrmDownload.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FrmDuplicadoFiltro.resx">
       <DependentUpon>FrmDuplicadoFiltro.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmFoders.resx">
+      <DependentUpon>FrmFoders.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmGeraDamp3.resx">
       <DependentUpon>FrmGeraDamp3.cs</DependentUpon>
@@ -325,6 +344,9 @@
     <None Include="Resources\ic_attach_money_128_28210.ico" />
     <None Include="Resources\ok_exceptapplicable_or_1090.png" />
     <None Include="Resources\8_122645.ico" />
+    <None Include="Resources\folder_my_documents_22605.ico" />
+    <None Include="Resources\download_arrow_14460.ico" />
+    <None Include="Resources\home_243.ico" />
     <Content Include="Resources\txtdocument_text_tx_9804.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

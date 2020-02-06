@@ -257,7 +257,6 @@ namespace ConvetPdfToLayoutAlta.Models
                             obj.CidadeImovel = string.IsNullOrWhiteSpace(obj.CidadeImovel.Trim()) ? "***NAO INFORMADO***" : obj.CidadeImovel;
                             obj.UfImovel = string.IsNullOrWhiteSpace(obj.UfImovel.Trim()) ? "XX" : obj.UfImovel;
 
-
                             break;
                         }
                     case 12:
@@ -889,6 +888,8 @@ namespace ConvetPdfToLayoutAlta.Models
 
                         item.Cabecalhos.ForEach(l =>
                         {
+                            //Solicitação da Camila para pegar somente a Apolice do ultimo cabeçalho de cada contrato
+                            //Data: 10/10/2019
                             _apolice = l.Apolice;
                            // _repactuacao = l.Repactuacao;
 
@@ -1268,7 +1269,12 @@ namespace ConvetPdfToLayoutAlta.Models
                                         }
                                         #endregion
 
+                                        #region PLANO
+                                        if (!_cabecalhoAnterior.Plano.Equals(_cabecalho.Plano))
+                                        {
 
+                                        }
+                                        #endregion
                                         // SE A OCORRENCIA 010 NÃO FOR DO TIPO [TAXA DE JUTOS, PRAZO, APOLICE, REPACTUAÇÃO], ESCREVE SOMENTE O CONTRATO E O TIPO DA OCORRENCIA
                                         if (!hasTypeOccurrence)
                                         {
@@ -1379,7 +1385,9 @@ namespace ConvetPdfToLayoutAlta.Models
                                     isOcorrenciaWrite = true;
                                     string _sinalOcorrencia = Convert.ToInt32(o.Amortizacao) < 0 ? "-" : "+";
                                     strAlta += string.Format("{0}{1}{2}", "0".PadLeft(54, '0'), o.Amortizacao.Replace("-", "").Trim().PadLeft(17, '0')+_sinalOcorrencia, o.SaldoDevedor.Trim().PadLeft(18, '0'));
-                                    strAlta += string.Format("{0}", Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd").Trim().PadRight(30, ' '));
+                                    strAlta += string.Format("{0}", Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd").Trim()+ "TAXA DE JUROS").PadRight(30, ' ');
+                                    strAlta += string.Format("{0}{1}", _cabecalho.TaxaJuros.Trim().PadRight(30, ' '), _cabecalhoAnterior.TaxaJuros.Trim().PadRight(30, ' '));
+                                    strAlta += string.Format("{0}", (o.NaoTemParcela ? "00010101" : _cabecalhoAnterior.Reajuste.Trim().PadRight(30, ' ')));
                                 }
 
                                 if (o.CodigoOcorrencia.Equals("022")) // Sinistro parcial
@@ -1388,6 +1396,15 @@ namespace ConvetPdfToLayoutAlta.Models
                                     string _sinalOcorrencia = Convert.ToInt32(o.Amortizacao) < 0 ? "-" : "+";
                                     strAlta += string.Format("{0}{1}{2}", "0".PadLeft(54, '0'), o.Amortizacao.Replace("-", "").Trim().PadLeft(17, '0')+_sinalOcorrencia, o.SaldoDevedor.Trim().PadLeft(18, '0'));
                                     strAlta += string.Format("{0}", Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd").Trim().PadRight(30, ' '));
+                                }
+
+                                if (o.CodigoOcorrencia.Equals("029")) // Amortização Residuo
+                                {
+                                    isOcorrenciaWrite = true;
+                                    string _sinalOcorrencia = Convert.ToInt32(o.Amortizacao) < 0 ? "-" : "+";
+                                    strAlta += string.Format("{0}{1}{2}", "0".PadLeft(18, '0'), Regex.Replace(o.Juros, "[^0-9$]", "").Trim().PadLeft(18, '0'), "0".PadLeft(18, '0'));
+                                    strAlta += string.Format("{0}{1}", o.Amortizacao.Replace("-", "").Trim().PadLeft(17, '0') + _sinalOcorrencia, o.SaldoDevedor.Trim().PadLeft(18, '0'));
+                                    strAlta += string.Format("{0}{1}", Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd").Trim().PadRight(30, ' '), "".PadRight(60, ' '));
                                 }
 
                                 if (o.CodigoOcorrencia.Equals("028")) // Amortização s/recalculo
@@ -1607,19 +1624,23 @@ namespace ConvetPdfToLayoutAlta.Models
             #endregion
 
             strAlta = string.Empty;
-           
+
 
             #region BLOCO QUE GERA O ARQUIVO DE CRONOGRAMA
             //======================= BLOCO QUE GERA O ARQUIVO DE CRONOGRAMA ===================================================
-            using (StreamWriter escreveCronograma = new StreamWriter(_diretorioDestino + @"\TL16CRON.txt", true, Encoding.Default))
+
+            if (lstContratosPdf.Any(xp => xp.Cronogramas.Count > 0))
             {
-                lstContratosPdf.ForEach(p =>
+                using (StreamWriter escreveCronograma = new StreamWriter(_diretorioDestino + @"\TL16CRON.txt", true, Encoding.Default))
                 {
-                    p.Cronogramas.ForEach(cron =>
+                    lstContratosPdf.ForEach(p =>
                     {
-                        escreveCronograma.WriteLine(string.Format("{0}CRONOGRAMA", cron).PadRight(84, ' '));
+                        p.Cronogramas.ForEach(cron =>
+                        {
+                            escreveCronograma.WriteLine(string.Format("{0}CRONOGRAMA", cron).PadRight(84, ' '));
+                        });
                     });
-                });
+                }
             }
             #endregion
 

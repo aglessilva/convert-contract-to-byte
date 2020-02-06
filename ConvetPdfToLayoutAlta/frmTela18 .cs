@@ -36,14 +36,13 @@ namespace ConvetPdfToLayoutAlta
 #endif
             try
             {
-               // ExceptionError.countError = 0;
 
                 listDiretory = Directory.GetDirectories(string.Format(@"{0}", diretorioOrigemPdf), tela, SearchOption.AllDirectories);
 
                 if (listDiretory.Count() == 0)
                 {
-                    MessageBox.Show(string.Format("No diretório informado, não existe {0} para efetuar extração.", tela), "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    this.Close();
+                    //MessageBox.Show(string.Format("No diretório informado, não existe {0} para efetuar extração.", tela), "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Close();
                     return;
                 }
 
@@ -54,8 +53,8 @@ namespace ConvetPdfToLayoutAlta
 
                 if (totalArquivo == 0)
                 {
-                    MessageBox.Show("No diretório informado, não existe contratos(pdf) para extração.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    this.Close();
+                    //MessageBox.Show("No diretório informado, não existe contratos(pdf) para extração.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Close();
                     return;
                 }
 
@@ -128,7 +127,6 @@ namespace ConvetPdfToLayoutAlta
             //    MessageBox.Show(result, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
             //}
 
-            Thread.Sleep(2000);
             Close(); 
         }
 
@@ -201,7 +199,6 @@ namespace ConvetPdfToLayoutAlta
                                                         {
                                                             isNotTela18 = true;
                                                             isErro = true;
-                                                           // ExceptionError.countError++;
                                                             ExceptionError.TrataErros(null, arquivoPdf.Name, "O Arquivo não é do tipo CTFIN/O018A", diretorioDestinoLayout);
                                                             break;
                                                         }
@@ -257,7 +254,6 @@ namespace ConvetPdfToLayoutAlta
                                             catch (Exception ex)
                                             {
                                                 reader.Dispose();
-                                               // ExceptionError.countError++;
                                                 BackgroundWorkerTela18.ReportProgress(countPercent, null);
 
                                                 isErro = true;
@@ -332,7 +328,6 @@ namespace ConvetPdfToLayoutAlta
                         }
                         catch (iTextSharp.text.exceptions.InvalidPdfException pdfExeception)
                         {
-                           // ExceptionError.countError++;
                             BackgroundWorkerTela18.ReportProgress(countPercent, null);
 
                             isErro = true;

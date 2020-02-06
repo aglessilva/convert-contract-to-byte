@@ -24,7 +24,7 @@ namespace ConvetPdfToLayoutAlta
         //BusinessCabecalho businessCabecalho = null;
 
         int contador = 0, countLote = 1, totalArquivo = 0, totalPorPasta = 0;
-        bool isErro = false, isFinal = false;
+        bool isFinal = false;
         IEnumerable<string> listContratoBlockPdf = null;
         IEnumerable<string> listDiretory = null;
         List<ItensDamp> itensFgts = null;
@@ -50,8 +50,8 @@ namespace ConvetPdfToLayoutAlta
 
                 if(listDiretory.Count() == 0)
                 {
-                    MessageBox.Show(string.Format( "No diretório informado, não existe {0} para efetuar extração.", tela), "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    this.Close();
+                    //MessageBox.Show(string.Format( "No diretório informado, não existe {0} para efetuar extração.", tela), "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Close();
                     return;
                 }
 
@@ -62,8 +62,8 @@ namespace ConvetPdfToLayoutAlta
 
                 if (totalArquivo == 0)
                 {
-                    MessageBox.Show("No diretório informado, não existe contratos(pdf) para extração.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    this.Close();
+                    //MessageBox.Show("No diretório informado, não existe contratos(pdf) para extração.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Close();
                     return;
                 }
 
@@ -110,7 +110,6 @@ namespace ConvetPdfToLayoutAlta
                 };
 
 
-                ExceptionError.countError = 0;
                 backgroundWorker1.RunWorkerAsync();
             }
             catch (Exception ex)
@@ -145,29 +144,28 @@ namespace ConvetPdfToLayoutAlta
 
         private void BackgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            int err = Directory.EnumerateFiles(string.Format(@"{0}\", diretorioOrigemPdf), "*_16.err", SearchOption.TopDirectoryOnly).Count();
-            if (isErro)
-            {
-                string result = string.Format("Resultado\n\n");
-                result += string.Format("Total de Contratos: {0}\n", totalArquivo);
-                result += string.Format("Total Processados: {0}\n", (totalArquivo - ExceptionError.countError));
-                result += string.Format("Total Erros: {0}\n", ExceptionError.countError);
-                result += string.Format("Total Arq. Rejeitado: {0}\n", err);
-                result += string.Format("{0}", lblTempo.Text);
-                MessageBox.Show(result, "Erro de Converção", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            else
-            {
-                string result = string.Format("Resultado\n\n");
-                result += string.Format("Total de Contratos: {0}\n", totalArquivo);
-                result += string.Format("Total Processados: {0}\n", totalArquivo - err);
-                result += string.Format("Total Arq. Rejeitado: {0}\n", err);
-                result += string.Format("{0}", lblTempo.Text);
-                MessageBox.Show(result,"Finalizado com Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
+            //int err = Directory.EnumerateFiles(string.Format(@"{0}\", diretorioOrigemPdf), "*_16.err", SearchOption.TopDirectoryOnly).Count();
+            //if (isErro)
+            //{
+            //    string result = string.Format("Resultado\n\n");
+            //    result += string.Format("Total de Contratos: {0}\n", totalArquivo);
+            //    result += string.Format("Total Processados: {0}\n", (totalArquivo - ExceptionError.countError));
+            //    result += string.Format("Total Erros: {0}\n", ExceptionError.countError);
+            //    result += string.Format("Total Arq. Rejeitado: {0}\n", err);
+            //    result += string.Format("{0}", lblTempo.Text);
+            //    MessageBox.Show(result, "Erro de Converção", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //}
+            //else
+            //{
+            //    string result = string.Format("Resultado\n\n");
+            //    result += string.Format("Total de Contratos: {0}\n", totalArquivo);
+            //    result += string.Format("Total Processados: {0}\n", totalArquivo - err);
+            //    result += string.Format("Total Arq. Rejeitado: {0}\n", err);
+            //    result += string.Format("{0}", lblTempo.Text);
+            //    MessageBox.Show(result,"Finalizado com Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            //}
 
-            Thread.Sleep(3000);
-            this.Close();
+            Close();
         }
 
         private void BackgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
@@ -255,8 +253,6 @@ namespace ConvetPdfToLayoutAlta
                             ExceptionError.RemoverTela(arquivoPdf, diretorioDestinoLayout);
                             ExceptionError.TrataErros(_numeroContrato, "Layout de Arquivo desconhecido", diretorioDestinoLayout);
                             _countPercent++;
-                            ExceptionError.countError++;
-                            isErro = true;
                             backgroundWorker1.ReportProgress(_countPercent,null);
                             contador++;
                             continue;
@@ -357,8 +353,6 @@ namespace ConvetPdfToLayoutAlta
                                                     if (!cabecalho.Any(c => c.Contains("CTFIN/O016A")))
                                                     {
                                                         isNotTela16 = true;
-                                                        isErro = true;
-                                                        ExceptionError.countError++;
                                                         ExceptionError.TrataErros(arquivoPdf.Name, "O Arquivo não é do tipo CTFIN/O016A", diretorioDestinoLayout);
                                                         break;
                                                     }
@@ -854,9 +848,7 @@ namespace ConvetPdfToLayoutAlta
                         userObject = new UserObject { Contrato = arquivoPdf.Name, PdfInfo = arquivoPdf, TotalArquivoPorPasta = totalPorPasta, DescricaoPercentural = "** Arquivo Danificado **" };
                         _countPercent++;
                         backgroundWorker1.ReportProgress(_countPercent, userObject);
-                        ExceptionError.countError++;
 
-                        isErro = true;
                         if (!File.Exists(diretorioDestinoLayout + @"\LogErroContratos.txt"))
                         {
                             StreamWriter item = File.CreateText(diretorioDestinoLayout + @"\LogErroContratos.txt");
@@ -883,9 +875,7 @@ namespace ConvetPdfToLayoutAlta
                     {
                         _countPercent++;
                         backgroundWorker1.ReportProgress(_countPercent, null);
-                        ExceptionError.countError++;
 
-                        isErro = true;
                         if (!File.Exists(diretorioDestinoLayout + @"\LogErroContratos.txt"))
                         {
                             StreamWriter item = File.CreateText(diretorioDestinoLayout + @"\LogErroContratos.txt");
@@ -917,9 +907,7 @@ namespace ConvetPdfToLayoutAlta
                         //ListaContratoErros.Add(obj.Contrato);
                         _countPercent++;
                         backgroundWorker1.ReportProgress(_countPercent, null);
-                        ExceptionError.countError++;
 
-                        isErro = true;
                         if (!File.Exists(diretorioDestinoLayout + @"\LogErroContratos.txt"))
                         {
                             StreamWriter item = File.CreateText(diretorioDestinoLayout + @"\LogErroContratos.txt");

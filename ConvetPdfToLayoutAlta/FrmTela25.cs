@@ -20,7 +20,6 @@ namespace ConvetPdfToLayoutAlta
         Thread _thread = null;
         UserObject obj = null;
         int contador = 0, totalArquivo = 0, totalPorPasta = 0;
-        bool isErro = false;
         int countpercent = 0;
         IEnumerable<string> listContratoBlockPdf = null;
         IEnumerable<string> listDiretory = null;
@@ -41,8 +40,8 @@ namespace ConvetPdfToLayoutAlta
 
                 if (listDiretory.Count() == 0)
                 {
-                    MessageBox.Show(string.Format("No diretório informado, não existe {0} para efetuar extração.", tela), "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    this.Close();
+                  //  MessageBox.Show(string.Format("No diretório informado, não existe {0} para efetuar extração.", tela), "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Close();
                     return;
                 }
 
@@ -53,8 +52,8 @@ namespace ConvetPdfToLayoutAlta
 
                 if (totalArquivo == 0)
                 {
-                    MessageBox.Show("No diretório informado, não existe contratos(pdf) para extração.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    this.Close();
+                    //MessageBox.Show("No diretório informado, não existe contratos(pdf) para extração.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Close();
                     return;
                 }
 
@@ -64,7 +63,6 @@ namespace ConvetPdfToLayoutAlta
                 lblQtd.Text = "Total: " + totalArquivo.ToString();
                 progressBarReaderPdf.Maximum = totalArquivo;
 
-                ExceptionError.countError = 0;
                 BackgroundWorkerTela25.RunWorkerAsync();
             }
             catch (Exception ex)
@@ -124,7 +122,6 @@ namespace ConvetPdfToLayoutAlta
             //    MessageBox.Show(result, "Finalizado com Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
             //}
 
-            Thread.Sleep(3000);
             Close();
           
             FrmConsolidacaoAlta f = new FrmConsolidacaoAlta(diretorioDestinoLayout, diretorioOrigemPdf);
@@ -193,8 +190,6 @@ namespace ConvetPdfToLayoutAlta
                                                         if (!_ArrayLinha.Any(ctn => ctn.Trim().Equals("CTFIN/O025A")))
                                                         {
                                                             isNotTela25 = true;
-                                                            isErro = true;
-                                                            ExceptionError.countError++;
                                                             ExceptionError.TrataErros(arquivoPdf.Name, "O Arquivo não é do tipo CTFIN/O025A", diretorioDestinoLayout);
                                                             break;
                                                         }
@@ -236,10 +231,8 @@ namespace ConvetPdfToLayoutAlta
                                             }
                                             catch (iTextSharp.text.exceptions.InvalidPdfException pdfExeception)
                                             {
-                                                ExceptionError.countError++;
                                                 BackgroundWorkerTela25.ReportProgress(countpercent, null);
 
-                                                isErro = true;
                                                 if (!File.Exists(diretorioDestinoLayout + @"\LogErroContratos.txt"))
                                                 {
                                                     StreamWriter item = File.CreateText(diretorioDestinoLayout + @"\LogErroContratos.txt");
@@ -262,10 +255,8 @@ namespace ConvetPdfToLayoutAlta
 
                                             catch (ArgumentOutOfRangeException ex)
                                             {
-                                                ExceptionError.countError++;
                                                 BackgroundWorkerTela25.ReportProgress(countpercent, null);
 
-                                                isErro = true;
                                                 if (!File.Exists(diretorioDestinoLayout + @"\LogErroContratos.txt"))
                                                 {
                                                     StreamWriter item = File.CreateText(diretorioDestinoLayout + @"\LogErroContratos.txt");
@@ -320,10 +311,8 @@ namespace ConvetPdfToLayoutAlta
                 }
                 catch (iTextSharp.text.exceptions.InvalidPdfException pdfExeception)
                 {
-                    ExceptionError.countError++;
                     BackgroundWorkerTela25.ReportProgress(countpercent, null);
 
-                    isErro = true;
                     if (!File.Exists(diretorioDestinoLayout + @"\LogErroContratos.txt"))
                     {
                         StreamWriter item = File.CreateText(diretorioDestinoLayout + @"\LogErroContratos.txt");
@@ -347,10 +336,8 @@ namespace ConvetPdfToLayoutAlta
 
                 catch (ArgumentOutOfRangeException ex)
                 {
-                    ExceptionError.countError++;
                     BackgroundWorkerTela25.ReportProgress(countpercent, null);
 
-                    isErro = true;
                     if (!File.Exists(diretorioDestinoLayout + @"\LogErroContratos.txt"))
                     {
                         StreamWriter item = File.CreateText(diretorioDestinoLayout + @"\LogErroContratos.txt");

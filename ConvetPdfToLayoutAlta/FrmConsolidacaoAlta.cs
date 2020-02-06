@@ -76,7 +76,20 @@ namespace ConvetPdfToLayoutAlta
 
         private void backgroundWorkerConsolida_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            MessageBox.Show("Ponteiro Atualizado","Finalizado com Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            int erros = Directory.EnumerateFiles(_diretorioOrigemPdf, "*_16.err", SearchOption.AllDirectories).Count();
+            int dups = Directory.EnumerateFiles(_diretorioOrigemPdf, "*_16.dup", SearchOption.AllDirectories).Count();
+            int fil = Directory.EnumerateFiles(_diretorioOrigemPdf, "*_16.fil", SearchOption.AllDirectories).Count();
+            int damp = Directory.EnumerateFiles(_diretorioOrigemPdf, "*_16.damp", SearchOption.AllDirectories).Count();
+            int rej = Directory.EnumerateFiles(_diretorioOrigemPdf, "*_16.rej", SearchOption.AllDirectories).Count();
+
+            File.Copy($@"{Directory.GetCurrentDirectory()}\Config\SITU115A.TXT", $@"{_diretorioOrigemPdf}\ALTA\SITU115A.TXT");
+            File.Copy($@"{Directory.GetCurrentDirectory()}\Config\RELADAMP.TXT", $@"{_diretorioOrigemPdf}\ALTA\RELADAMP.TXT");
+
+            string msgResult = $"Ponteiro atualizado!\nResultado:\n\nTotal Extraidos: {MaximumProgress}\nTotal de Erros: {erros}\nTotal Duplicados: {dups}\nTotal Filtrado: {fil}\nTotal sem Damp3: {damp} \nTotal Rejeitado: {rej}";
+            MessageBox.Show(msgResult,"Finalizado com Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            
+
+            Process.Start(_diretorioOrigemPdf + @"\ALTA\");
             Close();
         }
 

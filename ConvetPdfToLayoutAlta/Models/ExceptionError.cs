@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace ConvetPdfToLayoutAlta.Models
 {
     public static class ExceptionError
     {
-        public static int countError;
 
         public static void TrataErros(Exception exception, string _contrato, string _detalhes, string _path)
         {
@@ -62,7 +59,6 @@ namespace ConvetPdfToLayoutAlta.Models
 
             foreach (string itemTela in tela)
             {
-
                 try
                 {
                     if (!string.IsNullOrWhiteSpace(itemTela))
@@ -71,12 +67,10 @@ namespace ConvetPdfToLayoutAlta.Models
                         if (fileInfo.Exists)
                             File.Move(fileInfo.FullName, Path.ChangeExtension(fileInfo.FullName, ".damp"));
                     }
-
                 }
-                catch (Exception ese)
+                catch (Exception exeErr)
                 {
-
-                    throw;
+                    string t = exeErr.Message;
                 }
             }
         }

@@ -23,24 +23,20 @@ namespace ConvetPdfToLayoutAlta
         UserObject obj = null;
         int countpercent = 0, MaximumProgress = 0;
         string _tela = string.Empty;
+        Task task = null;
 
-        public FrmRenomearPdf(string _dretorioOrigemPdf, string tela)
+        public FrmRenomearPdf(string _dretorioOrigemPdf)
         {
             InitializeComponent();
             _diretorioPdf = _dretorioOrigemPdf;
-            _tela = tela;
         }
 
         private void FrmRenomearPdf_Load(object sender, EventArgs e)
         {
-            extencao = new List<string>() { $"*_{_tela}.dup", $"*_{_tela}.damp", $"*_{_tela}.fil", $"*_{_tela}.err", $"*_{_tela}.rej" };
-
-            listaRenomeada = Directory.EnumerateFiles(_diretorioPdf, _tela, SearchOption.AllDirectories);
-            MaximumProgress = listaRenomeada.Count();
-            lblQtd.Text = $"Total: {MaximumProgress}";
-            progressBarReaderPdf.Maximum = MaximumProgress;
-
-            Thread.Sleep(2000);
+            //listaRenomeada = Directory.EnumerateFiles(_diretorioPdf, _tela, SearchOption.AllDirectories);
+           // MaximumProgress = listaRenomeada.Count();
+           // lblQtd.Text = $"Total: {MaximumProgress}";
+            //progressBarReaderPdf.Maximum = MaximumProgress;
 
             stopwatch.Restart();
             backgroundWorkerRenomearPdf.RunWorkerAsync();
@@ -48,34 +44,39 @@ namespace ConvetPdfToLayoutAlta
 
         private void backgroundWorkerRenomearPdf_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            Thread.Sleep(2000);
             Close();
         }
 
         private void backgroundWorkerRenomearPdf_DoWork(object sender, DoWorkEventArgs e)
         {
+            extencao = new List<string>() { "*.dup", "*.damp", "*.fil", "*.err", "*.rej" };
             try
             {
                 FileInfo fileInfo = null;
-                extencao.ForEach(ex =>
+                task =  Task.Factory.StartNew(() =>
                 {
-                    listaRenomeada = Directory.EnumerateFiles(_diretorioPdf, ex, SearchOption.AllDirectories);
-                    MaximumProgress = listaRenomeada.Count();
-                    countpercent = 0;
-
-                    if (listaRenomeada.Count() > 0)
+                    extencao.ForEach(ex =>
                     {
-                        listaRenomeada.ToList().ForEach(arq =>
-                        {
-                            fileInfo = new FileInfo(arq);
-                            File.Move(fileInfo.FullName, System.IO.Path.ChangeExtension(fileInfo.FullName, ".pdf"));
-                            countpercent++;
-                            obj = new UserObject() { PdfInfo = fileInfo, DescricaoPercentural = ex };
-                            backgroundWorkerRenomearPdf.ReportProgress(countpercent, obj);
-                        });
-                    }
+                        listaRenomeada = Directory.EnumerateFiles(_diretorioPdf, ex, SearchOption.AllDirectories);
+                        MaximumProgress = listaRenomeada.Count();
+                        countpercent = 0;
 
+                        if (MaximumProgress > 0)
+                        {
+                            listaRenomeada.ToList().ForEach(arq =>
+                            {
+                                fileInfo = new FileInfo(arq);
+                                File.Move(fileInfo.FullName, Path.ChangeExtension(fileInfo.FullName, ".pdf"));
+                                countpercent++;
+                                obj = new UserObject() { PdfInfo = fileInfo, DescricaoPercentural = ex };
+                                backgroundWorkerRenomearPdf.ReportProgress(countpercent, obj);
+                            });
+                        }
+                    });
                 });
+
+                if (task.Status == TaskStatus.Running)
+                    task.Wait();
             }
             catch (Exception exe)
             {
@@ -86,40 +87,49 @@ namespace ConvetPdfToLayoutAlta
 
         private void backgroundWorkerRenomearPdf_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            obj = (UserObject)e.UserState;
-
-            if (progressBarReaderPdf.Maximum != MaximumProgress)
+            try
             {
-                progressBarReaderPdf.Maximum = MaximumProgress;
-                progressBarReaderPdf.Value = 0;
+                obj = (UserObject)e.UserState;
+
+                if (progressBarReaderPdf.Maximum != MaximumProgress)
+                {
+                    progressBarReaderPdf.Maximum = MaximumProgress;
+                    progressBarReaderPdf.Value = 0;
+                }
+
+                progressBarReaderPdf.Value = e.ProgressPercentage;
+
+                if (obj != null)
+                {
+                    if (obj.DescricaoPercentural.Contains(".dup"))
+                        lblQtd.Text = $"Total: {MaximumProgress} Arquivos duplicado";
+
+                    if (obj.DescricaoPercentural.Contains(".damp"))
+                        lblQtd.Text = $"Total: {MaximumProgress} Arquivos de Damp";
+
+                    if (obj.DescricaoPercentural.Contains(".fil"))
+                        lblQtd.Text = $"Total: {MaximumProgress} Arquivos de Filtro";
+
+                    if (obj.DescricaoPercentural.Contains(".err"))
+                        lblQtd.Text = $"Total: {MaximumProgress} Arquivos de Erro";
+
+                    if (obj.DescricaoPercentural.Contains(".rej"))
+                        lblQtd.Text = $"Total: {MaximumProgress} Arquivos de Rejeição";
+
+                    tmp = string.Format("Tempo de Execução: {0}:{1}:{2}:{3} ms", stopwatch.Elapsed.Hours, stopwatch.Elapsed.Minutes, stopwatch.Elapsed.Seconds, stopwatch.Elapsed.Milliseconds);
+                    int indiceNameArquivo = obj.PdfInfo.FullName.Length / 2;
+                    lblPorcentagem.Text = string.Format("{0:P2}", (double)e.ProgressPercentage / (double)(progressBarReaderPdf.Maximum));
+                    lblTempo.Text = tmp;
+                    lblArquivo.Text = string.Format(@"Arquivo: ...{0}", obj.PdfInfo.FullName.Substring(indiceNameArquivo));
+
+                }
             }
-
-            progressBarReaderPdf.Value = e.ProgressPercentage;
-
-            if (obj != null)
+            catch (Exception ex)
             {
-                if (obj.DescricaoPercentural.Contains(".dup"))
-                    lblQtd.Text = $"Total: {MaximumProgress} Arquivos duplicado";
 
-                if (obj.DescricaoPercentural.Contains(".damp"))
-                    lblQtd.Text = $"Total: {MaximumProgress} Arquivos de Damp";
-
-                if (obj.DescricaoPercentural.Contains(".fil"))
-                    lblQtd.Text = $"Total: {MaximumProgress} Arquivos de Filtro";
-
-                if (obj.DescricaoPercentural.Contains(".err"))
-                    lblQtd.Text = $"Total: {MaximumProgress} Arquivos de Erro";
-
-                if (obj.DescricaoPercentural.Contains(".rej"))
-                    lblQtd.Text = $"Total: {MaximumProgress} Arquivos de Rejeição";
-
-                tmp = string.Format("Tempo de Execução: {0}:{1}:{2}:{3} ms", stopwatch.Elapsed.Hours, stopwatch.Elapsed.Minutes, stopwatch.Elapsed.Seconds, stopwatch.Elapsed.Milliseconds);
-                int indiceNameArquivo = obj.PdfInfo.FullName.Length / 2;
-                lblPorcentagem.Text = string.Format("{0:P2}", (double)e.ProgressPercentage / (double)(progressBarReaderPdf.Maximum));
-                lblTempo.Text = tmp;
-                lblArquivo.Text = string.Format(@"Arquivo: ...{0}", obj.PdfInfo.FullName.Substring(indiceNameArquivo));
-               
+                string erro = ex.Message;
             }
         }
+        
     }
 }

@@ -55,7 +55,7 @@ namespace ConvetPdfToLayoutAlta.Models
                     //parcelaFgts.ParcelaQuota = _ArrayLine[1].Trim().Length == 5 ? Regex.Replace(_ArrayLine[1].Trim(), @"[^0-9$]", "") : "0";
                     parcelaFgts.ParcelaQuota = Regex.Replace(_ArrayLine[1].Trim(), @"[^0-9$]", "");
                     parcelaFgts.DataVencimento = Regex.Replace(_ArrayLine[2].Trim(), @"[^0-9\/$]", "");
-                    parcelaFgts.QuotaNominal = Regex.Replace(_ArrayLine[3].Trim(), @"[^0-9$]", "");
+                   // parcelaFgts.QuotaNominal = Regex.Replace(_ArrayLine[3].Trim(), @"[^0-9$]", "");
                     parcelaFgts.SaldoFgtsQUO = Regex.Replace(_ArrayLine[4].Trim(), @"[^0-9\/$]", "");
                     parcelaFgts.SobraMes = Regex.Replace(_ArrayLine[5].Trim(), @"[^0-9\-$]", "");
                     parcelaFgts.SobraAcumulada = Regex.Replace(_ArrayLine[6].Trim(), @"[^0-9$]", "");
