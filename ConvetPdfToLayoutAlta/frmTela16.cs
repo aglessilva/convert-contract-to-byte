@@ -21,7 +21,6 @@ namespace ConvetPdfToLayoutAlta
         Thread _thread = null;
         UserObject obj = null;
         List<string> _situacoesAtual = new List<string>();
-        //BusinessCabecalho businessCabecalho = null;
 
         int contador = 0, countLote = 1, totalArquivo = 0, totalPorPasta = 0;
         bool isFinal = false;
@@ -175,7 +174,6 @@ namespace ConvetPdfToLayoutAlta
             int numberPage = 0,  countParcela = 0;
             List<string> lstSituacao = new List<string>();
             List<string> lstCronograma = new List<string>(); 
-            List<string> lstGT = new List<string>();
             List<ItensDamp> parcelaFgts =  null;
             List<Cabecalho> lstCabecalho = null;
             List<Parcela> lstParcelas = null;
@@ -206,13 +204,12 @@ namespace ConvetPdfToLayoutAlta
             string[] arrayLinhaParcela = null;
             bool isParcelas = false, isNotiqual = false, hasIof = false, isCabecalhoParcela = false, isBody = false, isNotTela16 = false;
             int padrao = 0, _countPercent = 0;
-
             
-            using (StreamReader sr = new StreamReader(string.Format("{0}{1}", Directory.GetCurrentDirectory(), @"\config\ARQ_GARANTIA.TXT")))
-            {
-                while (!sr.EndOfStream)
-                    lstGT.Add(sr.ReadLine().Trim());
-            }
+            //using (StreamReader sr = new StreamReader(string.Format("{0}{1}", Directory.GetCurrentDirectory(), @"\config\ARQ_GARANTIA.TXT")))
+            //{
+            //    while (!sr.EndOfStream)
+            //        lstGT.Add(sr.ReadLine().Trim());
+            //}
 
             businessCabecalho = new BusinessCabecalho();
             businessParcelas = new BusinessParcelas();
@@ -790,6 +787,9 @@ namespace ConvetPdfToLayoutAlta
                             userObject = new UserObject { Contrato = objCabecalho.Contrato, PdfInfo = arquivoPdf, TotalArquivoPorPasta = totalPorPasta };
                             objContratoPdf.Contrato = lstCabecalho.FirstOrDefault().Contrato;
                             objContratoPdf.Carteira = lstCabecalho.FirstOrDefault().Carteira;
+                            objContratoPdf.Bem = Ambiente.listGTBem.Find(kv => kv.Key.Contains(objContratoPdf.Contrato)).Value;
+
+
                             objContratoPdf.Cabecalhos.AddRange(lstCabecalho);
                             objContratoPdf.Parcelas.AddRange(lstParcelas);
                             objContratoPdf.Ocorrencias.AddRange(lstOcorrencia);
@@ -823,7 +823,6 @@ namespace ConvetPdfToLayoutAlta
                                 var tab = new
                                 {
                                     item1 = lstContratosPdf,
-                                    item2 = lstGT,
                                     item3 = diretorioDestinoLayout,
                                     item4 = diretorioOrigemPdf
                                 };
@@ -945,7 +944,6 @@ namespace ConvetPdfToLayoutAlta
                 var tab = new
                 {
                     item1 = lstContratosPdf,
-                    item2 = lstGT,
                     item3 = diretorioDestinoLayout,
                     item4 = diretorioOrigemPdf
                 };

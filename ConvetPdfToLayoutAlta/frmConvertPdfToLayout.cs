@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 
@@ -14,13 +12,9 @@ namespace ConvetPdfToLayoutAlta
     public partial class FrmSelectFolder : Form
     {
         List<string> lstDamp3 = new List<string>();
-        bool[] consistencia = { false, false, false, false };
-        bool[] isProcessado = { false, false, false, false };
-        bool[] orderExcute = { false, false, false, false };
         string pdfOrigem = string.Empty;
         bool isNewExtract;
         List<string> telas = new List<string> { "TELA 18", "TELA 16", "TELA 20", "TELA 25" };
-
 
 
         public FrmSelectFolder(string _diretorioOrigemArquivoPdf, bool _isNewExtract = false)

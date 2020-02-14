@@ -80,7 +80,7 @@ namespace ConvetPdfToLayoutAlta
             int dups = Directory.EnumerateFiles(_diretorioOrigemPdf, "*_16.dup", SearchOption.AllDirectories).Count();
             int fil = Directory.EnumerateFiles(_diretorioOrigemPdf, "*_16.fil", SearchOption.AllDirectories).Count();
             int damp = Directory.EnumerateFiles(_diretorioOrigemPdf, "*_16.damp", SearchOption.AllDirectories).Count();
-            int rej = Directory.EnumerateFiles(_diretorioOrigemPdf, "*_16.rej", SearchOption.AllDirectories).Count();
+            int rej = Directory.EnumerateFiles(_diretorioOrigemPdf, "*.rej", SearchOption.AllDirectories).Count();
 
             File.Copy($@"{Directory.GetCurrentDirectory()}\Config\SITU115A.TXT", $@"{_diretorioOrigemPdf}\ALTA\SITU115A.TXT");
             File.Copy($@"{Directory.GetCurrentDirectory()}\Config\RELADAMP.TXT", $@"{_diretorioOrigemPdf}\ALTA\RELADAMP.TXT");

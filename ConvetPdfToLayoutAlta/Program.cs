@@ -17,7 +17,7 @@ namespace ConvetPdfToLayoutAlta
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new FrmFoders());
-            //Application.Run(new frmGerarLayoutAlta());
+            //Application.Run(new FrmSelectFolder(null));
         }
     }
 }

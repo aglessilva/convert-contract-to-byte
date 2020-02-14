@@ -856,7 +856,6 @@ namespace ConvetPdfToLayoutAlta.Models
         {
 
             List<ContratoPdf> lstContratosPdf = (List<ContratoPdf>)parametro.GetType().GetProperty("item1").GetValue(parametro, null);
-            List<string> lstGT = (List<string>)parametro.GetType().GetProperty("item2").GetValue(parametro, null);
             string _diretorioDestino = (string)parametro.GetType().GetProperty("item3").GetValue(parametro, null);
             string _diretorioOrigem = (string)parametro.GetType().GetProperty("item4").GetValue(parametro, null);
             List<string> lstContratosNovos = new List<string>();
@@ -931,7 +930,7 @@ namespace ConvetPdfToLayoutAlta.Models
                             _dataPrimeiroVencimento = item.Parcelas.FirstOrDefault().Vencimento;
                         }
 
-                        _contratoGT = lstGT.Find(p => p.Equals(c.Carteira.Substring(2, 2) + c.Contrato.Trim()));
+                        _contratoGT = Ambiente.listGTBem.Find(p => p.Key.Equals(c.Carteira.Substring(2, 2) + c.Contrato.Trim())).Key;
 
                         if (!string.IsNullOrWhiteSpace(_contratoGT))
                         {
@@ -944,11 +943,11 @@ namespace ConvetPdfToLayoutAlta.Models
 
                             strAlta = string.Format("{0}{1}{2}{3}", c.Carteira.Trim().Substring(2), c.Contrato.Trim(), _diaVencimento, c.Agencia.Substring(2, 4)).PadRight(24, ' ');
                             strAlta += string.Format("{0}{1}{2}{3}", (c.Nome.Trim().Length > 40 ? c.Nome.Trim().Substring(0, 40) : c.Nome.Trim()).PadRight(40, ' '), c.DataNascimento.Trim().PadRight(10, ' '), c.DataTransferencia.PadRight(14, ' '), c.EnderecoImovel.Trim().PadRight(80, ' '));
-                            strAlta += string.Format("{0}{1}{2}{3}", (c.Cpf.Trim().Length < 15 ? c.Cpf : c.Cpf.Substring(1)).PadRight(14, ' '), "".PadRight(3, ' '), _contratoGT.Trim().PadRight(20, ' '), "".PadRight(20, ' '));
+                            strAlta += string.Format("{0}{1}{2}{3}", (c.Cpf.Trim().Length < 15 ? c.Cpf : c.Cpf.Substring(1)).PadRight(14, ' '), "".PadRight(3, ' '), _contratoGT.Trim().PadRight(20, ' '), item.Bem.PadRight(20, ' '));
                             strAlta += string.Format("{0}{1}", c.Modalidade.Trim().PadRight(40, ' '), (c.CidadeImovel.Trim().Length <= 31 ? c.CidadeImovel.Trim() : c.CidadeImovel.Trim().Substring(0, 31)).PadRight(31, ' '));
                             strAlta += string.Format("{0}{1}{2}", c.Plano.Trim().PadRight(10, ' '), c.DataContrato.Trim().PadRight(10, ' '), "".PadRight(2, ' '));
                             strAlta += string.Format("{0}{1}", c.Prestacao.Trim().PadLeft(18, '0'), c.Sistema.Trim().PadRight(2, ' '));
-                            strAlta += string.Format("{0}{1}{2}", c.ValorFinanciamento.Trim().PadLeft(18, '0'), c.CodigoContabil.Trim().Substring(1).PadRight(15, '0'), c.SeguroMIP.Trim().PadLeft(18, '0'));
+                            strAlta += string.Format("{0}{1}{2}", c.ValorFinanciamento.Trim().PadLeft(18, '0'), string.IsNullOrWhiteSpace(c.CodigoContabil.Trim()) ? "".PadRight(15, '0') : c.CodigoContabil.Trim().Substring(1).PadRight(15, '0'), c.SeguroMIP.Trim().PadLeft(18, '0'));
 
                             // O Luis disse que na construção do contrato, "REAJUSTE"  é sempre o original
                             //strAlta += string.Format("{0}{1}", c.Reajuste.Trim().PadRight(10, ' '), c.DataGarantia.Trim().PadRight(18, ' '));
@@ -987,14 +986,14 @@ namespace ConvetPdfToLayoutAlta.Models
                     catch (ArgumentOutOfRangeException exOut)
                     {
                         lstContratosPdf.Remove(item);
-                        string _detalhes = "Metodo: PopulaContrato - Classe: BusinessCabecalho - Ação: tentativa de gerear o registro no arquivo TL16CONT.txt";
+                        string _detalhes = "Metodo: PopulaContrato - Classe: BusinessCabecalho - 001 Ação: tentativa de gerear o registro no arquivo TL16CONT.txt";
                         ExceptionError.TrataErros(exOut, c.Contrato, _detalhes, _diretorioDestino);
                         
                     }
                     catch (Exception ex)
                     {
                         lstContratosPdf.Remove(item);
-                        string _detalhes = "Metodo: PopulaContrato - Classe: BusinessCabecalho - Ação: tentativa de gerear o registro no arquivo TL16CONT.txt";
+                        string _detalhes = "Metodo: PopulaContrato - Classe: BusinessCabecalho - 002 Ação: tentativa de gerear o registro no arquivo TL16CONT.txt";
                         ExceptionError.TrataErros(ex, c.Contrato, _detalhes, _diretorioDestino);
                        
                     }
@@ -1012,7 +1011,7 @@ namespace ConvetPdfToLayoutAlta.Models
                 string _novaOcorrencia, altaRepac,strCabecalhoOcorrencia;
                 strAlta = strCabecalhoOcorrencia = altaRepac = string.Empty;
 
-                bool _consistencia = false, isOcorrenciaWrite =  false;
+                bool isOcorrenciaWrite =  false;
                 Parcela _parcela = null;
                 Cabecalho _cabecalho = null, _cabecalhoAnterior = null;
                 List<string> lstTipoOcorrencia = new List<string>() { "004", "005", "010" };
@@ -1242,12 +1241,13 @@ namespace ConvetPdfToLayoutAlta.Models
                                             strAlta = string.IsNullOrWhiteSpace(_novaOcorrencia) ? strCabecalhoOcorrencia : _novaOcorrencia;
 
                                            // hasDiferenca = true;
-                                            if (_consistencia)
-                                            {
-                                                strAlta = string.Format("{0}", (q.Carteira.Substring(2, 2) + o.Contrato).PadRight(15, '0'));
-                                                strAlta += string.Format("{0}{1}", o.Vencimento.Trim().Trim().PadRight(10, '0'), o.Pagamento.Trim().Trim().PadRight(10, '0'));
-                                                strAlta += string.Format("{0}", o.Descricao.Trim().PadRight(36, ' '));
-                                            }
+                                           // NUNCA IRIA ENTRAR NESSE BLOCO, MAS VAMOS DEIXAR AQUI
+                                            //if (_consistencia)
+                                            //{
+                                            //    strAlta = string.Format("{0}", (q.Carteira.Substring(2, 2) + o.Contrato).PadRight(15, '0'));
+                                            //    strAlta += string.Format("{0}{1}", o.Vencimento.Trim().Trim().PadRight(10, '0'), o.Pagamento.Trim().Trim().PadRight(10, '0'));
+                                            //    strAlta += string.Format("{0}", o.Descricao.Trim().PadRight(36, ' '));
+                                            //}
 
                                             strAlta += string.Format("{0}{1}{2}{3}", "0".PadLeft(54, '0'), "0".PadLeft(17, '0') + "+", o.SaldoDevedor.Trim().PadLeft(18, '0'), "PRAZO".PadRight(30, ' '));
 
@@ -1272,37 +1272,114 @@ namespace ConvetPdfToLayoutAlta.Models
                                         #region PLANO
                                         if (!_cabecalhoAnterior.Plano.Equals(_cabecalho.Plano))
                                         {
+                                            hasTypeOccurrence = true;
 
-                                        }
-                                        #endregion
-                                        // SE A OCORRENCIA 010 NÃO FOR DO TIPO [TAXA DE JUTOS, PRAZO, APOLICE, REPACTUAÇÃO], ESCREVE SOMENTE O CONTRATO E O TIPO DA OCORRENCIA
-                                        if (!hasTypeOccurrence)
-                                        {
-                                            if (strAlta.Length > 15)
-                                            {
-                                                strAlta = strAlta.PadRight(281, ' ');
-                                                escreverOcorrencia.WriteLine(strAlta);
-                                            }
+                                            strAlta = string.IsNullOrWhiteSpace(_novaOcorrencia) ? strCabecalhoOcorrencia : _novaOcorrencia;
+                                            strAlta += string.Format("{0}{1}{2}{3}", "0".PadLeft(54, '0'), "0".PadLeft(17, '0') + "+", o.SaldoDevedor.Trim().PadLeft(18, '0'), "PLANO".PadRight(30, ' '));
+                                            strAlta += string.Format("{0}{1}", _cabecalho.Plano.Trim().PadRight(30, ' '), _cabecalhoAnterior.Plano.Trim().PadRight(30, ' '));
+
+                                            strAlta = strAlta.PadRight(281, ' ');
+                                            escreverOcorrencia.WriteLine(strAlta);
                                             strAlta = string.Empty;
                                         }
+                                        #endregion
+
+                                        #region SISTEMA
+                                        if (!_cabecalhoAnterior.Sistema.Equals(_cabecalho.Sistema))
+                                        {
+                                            hasTypeOccurrence = true;
+
+                                            strAlta = string.IsNullOrWhiteSpace(_novaOcorrencia) ? strCabecalhoOcorrencia : _novaOcorrencia;
+                                            strAlta += string.Format("{0}{1}{2}{3}", "0".PadLeft(54, '0'), "0".PadLeft(17, '0') + "+", o.SaldoDevedor.Trim().PadLeft(18, '0'), "SISTEMA".PadRight(30, ' '));
+                                            strAlta += string.Format("{0}{1}", _cabecalho.Sistema.Trim().PadRight(30, ' '), _cabecalhoAnterior.Sistema.Trim().PadRight(30, ' '));
+
+                                            strAlta = strAlta.PadRight(281, ' ');
+                                            escreverOcorrencia.WriteLine(strAlta);
+                                            strAlta = string.Empty;
+                                        }
+                                        #endregion
+
+                                        #region REAJUSTE
+                                        if (!_cabecalhoAnterior.Reajuste.Equals(_cabecalho.Reajuste))
+                                        {
+                                            hasTypeOccurrence = true;
+
+                                            strAlta = string.IsNullOrWhiteSpace(_novaOcorrencia) ? strCabecalhoOcorrencia : _novaOcorrencia;
+                                            strAlta += string.Format("{0}{1}{2}{3}", "0".PadLeft(54, '0'), "0".PadLeft(17, '0') + "+", o.SaldoDevedor.Trim().PadLeft(18, '0'), "REAJUSTE".PadRight(30, ' '));
+                                            strAlta += string.Format("{0}{1}", _cabecalho.Reajuste.Trim().PadRight(30, ' '), _cabecalhoAnterior.Reajuste.Trim().PadRight(30, ' '));
+
+                                            strAlta = strAlta.PadRight(281, ' ');
+                                            escreverOcorrencia.WriteLine(strAlta);
+                                            strAlta = string.Empty;
+                                        }
+                                        #endregion
+
+                                        #region DATA DE CONTRATO
+                                        if (!_cabecalhoAnterior.DataContrato.Equals(_cabecalho.DataContrato))
+                                        {
+                                            hasTypeOccurrence = true;
+
+                                            strAlta = string.IsNullOrWhiteSpace(_novaOcorrencia) ? strCabecalhoOcorrencia : _novaOcorrencia;
+                                            strAlta += string.Format("{0}{1}{2}{3}", "0".PadLeft(54, '0'), "0".PadLeft(17, '0') + "+", o.SaldoDevedor.Trim().PadLeft(18, '0'), "DTCONTRATO".PadRight(30, ' '));
+                                            strAlta += string.Format("{0}{1}", _cabecalho.DataContrato.Trim().PadRight(30, ' '), _cabecalhoAnterior.DataContrato.Trim().PadRight(30, ' '));
+
+                                            strAlta = strAlta.PadRight(281, ' ');
+                                            escreverOcorrencia.WriteLine(strAlta);
+                                            strAlta = string.Empty;
+                                        }
+                                        #endregion
+
+                                        #region VALOR FINANCIADO
+                                        if (!_cabecalhoAnterior.ValorFinanciamento.Equals(_cabecalho.ValorFinanciamento))
+                                        {
+                                            hasTypeOccurrence = true;
+
+                                            strAlta = string.IsNullOrWhiteSpace(_novaOcorrencia) ? strCabecalhoOcorrencia : _novaOcorrencia;
+                                            strAlta += string.Format("{0}{1}{2}{3}", "0".PadLeft(54, '0'), "0".PadLeft(17, '0') + "+", o.SaldoDevedor.Trim().PadLeft(18, '0'), "VRFINANCIAMENTO".PadRight(30, ' '));
+                                            strAlta += string.Format("{0}{1}", _cabecalho.ValorFinanciamento.Trim().PadRight(30, ' '), _cabecalhoAnterior.ValorFinanciamento.Trim().PadRight(30, ' '));
+
+                                            strAlta = strAlta.PadRight(281, ' ');
+                                            escreverOcorrencia.WriteLine(strAlta);
+                                            strAlta = string.Empty;
+                                        }
+                                        #endregion
+
+                                        #region VALOR PRESTAÇÃO
+                                        if (!_cabecalhoAnterior.Prestacao.Equals(_cabecalho.Prestacao))
+                                        {
+                                            hasTypeOccurrence = true;
+
+                                            strAlta = string.IsNullOrWhiteSpace(_novaOcorrencia) ? strCabecalhoOcorrencia : _novaOcorrencia;
+                                            strAlta += string.Format("{0}{1}{2}{3}", "0".PadLeft(54, '0'), "0".PadLeft(17, '0') + "+", o.SaldoDevedor.Trim().PadLeft(18, '0'), "VRPRESTACAO".PadRight(30, ' '));
+                                            strAlta += string.Format("{0}{1}", _cabecalho.Prestacao.Trim().PadRight(30, ' '), _cabecalhoAnterior.Prestacao.Trim().PadRight(30, ' '));
+
+                                            strAlta = strAlta.PadRight(281, ' ');
+                                            escreverOcorrencia.WriteLine(strAlta);
+                                            strAlta = string.Empty;
+                                        }
+                                        #endregion
+                                       
 
                                         #region DATA 1º VENCIMENTO 
 
                                         // Usando o contrato 72189230001887, foi definido com o Agles e Luiz, que dentro da ocorrencia 010, não é necessario validar a Data de Primeiro Vencimento
                                         // DATA: 08/20/2019
 
-                                        //if (!_cabecalhoAnterior.DataPrimeiroVencimento.Equals(_cabecalho.DataPrimeiroVencimento)) // ALTERAÇÃO NA DATA DO 1º. VENCIMENTO DA PARCELA
-                                        //{
-                                        //    strAlta = _novaOcorrencia;
-                                        //    hasDiferenca = true;
-                                        //    strAlta += string.Format("{0}{1}", "0".PadLeft(72, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'));
-                                        //    strAlta += string.Format("{0}", Convert.ToDateTime((_parcela == null ? _cabecalho.DataGarantia : _parcela.Vencimento)).ToString("yyyyMMdd").Trim().PadRight(30, ' '));
-                                        //    strAlta += string.Format("{0}", _cabecalho.DataPrimeiroVencimento.PadRight(30, ' '));
-                                        //    strAlta += string.Format("{0}", _cabecalhoAnterior.DataPrimeiroVencimento.Trim().PadRight(60, ' '));
-                                        //    strAlta = strAlta.PadRight(281, ' ');
-                                        //    escreverOcorrencia.WriteLine(strAlta);
-                                        //    strAlta = string.Empty;
-                                        //}
+                                        if (!_cabecalhoAnterior.DataPrimeiroVencimento.Equals(_cabecalho.DataPrimeiroVencimento)) // ALTERAÇÃO NA DATA DO 1º. VENCIMENTO DA PARCELA
+                                        {
+                                            hasTypeOccurrence = true;
+
+                                            strAlta = string.IsNullOrWhiteSpace(_novaOcorrencia) ? strCabecalhoOcorrencia : _novaOcorrencia;
+
+                                            //hasDiferenca = true;
+                                            strAlta += string.Format("{0}{1}{2}", "0".PadLeft(72, '0'), o.SaldoDevedor.Trim().PadLeft(18, '0'), "DTVENCIMENTO".PadRight(30, ' '));
+                                            strAlta += string.Format("{0}", Convert.ToDateTime((_parcela == null ? _cabecalho.DataGarantia : _parcela.Vencimento)).ToString("yyyyMMdd").Trim().PadRight(30, ' '));
+                                            strAlta += string.Format("{0}", _cabecalho.DataPrimeiroVencimento.PadRight(30, ' '));
+                                            strAlta += string.Format("{0}", _cabecalhoAnterior.DataPrimeiroVencimento.Trim().PadRight(60, ' '));
+                                            strAlta = strAlta.PadRight(281, ' ');
+                                            escreverOcorrencia.WriteLine(strAlta);
+                                            strAlta = string.Empty;
+                                        }
 
                                         //if (!hasDiferenca)
                                         //{
@@ -1316,6 +1393,17 @@ namespace ConvetPdfToLayoutAlta.Models
                                         //}
 
                                         #endregion
+                                       
+                                        // SE A OCORRENCIA 010 NÃO FOR DO TIPO [TAXA DE JUTOS, PRAZO, APOLICE, REPACTUAÇÃO], ESCREVE SOMENTE O CONTRATO E O TIPO DA OCORRENCIA
+                                        if (!hasTypeOccurrence)
+                                        {
+                                            if (strAlta.Length > 15)
+                                            {
+                                                strAlta = strAlta.PadRight(281, ' ');
+                                                escreverOcorrencia.WriteLine(strAlta);
+                                            }
+                                            strAlta = string.Empty;
+                                        }
                                     }
 
 
@@ -1539,7 +1627,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                     escreverOcorrencia.WriteLine(strAlta);
 
                                 _parcela = null;
-                                _consistencia = isOcorrenciaWrite = false;
+                                isOcorrenciaWrite = false;
                                 strAlta = string.Empty;
                             }
                             catch (Exception exOc)
@@ -1624,7 +1712,6 @@ namespace ConvetPdfToLayoutAlta.Models
             #endregion
 
             strAlta = string.Empty;
-
 
             #region BLOCO QUE GERA O ARQUIVO DE CRONOGRAMA
             //======================= BLOCO QUE GERA O ARQUIVO DE CRONOGRAMA ===================================================

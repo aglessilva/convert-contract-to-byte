@@ -5,7 +5,9 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -19,10 +21,20 @@ namespace ConvetPdfToLayoutAlta
             InitializeComponent();
         }
 
+         
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            List<DirectoryInfo> _diretorio = new DirectoryInfo(@"\\mscluster40fs\plataformaPF2\TOMBAMENTO_PF\Processamento\").GetDirectories().ToList();
+            const string path = @"\\mscluster40fs\plataformaPF2\TOMBAMENTO_PF\Processamento\";
+
+           if (!VerificaAcesso(path))
+            {
+                MessageBox.Show($"Descrição: Acesso negado!\n\nUsuário {Environment.UserName} não tem permissão de acesso ao diretório para realizar o download dos contratos.\nSolicite autorização ao gestor do diretório", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                return;
+            }
+
+            List<DirectoryInfo> _diretorio = new DirectoryInfo(path).GetDirectories().ToList();
+
             List<object> listDatas = new List<object>();
             _diretorio.ForEach(f => {
                 var item = new { isvalues = false, folderData = f.Name };
@@ -40,7 +52,7 @@ namespace ConvetPdfToLayoutAlta
             }
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnDownload_Click(object sender, EventArgs e)
         {
             string strDatas = string.Empty;
 
@@ -65,7 +77,7 @@ namespace ConvetPdfToLayoutAlta
             f.ShowDialog();
             Hide();
             FrmSelectFolder frmSelect = new FrmSelectFolder(folderBrowserDialog1.SelectedPath, true);
-            frmSelect.ShowDialog();
+            frmSelect.ShowDialog(); 
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -75,9 +87,86 @@ namespace ConvetPdfToLayoutAlta
             frmSelect.ShowDialog();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+       
+
+        private void FrmFoders_Load(object sender, EventArgs e)
         {
-           
+            try
+            {
+                if(!File.Exists($@"{Directory.GetCurrentDirectory()}\config\QUERY_FOR_FILTER_FOR_QUERY__000.xlsx"))
+                {
+                    MessageBox.Show("O arquivo 'QUERY_FOR_FILTER_FOR_QUERY__000.xlsx' para consulta do número do BEM dos contratos, não foi encontrato na pasta 'config'", "ERRO", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                    Close();
+                }
+
+                if (Ambiente.listGTBem.Count == 0)
+                {
+                    Task threadInput = new Task(() =>
+                    {
+                        EnabledDisabled(true);
+                        Ambiente.GetContratoNumeroBem();
+                        EnabledDisabled(false);
+                    });
+                    threadInput.Start();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ocorreu um erro na tentantida de pesquisa..\nERRO: " + ex.Message, "ERRO", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+            }
+        }
+
+        void EnabledDisabled(bool setLoad)
+        {
+            if (setLoad)
+                Invoke((MethodInvoker)delegate
+                    {
+                        Cursor = Cursors.WaitCursor;
+                        panelload.Visible = setLoad;
+                    });
+            else
+                Invoke((MethodInvoker)delegate
+                    {
+                        panelload.Visible = setLoad;
+                        Cursor = Cursors.Default;
+                    });
+
+        }
+
+        
+        private void BtnVoltar_Click(object sender, EventArgs e)
+        {
+            panelNovaExtracao.Visible = !panelNovaExtracao.Visible;
+        }
+        
+
+        bool VerificaAcesso(string directoryPath)
+        {
+            bool isWriteAccess = false;
+            try
+            {
+                AuthorizationRuleCollection collection = Directory.GetAccessControl(directoryPath).GetAccessRules(true, true, typeof(System.Security.Principal.NTAccount));
+                foreach (FileSystemAccessRule rule in collection)
+                {
+                    if (rule.AccessControlType == AccessControlType.Allow)
+                    {
+                        isWriteAccess = true;
+                        break;
+                    }
+                }
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                isWriteAccess = false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro na tentativa de inicializar o sistema\n" + ex.Message, "ERRO", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Close();
+            }
+
+
+            return isWriteAccess;
         }
     }
 }

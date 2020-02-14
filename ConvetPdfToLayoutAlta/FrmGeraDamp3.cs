@@ -123,7 +123,8 @@ namespace ConvetPdfToLayoutAlta
 
         private void backgroundWorkerDamp3_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            MessageBox.Show("Arquivo de Damp Atualizado!!!", "Finalizado com Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            if (!isnewExtact)
+                MessageBox.Show("Arquivo de Damp Atualizado!!!", "Finalizado com Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
             File.Copy(arquivoCTO068A, Directory.GetCurrentDirectory() + @"\config\CTO068A.txt", true);
             Close();
         }

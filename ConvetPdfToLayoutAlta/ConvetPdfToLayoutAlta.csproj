@@ -347,6 +347,7 @@
     <None Include="Resources\folder_my_documents_22605.ico" />
     <None Include="Resources\download_arrow_14460.ico" />
     <None Include="Resources\home_243.ico" />
+    <None Include="Resources\ajax-loader.gif" />
     <Content Include="Resources\txtdocument_text_tx_9804.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,6 +1,5 @@
 ﻿using ConvetPdfToLayoutAlta.FluentApi;
 using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration;
 using System.Data.Entity.ModelConfiguration.Conventions;
 
 namespace ConvetPdfToLayoutAlta.Models
@@ -29,4 +28,7 @@ namespace ConvetPdfToLayoutAlta.Models
             base.OnModelCreating(modelBuilder); 
         }
     }
+
+
+
 }

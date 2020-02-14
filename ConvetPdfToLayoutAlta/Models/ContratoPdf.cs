@@ -19,6 +19,7 @@ namespace ConvetPdfToLayoutAlta.Models
         }
         public string Carteira { get; set; }
         public string Contrato { get; set; }
+        public string Bem { get; set; }
         public List<Cabecalho> Cabecalhos { get; set; }
         public List<Parcela> Parcelas { get; set; }
         public List<Ocorrencia> Ocorrencias { get; set; }
