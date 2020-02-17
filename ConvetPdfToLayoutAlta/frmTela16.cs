@@ -827,6 +827,10 @@ namespace ConvetPdfToLayoutAlta
                                     item4 = diretorioOrigemPdf
                                 };
 
+                                if (_thread != null)
+                                    if (_thread.ThreadState == System.Threading.ThreadState.Running)
+                                        _thread.Join();
+
                                 _thread = new Thread(new ParameterizedThreadStart(businessCabecalho.PopulaContrato));
                                 _thread.Start(tab);
 
