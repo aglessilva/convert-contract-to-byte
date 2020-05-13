@@ -268,7 +268,6 @@ namespace ConvetPdfToLayoutAlta
 
         private void backgroundWorkerHistParcelas_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-           
             string tmp = string.Format("Tempo de Execução: {0}:{1}:{2}:{3} ms", stopwatch.Elapsed.Hours, stopwatch.Elapsed.Minutes, stopwatch.Elapsed.Seconds, stopwatch.Elapsed.Milliseconds);
             MessageBox.Show("Armazenamento conlcuído\n"+tmp, "Historico de Parcelas", MessageBoxButtons.OK, MessageBoxIcon.Information);
             Close();

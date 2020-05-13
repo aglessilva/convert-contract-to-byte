@@ -203,6 +203,16 @@ namespace ConvetPdfToLayoutAlta.Properties {
         /// <summary>
         ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap microsoft_office_excel {
+            get {
+                object obj = ResourceManager.GetObject("microsoft-office-excel", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap ok_exceptapplicable_or_1090 {
             get {
                 object obj = ResourceManager.GetObject("ok_exceptapplicable_or_1090", resourceCulture);

@@ -60,10 +60,13 @@ namespace ConvetPdfToLayoutAlta.Models
         {
             try
             {
+                List<OcorrenciaBulk> lst = null; 
                 using (DbConnEntity dbConnEntity = new DbConnEntity())
                 {
-                    return dbConnEntity.Ocorrencias.Where(hp => hp.Contrato.Equals(_numeroContrato.Trim())).ToList();
+                    lst = dbConnEntity.Ocorrencias.Where(hp => hp.Contrato.Equals(_numeroContrato.Trim())).ToList();
                 }
+
+                return lst;
             }
 
             catch (Exception sqlExe)

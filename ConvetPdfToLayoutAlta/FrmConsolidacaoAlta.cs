@@ -104,7 +104,10 @@ namespace ConvetPdfToLayoutAlta
                 while (!sw.EndOfStream)
                 {
                     linha = sw.ReadLine();
+                    if (linha.Length > 650)
+                        MessageBox.Show($"Linha disposicionada\n\n{linha}", "Disposicionamento", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                     tbl16Cont.Rows.Add(string.Format("01{0}1", linha.Substring(0, 15)));
+                    linha = "";
                 }
             }
             #endregion

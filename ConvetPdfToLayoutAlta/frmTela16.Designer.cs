@@ -147,7 +147,7 @@
             this.lblTempo.Text = "Tempo";
             this.lblTempo.UseWaitCursor = true;
             // 
-            // frmGerarLayoutAlta
+            // FrmTela16
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -156,7 +156,9 @@
             this.Controls.Add(this.progressBarReaderPdf);
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Name = "frmGerarLayoutAlta";
+            this.Name = "FrmTela16";
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "frmGerarLayoutAlta";
             this.UseWaitCursor = true;

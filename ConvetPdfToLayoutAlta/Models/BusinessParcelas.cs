@@ -54,7 +54,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                     _pagamento.Insert(1, "01/01/0001");
                             }
 
-                            if(!_pagamento.Any(f => Regex.IsMatch(_pagamento[3], @"(^\d{1},\d{6}$)")))
+                            if(_pagamento.FindIndex(f => Regex.IsMatch(f, @"(^\d{1},\d{6}$)")) != 3)
                                 _pagamento.Insert(3, "0");
 
                             _obj.Vencimento = Regex.Replace(_pagamento.FirstOrDefault(), @"[^0-9\/$]", ""); _pagamento.RemoveAt(0);
@@ -62,8 +62,12 @@ namespace ConvetPdfToLayoutAlta.Models
                             _obj.NumeroPrazo = Regex.Replace(_pagamento.FirstOrDefault(), @"[^0-9$]", ""); _pagamento.RemoveAt(0);
                             _obj.Indice =  Regex.Replace(_pagamento.FirstOrDefault(), @"[^0-9$]", ""); _pagamento.RemoveAt(0);
                             _obj.Prestacao = Regex.Replace(_pagamento.FirstOrDefault(), @"[^0-9$]", "");  _pagamento.RemoveAt(0);
-                            _obj.Seguro = Regex.Replace(_pagamento.FirstOrDefault(), @"[^0-9$]", ""); _pagamento.RemoveAt(0);
 
+                            if (_pagamento.Count > 1)
+                            {
+                                _obj.Seguro = Regex.Replace(_pagamento.FirstOrDefault(), @"[^0-9$]", "");
+                                _pagamento.RemoveAt(0);
+                            }
 
                             if (_pagamento.Count == 1)
                             {
@@ -162,21 +166,34 @@ namespace ConvetPdfToLayoutAlta.Models
 
                             if (_linha.Count(u => Regex.IsMatch(u, @"(^\d{2}\/\d{2}\/\d{4}$)")) == 2)
                             {
-                                _obj.Proc_Emi_Pag = Regex.Replace(_linha[0] + _linha[1], @"[^0-9\/$]", "");
+                                _obj.Proc_Emi_Pag = Regex.Replace(string.Join(" ", _linha.Where(m => Regex.IsMatch(m.Trim(), @"(^\d{2}\/\d{2}\/\d{4}$)")).ToArray()), @"[^0-9\/$]", "");
 
-                                if (_linha.Length == 3)
+                                // Remove os valores do Array do campo Proc_Emi_Pag
+                                var removeItem =  _linha.ToList();
+                                removeItem.RemoveAll(r => Regex.IsMatch(r.Trim(), @"(^\d{2}\/\d{2}\/\d{4}$)") || r.Equals("000"));
+                                _linha = removeItem.ToArray();
+
+                                if (_linha.Length == 1)
+                                {
+                                    if (lstDampFgts.Any(p => p.Contrato.Equals(_contrato) && p.DataVencimento.Equals(_obj.Vencimento.Trim())))
+                                        _obj.Fgts = _obj.Fgts == "0" ? Regex.Replace(_linha[0], @"[^0-9$]", "") : "0";
+                                    else
+                                        _obj.Mora  = _obj.Mora == "0" ? Regex.Replace(_linha[0], @"[^0-9$]", "") : "0";
+                                }
+
+                                if (_linha.Length == 2)
                                 {
                                     // não foi definido se iremos utilizar p campo "DataBase" ou "DataEmissao"
                                     // optamos por utilizar "DataEmissao", até o que o Luis esclareça essa dúvida com a Andrea
                                     //Data de Correção: 22/11/2019
                                     if (lstDampFgts.Any(p => p.Contrato.Equals(_contrato) && p.DataVencimento.Equals(_obj.Vencimento.Trim())))
-                                        _obj.Fgts = _obj.Fgts == "0" ? Regex.Replace(_linha[2], @"[^0-9$]", "") : "0";
-                                        else
-                                            if (Convert.ToDateTime(cabecalho.DataEmicao) <= Convert.ToDateTime(_obj.Vencimento))
-                                                _obj.Mora = _obj.Mora = "0";
-                                            else
-                                                if (Convert.ToInt32((Convert.ToDecimal(_linha[2]) / Convert.ToDecimal(_obj.Encargo)) * 100) <= 80)
-                                                    _obj.Mora = _obj.Mora == "0" ? Regex.Replace(_linha[2], @"[^0-9$]", "") : "0";
+                                        _obj.Fgts = _obj.Fgts == "0" ? Regex.Replace(_linha[0], @"[^0-9$]", "") : "0";
+                                       
+                                    if (Convert.ToDateTime(cabecalho.DataEmicao) <= Convert.ToDateTime(_obj.Vencimento))
+                                        _obj.Mora = _obj.Mora = "0";
+                                    else
+                                        if (Convert.ToInt32((Convert.ToDecimal(_linha[0]) / Convert.ToDecimal(_obj.Encargo)) * 100) <= 80)
+                                            _obj.Mora = _obj.Mora == "0" ? Regex.Replace(_linha[1], @"[^0-9$]", "") : "0";
 
                                 }
 
@@ -188,7 +205,7 @@ namespace ConvetPdfToLayoutAlta.Models
                             }
 
                             if (_linha.Count(u => Regex.IsMatch(u, @"(^\d{2}\/\d{2}\/\d{4}$)")) > 2)
-                                _obj.Proc_Emi_Pag = Regex.Replace(_linha[1] + _linha[2], @"[^0-9\/$]", "");
+                                _obj.Proc_Emi_Pag = Regex.Replace(string.Join(" ", _linha.Where(m => Regex.IsMatch(m.Trim(), @"(^\d{2}\/\d{2}\/\d{4}$)")).Skip(1).Take(2).ToArray()), @"[^0-9\/$]", "");
 
                             break;
                         }
@@ -312,7 +329,7 @@ namespace ConvetPdfToLayoutAlta.Models
                 if (_linhaOcorrencia.Length < 2)
                     return _obj;
 
-                _codigoOcorrencia = _linhaOcorrencia.Any(u => u.Trim().Equals("DAMP")) ? _linhaOcorrencia[0] : Regex.Replace(_linhaOcorrencia[2], @"[^0-9$]", "").Substring(0, 3);
+                _codigoOcorrencia = _linhaOcorrencia.Any(u => u.Trim().Equals("DAMP")) ? _linhaOcorrencia[0] : _linhaOcorrencia.Count(p => Regex.IsMatch(p, @"(^\d{2}\/\d{2}\/\d{4}$)")) == 1 ? Regex.Replace(_linhaOcorrencia[1], @"[^0-9$]", "").Substring(0, 3) : Regex.Replace(_linhaOcorrencia[2], @"[^0-9$]", "").Substring(0, 3);
                 bool hasMora = _linhaOcorrencia.Any(t => t.Contains("Tot"));
 
                     if (_linhaOcorrencia.Any(d => d.Equals("DAMP")))
@@ -385,6 +402,26 @@ namespace ConvetPdfToLayoutAlta.Models
                             _obj.Descricao = "***010Alteração Contratual";
                             break;
                         }
+                    case "011": // Prorrogação de Prazo
+                        {
+                            _case = "011 - Metodo: TrataOcorrencia -  Situação: Alteração Contratual( Prorrogação de Prazo)";
+
+                            _obj.Vencimento = _linhaOcorrencia[0].Trim();
+                            _obj.Pagamento = _linhaOcorrencia[1].Trim();
+                            _obj.CodigoOcorrencia = _codigoOcorrencia;
+                            if (_linhaOcorrencia.Length == 4)
+                            {
+                                _obj.Amortizacao = "0";
+                                _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[3].Trim(), @"[^0-9$]", "");
+                            }
+                            else
+                            {
+                                _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[3].Trim(), @"[^0-9$\/-]", "");
+                                _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[4].Trim(), @"[^0-9$]", "");
+                            }
+                            _obj.Descricao = "***011Prorrogação de Prazo";
+                            break;
+                        }
                     case "012": // Crescimento tx.Juros
                         {
                             _case = "012 - Metodo: TrataOcorrencia -  Situação: Crescimento tx.Juros";
@@ -449,6 +486,30 @@ namespace ConvetPdfToLayoutAlta.Models
                             _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[(_linhaOcorrencia.Length - 2)].Trim(), @"[^0-9$\/-]", "");
                             _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[_linhaOcorrencia.Length - 1].Trim(), @"[^0-9$]", "");
                             _obj.Descricao = "***022Sinistro parcial";
+                            break;
+                        }
+                    case "023": // amortização extra 
+                        {
+                            _case = "023 - Metodo: TrataOcorrencia -  Situação: Amortização Extra";
+
+                            _obj.Vencimento = _linhaOcorrencia[0].Trim();
+                            _obj.Pagamento = _linhaOcorrencia[1].Trim();
+                            _obj.CodigoOcorrencia = _codigoOcorrencia;
+                            _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[3].Trim(), @"[^0-9$\/-]", "");
+                            _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[4].Trim(), @"[^0-9$]", "");
+                            _obj.Descricao = "***023Amortização Extra";
+                            break;
+                        }
+                    case "024": // amortização extra 
+                        {
+                            _case = "023 - Metodo: TrataOcorrencia -  Situação: Amortização Extra";
+
+                            _obj.Vencimento = _linhaOcorrencia[0].Trim();
+                            _obj.Pagamento = _linhaOcorrencia[1].Trim();
+                            _obj.CodigoOcorrencia = _codigoOcorrencia;
+                            _obj.Amortizacao = Regex.Replace(_linhaOcorrencia[3].Trim(), @"[^0-9$\/-]", "");
+                            _obj.SaldoDevedor = Regex.Replace(_linhaOcorrencia[4].Trim(), @"[^0-9$]", "");
+                            _obj.Descricao = "***024Amortização Extra";
                             break;
                         }
                     case "028": // Amortização s/recalculo 
@@ -773,67 +834,75 @@ namespace ConvetPdfToLayoutAlta.Models
             List<string> x, y;
             x = y = new List<string>();
 
-            for (int i = _numberLine; i < arrayPagina.Length; i++)
+            try
             {
-                if (arrayPagina[i].Trim() == _linhaAtual)
+                for (int i = _numberLine; i < arrayPagina.Length; i++)
                 {
-                    //if ((arrayPagina[(i + 1)].Trim().Split(' ').Length < 5) && (!arrayPagina[(i + 1)].Trim().Contains("ANT") || !arrayPagina[(i + 1)].Trim().Contains("COR")))
-                    if (arrayPagina[(i + 1)].Split(' ').Any(t => Regex.IsMatch(t, @"(^\d{6}.\d{1}$)")) || arrayPagina[(i + 1)].Split(' ').Any(t => Regex.IsMatch(t, @"(^\d{1},\d{6}$)")))
-                        y = arrayPagina[(i + 1)].Split(' ').Where(j => !string.IsNullOrWhiteSpace(j)).ToList();
-                   else
+                    if (arrayPagina[i].Trim() == _linhaAtual)
                     {
-                        y = arrayPagina[(i - 1)].Split(' ').Where(j => !string.IsNullOrWhiteSpace(j)).ToList();
-                    }
-
-                    x = _linhaAtual.Split(' ').ToList();
-
-                    if(y.Any(t => t.Equals("COR")))
-                        return x.ToArray();
-
-                    if (y.Any(h => h.Contains("*")))
-                        return x.ToArray();
-
-                    if(y.Any(h => Regex.IsMatch(h, @"(^\d{1,2}:\d{1,2}:\d{1,2}$)")))
-                        return x.ToArray();
-
-                    if (string.Join(" ", y).Contains("00/00/0000"))
-                        return x.ToArray();
-
-                    if(y.Any(r => Regex.IsMatch(r.Trim(), @"(^\d{6}.\d{1}$)")))
-                        return x.ToArray();
-
-                    if(y.Any(r => Regex.IsMatch(r.Trim(), @"(^\d{1,2}:\d{1,2}:\d{1,2}$)")))
-                        return x.ToArray();
-
-                    string _ordenValor = y.Find(r => Regex.IsMatch(r.Trim(), @"(^\d{1},\d{6}$)"));
-
-                    if (!string.IsNullOrWhiteSpace(_ordenValor))
-                    {
-                        int sequencia = x.FindIndex(u => Regex.IsMatch(u, @"(^\d{3}\/\d{3}$)"));
-
-                        x.Insert((sequencia + 1), _ordenValor);
-                        y.Remove(_ordenValor);
-                        _ordenValor = y.Find(r => Regex.IsMatch(r.Trim(), @"(^\d{2}\/\d{2}\/\d{4}$)"));
-
-                        if (string.IsNullOrWhiteSpace(_ordenValor))
-                        {
-                            x.Insert(1, "INCORP");
-                            y.RemoveAll(r => r.Contains("INCORP"));
-                        }
+                        //if ((arrayPagina[(i + 1)].Trim().Split(' ').Length < 5) && (!arrayPagina[(i + 1)].Trim().Contains("ANT") || !arrayPagina[(i + 1)].Trim().Contains("COR")))
+                        if (arrayPagina[(i + 1)].Split(' ').Any(t => Regex.IsMatch(t, @"(^\d{6}.\d{1}$)")) || arrayPagina[(i + 1)].Split(' ').Any(t => Regex.IsMatch(t, @"(^\d{1},\d{6}$)")))
+                            y = arrayPagina[(i + 1)].Split(' ').Where(j => !string.IsNullOrWhiteSpace(j)).ToList();
                         else
                         {
-                            x.Insert(1, _ordenValor);
-                            y.Remove(_ordenValor);
+                            y = arrayPagina[(i - 1)].Split(' ').Where(j => !string.IsNullOrWhiteSpace(j)).ToList();
                         }
-                        x.Insert(5, y[0]);
+
+                        x = _linhaAtual.Split(' ').ToList();
+
+                        if (y.Any(t => t.Equals("COR")))
+                            return x.ToArray();
+
+                        if (y.Any(h => h.Contains("*")))
+                            return x.ToArray();
+
+                        if (y.Any(h => Regex.IsMatch(h, @"(^\d{1,2}:\d{1,2}:\d{1,2}$)")))
+                            return x.ToArray();
+
+                        if (string.Join(" ", y).Contains("00/00/0000"))
+                            return x.ToArray();
+
+                        if (y.Any(r => Regex.IsMatch(r.Trim(), @"(^\d{6}.\d{1}$)")))
+                            return x.ToArray();
+
+                        if (y.Any(r => Regex.IsMatch(r.Trim(), @"(^\d{1,2}:\d{1,2}:\d{1,2}$)")))
+                            return x.ToArray();
+
+                        string _ordenValor = y.Find(r => Regex.IsMatch(r.Trim(), @"(^\d{1},\d{6}$)"));
+
+                        if (!string.IsNullOrWhiteSpace(_ordenValor))
+                        {
+                            int sequencia = x.FindIndex(u => Regex.IsMatch(u, @"(^\d{3}\/\d{3}$)"));
+
+                            x.Insert((sequencia + 1), _ordenValor);
+                            y.Remove(_ordenValor);
+                            _ordenValor = y.Find(r => Regex.IsMatch(r.Trim(), @"(^\d{2}\/\d{2}\/\d{4}$)"));
+
+                            if (string.IsNullOrWhiteSpace(_ordenValor))
+                            {
+                                x.Insert(1, "INCORP");
+                                y.RemoveAll(r => r.Contains("INCORP"));
+                            }
+                            else
+                            {
+                                x.Insert(1, _ordenValor);
+                                y.Remove(_ordenValor);
+                            }
+                            if (x.Count >= 5 && y.Count > 0)
+                                x.Insert(5, y[0]);
+                        }
+
+                        break;
                     }
-
-                    break;
                 }
-            }
 
-            x.Remove("COR");
-            x.RemoveAll(rem => string.IsNullOrWhiteSpace(rem));
+                x.Remove("COR");
+                x.RemoveAll(rem => string.IsNullOrWhiteSpace(rem));
+            }
+            catch (Exception exErro)
+            {
+                throw exErro;
+            }
 
             return x.ToArray();
         }
@@ -894,6 +963,7 @@ namespace ConvetPdfToLayoutAlta.Models
             return table;
         }
 
+
         public void AddBulkItens(object _dataTable)
         {
             DataTable dataTable = (DataTable)_dataTable.GetType().GetProperty("item1").GetValue(_dataTable, null);
@@ -918,6 +988,7 @@ namespace ConvetPdfToLayoutAlta.Models
                 }
 
                 dataTable = null;
+               
             }
             catch (Exception exdb)
             {

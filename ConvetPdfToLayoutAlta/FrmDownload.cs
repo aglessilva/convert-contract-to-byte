@@ -22,7 +22,7 @@ namespace ConvetPdfToLayoutAlta
         public FrmDownload(List<string> _lstFoldes, string _diretorioDestino)
         {
             InitializeComponent();
-
+    
             diretorioDestinoALTA = _diretorioDestino + @"\";
             lstDiretoriosFoldes = _lstFoldes;
         }

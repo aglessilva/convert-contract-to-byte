@@ -152,6 +152,8 @@ namespace ConvetPdfToLayoutAlta.Models
                                             .Replace("TAXA", ":TAXA").Trim()
                                             .Replace("Razão", ":Razao").Trim()
                                             .Replace("IOF.SEG", ":SEG").Trim()
+                                            .Replace("SEG.1.PARCELA", ":PARCELA").Trim()
+                                            .Replace("IOF", ":IOF").Trim()
                                             .Replace("Tipo de Origem", ":TipoOrig").Trim()
                                             .Replace("Data Ult. Alteração", ":DtUltAlter").Trim()
                                             .Replace("Tipo Financiamento", ":TipoFinanc").Trim()
@@ -174,6 +176,7 @@ namespace ConvetPdfToLayoutAlta.Models
                                             .Replace("REMUNERAÇÃO", ":Remuneracao").Trim()
                                             .Replace("Seguro MIP", ":SeguroMIP").Trim()
                                             .Replace("Reajuste",":Reaj")
+                                            .Replace("ITBI", ":ITBI")
 
                                             .Trim().Split(':')
                                             .Where(x => !string.IsNullOrWhiteSpace(x.Trim())).ToArray();
@@ -449,10 +452,10 @@ namespace ConvetPdfToLayoutAlta.Models
                                 obj.Empreendimento = Regex.Replace(_arrayLinha[_id].Replace("Emp", "").Trim(), @"[^0-9\/$]+", "");
                             }
 
-                            if (_arrayLinha.Any(n => n.Contains("SEG")))
+                            if (_arrayLinha.Any(n => n.Contains("SEG") ||  n.Contains("IOF")))
                             {
-                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("SEG"));
-                                obj.Iof = Regex.Replace(_arrayLinha[_id].Replace("SEG", "").Trim(), @"[^0-9\/$]+", "");
+                                _id = _arrayLinha.ToList().FindIndex(f => f.Contains("SEG") || f.Contains("IOF"));
+                                obj.Iof = Regex.Replace(_arrayLinha[_id].Replace("SEG", "").Replace("IOF", "").Trim(), @"[^0-9\/$]+", "");
                             }
 
                             if (_arrayLinha.Any(n => n.Contains("aplc")))
@@ -723,9 +726,15 @@ namespace ConvetPdfToLayoutAlta.Models
                         {
                             _case = "2 - Metodo: TrataCabecalhoPadrao2 -  campo: Cpf, DataNascimento";
 
-                            obj.Nome = Regex.Replace(_arrayLinha[2].Trim(), @"[^A-Z$]+", " ");
-                            obj.Cpf = Regex.Replace(_arrayLinha[0].Trim(), @"[^0-9$]+", "");
-                            obj.DataNascimento = Regex.Replace(_arrayLinha[1].Trim(), @"[^0-9\/$]+", "");
+                            obj.Nome = _arrayLinha.FirstOrDefault(c => Regex.IsMatch(c, @"[a-zA-Z]+")).Trim();
+                            obj.Cpf = _arrayLinha.FirstOrDefault(c => Regex.IsMatch(c, @"(^\d{3}.\d{3}.\d{3}-\d{2}$)|(^\d{3}.\d{3}.\d{3}\/\d{4}\-\d{2}$)"));
+                            if(obj.Cpf == null || obj.Cpf != "0")
+                               obj.Cpf =  Regex.Replace(obj.Cpf, @"[^0-9$]+", "");
+
+                            if (!_arrayLinha.Any(u => Regex.IsMatch(u, @"(^\d{2}\/\d{2}\/\d{4}$)")))
+                                obj.DataNascimento = "01/01/0001";
+                            else
+                                obj.DataNascimento = _arrayLinha.FirstOrDefault(u => Regex.IsMatch(u, @"(^\d{2}\/\d{2}\/\d{4}$)"));
                             break;
                         }
                     case 3:
@@ -943,7 +952,7 @@ namespace ConvetPdfToLayoutAlta.Models
 
                             strAlta = string.Format("{0}{1}{2}{3}", c.Carteira.Trim().Substring(2), c.Contrato.Trim(), _diaVencimento, c.Agencia.Substring(2, 4)).PadRight(24, ' ');
                             strAlta += string.Format("{0}{1}{2}{3}", (c.Nome.Trim().Length > 40 ? c.Nome.Trim().Substring(0, 40) : c.Nome.Trim()).PadRight(40, ' '), c.DataNascimento.Trim().PadRight(10, ' '), c.DataTransferencia.PadRight(14, ' '), c.EnderecoImovel.Trim().PadRight(80, ' '));
-                            strAlta += string.Format("{0}{1}{2}{3}", (c.Cpf.Trim().Length < 15 ? c.Cpf : c.Cpf.Substring(1)).PadRight(14, ' '), "".PadRight(3, ' '), _contratoGT.Trim().PadRight(20, ' '), item.Bem.PadRight(20, ' '));
+                            strAlta += string.Format("{0}{1}{2}{3}", (c.Cpf.Trim().Length < 15 ? c.Cpf : c.Cpf.Substring(1)).PadRight(14, ' '), "".PadRight(3, ' '), _contratoGT.Trim().PadRight(20, ' '), (item.Bem ?? "").PadRight(20, ' '));
                             strAlta += string.Format("{0}{1}", c.Modalidade.Trim().PadRight(40, ' '), (c.CidadeImovel.Trim().Length <= 31 ? c.CidadeImovel.Trim() : c.CidadeImovel.Trim().Substring(0, 31)).PadRight(31, ' '));
                             strAlta += string.Format("{0}{1}{2}", c.Plano.Trim().PadRight(10, ' '), c.DataContrato.Trim().PadRight(10, ' '), "".PadRight(2, ' '));
                             strAlta += string.Format("{0}{1}", c.Prestacao.Trim().PadLeft(18, '0'), c.Sistema.Trim().PadRight(2, ' '));
@@ -1054,14 +1063,15 @@ namespace ConvetPdfToLayoutAlta.Models
 
                                 altaRepac = _novaOcorrencia = strCabecalhoOcorrencia = strAlta;
 
-                                if (o.CodigoOcorrencia.Equals("020")) //Amortização extra
+                                //Amortização extra
+                                if (new[] {"020","023","024" }.Any(e20 =>  o.CodigoOcorrencia.Equals(e20))) 
                                 {
                                     isOcorrenciaWrite = true;
                                     string strAltaNovoPrazo = strAlta;
 
                                     string _sinalOcorrencia = Convert.ToInt32(o.Amortizacao) < 0 ? "-" : "+";
 
-                                    strAlta += string.Format("{0}{1}", "0".PadLeft(18, '0'), Regex.Replace(o.Juros, "[^0-9$]", "").Trim().PadLeft(18, '0'));
+                                    strAlta += string.Format("{0}{1}", "0".PadLeft(18, '0'), Regex.Replace((o.Juros ?? "0"), "[^0-9$]", "").Trim().PadLeft(18, '0'));
                                     strAlta += string.Format("{0}{1}{2}", "0".PadLeft(18, '0'), o.Amortizacao.Replace("-", "").Trim().PadLeft(17, '0')+_sinalOcorrencia, o.SaldoDevedor.Trim().PadLeft(18, '0'));
                                     
                                     //alteração feita na data: 29/07/2019 as 21:30 pedido pelo Emerson e Luis 
@@ -1486,6 +1496,22 @@ namespace ConvetPdfToLayoutAlta.Models
                                     strAlta += string.Format("{0}", Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd").Trim().PadRight(30, ' '));
                                 }
 
+                                //if (o.CodigoOcorrencia.Equals("023")) // Amortização Extra
+                                //{
+                                //    isOcorrenciaWrite = true;
+                                //    string _sinalOcorrencia = Convert.ToInt32(o.Amortizacao) < 0 ? "-" : "+";
+                                //    strAlta += string.Format("{0}{1}{2}", "0".PadLeft(54, '0'), o.Amortizacao.Replace("-", "").Trim().PadLeft(17, '0') + _sinalOcorrencia, o.SaldoDevedor.Trim().PadLeft(18, '0'));
+                                //    strAlta += string.Format("{0}", Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd").Trim().PadRight(30, ' '));
+                                //}
+
+                                //if (o.CodigoOcorrencia.Equals("024")) // Amortização Extra
+                                //{
+                                //    isOcorrenciaWrite = true;
+                                //    string _sinalOcorrencia = Convert.ToInt32(o.Amortizacao) < 0 ? "-" : "+";
+                                //    strAlta += string.Format("{0}{1}{2}", "0".PadLeft(54, '0'), o.Amortizacao.Replace("-", "").Trim().PadLeft(17, '0') + _sinalOcorrencia, o.SaldoDevedor.Trim().PadLeft(18, '0'));
+                                //    strAlta += string.Format("{0}", Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd").Trim().PadRight(30, ' '));
+                                //}
+
                                 if (o.CodigoOcorrencia.Equals("029")) // Amortização Residuo
                                 {
                                     isOcorrenciaWrite = true;
@@ -1620,10 +1646,17 @@ namespace ConvetPdfToLayoutAlta.Models
                                     strAlta += string.Format("{0}", Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd").Trim().PadRight(30, ' '));
                                 }
 
-                                if (!string.IsNullOrWhiteSpace(strAlta))
+                                if (o.CodigoOcorrencia.Equals("065")) // Pendencia de Complemento
+                                {
+                                    isOcorrenciaWrite = true;
+                                    strAlta += string.Format("{0}{1}{2}", "0".PadLeft(46, '0'), "0".PadRight(18, '0'), "0".PadLeft(18, '0'));
+                                    strAlta += string.Format("{0}{1}", Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd").Trim(), "PENDENCIA COMP".PadRight(30, ' '));
+                                }
+
+                                if (strAlta.Length > 160)
                                     strAlta = strAlta.PadRight(281, ' ');
 
-                                if (!string.IsNullOrWhiteSpace(strAlta) && isOcorrenciaWrite)
+                                if (strAlta.Length > 160 && isOcorrenciaWrite)
                                     escreverOcorrencia.WriteLine(strAlta);
 
                                 _parcela = null;

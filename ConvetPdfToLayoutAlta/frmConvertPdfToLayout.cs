@@ -30,7 +30,7 @@ namespace ConvetPdfToLayoutAlta
             {
                 if (SelectFolders(1) == DialogResult.Yes)
                 {
-                    string[] _arquivos = { Directory.GetCurrentDirectory() + @"\config\SITU115A.TXT", Directory.GetCurrentDirectory() + @"\config\ARQ_GARANTIA.TXT", Directory.GetCurrentDirectory() + @"\config\ARQUPONT.TXT" };
+                    string[] _arquivos = { Directory.GetCurrentDirectory() + @"\config\SITU115A.TXT", /*Directory.GetCurrentDirectory() + @"\config\ARQ_GARANTIA.TXT", */ Directory.GetCurrentDirectory() + @"\config\ARQUPONT.TXT" };
                     string msg = string.Format("--- COPIE OS ARQUIVOS NO DIRETORIO ABAIXO ---\n\n");
 
                     if (!Directory.Exists(Directory.GetCurrentDirectory() + @"\config"))
@@ -46,12 +46,12 @@ namespace ConvetPdfToLayoutAlta
                         return;
                     }
 
-                    if (!File.Exists(Directory.GetCurrentDirectory() + @"\config\ARQ_GARANTIA.TXT"))
-                    {
-                        msg += string.Format("--> {0}", _arquivos[1]);
-                        MessageBox.Show(msg, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-                        return;
-                    }
+                    //if (!File.Exists(Directory.GetCurrentDirectory() + @"\config\ARQ_GARANTIA.TXT"))
+                    //{
+                    //    msg += string.Format("--> {0}", _arquivos[1]);
+                    //    MessageBox.Show(msg, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    //    return;
+                    //}
 
                     //btnDuplicata.Enabled = comboBoxTela.Enabled = (textDestinoLayout.TextLength > 0 && textOrigemContratosPdf.TextLength > 0);
                     btnDuplicata.Enabled = (textDestinoLayout.TextLength > 0 && textOrigemContratosPdf.TextLength > 0);
@@ -276,25 +276,9 @@ namespace ConvetPdfToLayoutAlta
         //}
 
 
-
-        private void btnLocalizarHistoricoParcela_Click(object sender, EventArgs e)
-        {
-            openFileDialog1.Filter = "08 Hist Parcelas|*.txt|Ocorrência|*.txt|CTO068A|*.txt";
-            openFileDialog1.Title = "Historico de parcelas, Ocorrências, CTO068A";
-            openFileDialog1.FileName = "";
-            if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                textBoxHistoricoParcelas.Text = openFileDialog1.FileName;
-                button11.Enabled = true;
-            }
-        }
-
-
         private void gerarArquivoDeDamp3ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            label4.Text = "68 - Selecione o arquivo CTO068A.txt";
-            button11.Text = "Atualizar Arquivo RelaDamp";
-            Painel();
+            OpenFileText();
         }
 
 
@@ -306,61 +290,67 @@ namespace ConvetPdfToLayoutAlta
             panelSpinner.Visible = !panelSpinner.Visible;
         }
 
-        private void button11_Click(object sender, EventArgs e)
+        void OpenFileText()
         {
-            FileInfo fileInfo = new FileInfo(textBoxHistoricoParcelas.Text);
-            Painel();
-            panelSpinner.Visible = !panelSpinner.Visible;
+            bool valor = false;
+            openFileDialog1.Filter = "08 Hist Parcelas|*.txt|Ocorrência|*.txt|CTO068A|*.txt";
+            openFileDialog1.Title = "Historico de parcelas, Ocorrências, CTO068A";
+            openFileDialog1.FileName = "";
 
-            Form f = null;
-            if (label4.Text.Split('-')[0].Trim().Equals("8"))
+            if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                if (!fileInfo.Name.Equals("ARQ.EXT.08.HIST.PARCELAS.TXT"))
-                    MessageBox.Show("O conteúdo deste arquivo não é compativel com o arquivo Hitorico de Parcelas", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-                else
-                    f = new FrmHistoricoParcelas(textBoxHistoricoParcelas.Text);
-            }
+                FileInfo fileInfo = new FileInfo(openFileDialog1.FileName);
+                panelSpinner.Visible = !panelSpinner.Visible;
 
-            if (label4.Text.Split('-')[0].Trim().Equals("16"))
-            {
-                if (!fileInfo.Name.Equals("TL16PARC.txt"))
-                    MessageBox.Show("O conteúdo deste arquivo não é compativel com o arquivo de parcelas da tela 16", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-                else
-                    f = new FrmCarregaParcelas(textBoxHistoricoParcelas.Text);
-            }
+                Form f = null;
 
-            if (label4.Text.Split('-')[0].Trim().Equals("32"))
-            {
-                if (!fileInfo.Name.Equals("TL16OCOR.txt"))
-                    MessageBox.Show("O conteúdo deste arquivo não é compativel com o arquivo de ocorrências da tela 16", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-                else
-                    f = new FrmCarregaOcorrencia(textBoxHistoricoParcelas.Text);
-            }
+                if (fileInfo.Name.ToUpper().Equals("ARQ.EXT.08.HIST.PARCELAS.TXT"))
+                {
+                    f = new FrmHistoricoParcelas(openFileDialog1.FileName);
+                    valor = true;
+                }
 
-            if (label4.Text.Split('-')[0].Trim().Equals("68"))
-            {
-                if (!fileInfo.Name.Equals("CTO068A.txt"))
-                    MessageBox.Show("O conteúdo deste arquivo não é compativel com o arquivo CTO068A.txt", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+
+                if (fileInfo.Name.ToUpper().Equals("TL16PARC.TXT"))
+                {
+                    f = new FrmCarregaParcelas(openFileDialog1.FileName);
+                    valor = true;
+                }
+
+
+                if (fileInfo.Name.ToUpper().Equals("TL16OCOR.TXT"))
+                {
+                    f = new FrmCarregaOcorrencia(openFileDialog1.FileName);
+                    valor = true;
+                }
+
+
+                if (fileInfo.Name.ToUpper().Equals("CTO068A.TXT"))
+                {
+                    f = new FrmGeraDamp3(openFileDialog1.FileName, lstDamp3);
+                    valor = true;
+                }
+
+                if (valor)
+                {
+                    if (f != null)
+                        f.ShowDialog();
+                }
                 else
                 {
-                    f = new FrmGeraDamp3(textBoxHistoricoParcelas.Text, lstDamp3);
+                    MessageBox.Show("O arquivo não é compativel", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    panelSpinner.Visible = !panelSpinner.Visible;
                 }
+
+                fileInfo = null;
+                panelSpinner.Visible = !panelSpinner.Visible;
             }
-
-            if (f != null)
-                f.ShowDialog();
-
-            fileInfo = null;
-            panelSpinner.Visible = !panelSpinner.Visible;
         }
+
 
         private void MenuItemGravarHistoricoParcelas_Click(object sender, EventArgs e)
         {
-
-            label4.Text = "8 - Selecione o arquivo ARQ.EXT.08.HIST.PARCELAS.TXT";
-            button11.Text = "Gravar Histórico de Parcelas";
-            button11.Width = 182;
-            Painel();
+            OpenFileText();
         }
 
         private void consultarHistóricoDeParcelasToolStripMenuItem_Click(object sender, EventArgs e)
@@ -371,11 +361,7 @@ namespace ConvetPdfToLayoutAlta
 
         private void gravarParcelasToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
-            label4.Text = "16 - Selecione o arquivo TL16PARC.txt";
-            button11.Text = "Gravar Parcelas (pdf)";
-            button11.Width = 155;
-            Painel();
+            OpenFileText();
         }
 
         private void consultaFgtsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -390,25 +376,10 @@ namespace ConvetPdfToLayoutAlta
             frmParcelas.ShowDialog();
         }
 
-        void Painel(bool _is = false)
-        {
-            groupBox1.Visible = _is;
-            pnlHistoricoParcela.Visible = !groupBox1.Visible;
-            voltarToolStripMenuItem.Enabled = !groupBox1.Visible;
-        }
-
-        private void voltarToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Painel(true);
-            textBoxHistoricoParcelas.Text = string.Empty;
-        }
 
         private void gravarOcorrênciaToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            label4.Text = "32 - Selecione o arquivo TL16OCOR.txt";
-            button11.Text = "Gravar Ocorrências (pdf)";
-            button11.Width = 165;
-            Painel();
+            OpenFileText();
         }
 
         private void consultarOcorrênciaToolStripMenuItem_Click(object sender, EventArgs e)
@@ -428,6 +399,10 @@ namespace ConvetPdfToLayoutAlta
                 IEnumerable<string> fileContract = Directory.EnumerateFiles(folderBrowserDialog1.SelectedPath, "*_16.pdf", SearchOption.AllDirectories);
                 fileContract.ToList().Sort();
                 FileInfo f = null;
+
+                if (File.Exists(Directory.GetCurrentDirectory() + @"\config\ARQUPONT.txt"))
+                    File.Delete(Directory.GetCurrentDirectory() + @"\config\ARQUPONT.txt");
+
                 using (StreamWriter sw = new StreamWriter(Directory.GetCurrentDirectory() + @"\config\ARQUPONT.txt", true, Encoding.ASCII))
                 {
                     {
@@ -491,18 +466,7 @@ namespace ConvetPdfToLayoutAlta
             }
         }
 
-        private void novoPonteiroToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            openFileDialog1.Filter = "Arquivo ARQUEPONT|*.txt";
-            openFileDialog1.Title = "Selecione o arquivo de Ponteiro";
-            openFileDialog1.FileName = "ARQUPONT.txt";
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                AtualizaPonteiro(openFileDialog1.FileName);
-                MessageBox.Show("Ponteiro registrado para extração de contratos", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
-
+       
         private void FrmSelectFolder_FormClosed(object sender, FormClosedEventArgs e)
         {
             Application.Exit();

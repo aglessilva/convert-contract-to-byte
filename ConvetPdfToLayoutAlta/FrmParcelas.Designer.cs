@@ -33,9 +33,7 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmParcelas));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.button2 = new System.Windows.Forms.Button();
             this.textBoxContrato = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
             this.dataGridViewParcelas = new System.Windows.Forms.DataGridView();
             this.Carteira = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Contrato = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -59,6 +57,9 @@
             this.SaldoDevedor = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Proc_Emi_Pag = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Iof = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.buttonExportarExcel = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewParcelas)).BeginInit();
             this.SuspendLayout();
@@ -68,6 +69,7 @@
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.buttonExportarExcel);
             this.groupBox1.Controls.Add(this.button2);
             this.groupBox1.Controls.Add(this.textBoxContrato);
             this.groupBox1.Controls.Add(this.button1);
@@ -77,18 +79,6 @@
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Pesquisa de Parcelas  por Contrato";
-            // 
-            // button2
-            // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Image = global::ConvetPdfToLayoutAlta.Properties.Resources.clear_filters_48_45590__1_;
-            this.button2.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.button2.Location = new System.Drawing.Point(1077, 19);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(49, 40);
-            this.button2.TabIndex = 2;
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // textBoxContrato
             // 
@@ -103,24 +93,9 @@
             this.textBoxContrato.Location = new System.Drawing.Point(6, 20);
             this.textBoxContrato.MaxLength = 15;
             this.textBoxContrato.Name = "textBoxContrato";
-            this.textBoxContrato.Size = new System.Drawing.Size(922, 38);
+            this.textBoxContrato.Size = new System.Drawing.Size(888, 38);
             this.textBoxContrato.TabIndex = 0;
             this.textBoxContrato.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxContrato_KeyPress);
-            // 
-            // button1
-            // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Font = new System.Drawing.Font("Arial Unicode MS", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Image = global::ConvetPdfToLayoutAlta.Properties.Resources.xmag_search_find_export_locate_5984;
-            this.button1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button1.Location = new System.Drawing.Point(927, 19);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(142, 40);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "Pesquisar";
-            this.button1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // dataGridViewParcelas
             // 
@@ -364,6 +339,45 @@
             this.Iof.ReadOnly = true;
             this.Iof.Width = 49;
             // 
+            // buttonExportarExcel
+            // 
+            this.buttonExportarExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonExportarExcel.Image = global::ConvetPdfToLayoutAlta.Properties.Resources.microsoft_office_excel;
+            this.buttonExportarExcel.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.buttonExportarExcel.Location = new System.Drawing.Point(1083, 19);
+            this.buttonExportarExcel.Name = "buttonExportarExcel";
+            this.buttonExportarExcel.Size = new System.Drawing.Size(49, 40);
+            this.buttonExportarExcel.TabIndex = 3;
+            this.buttonExportarExcel.UseVisualStyleBackColor = true;
+            this.buttonExportarExcel.Click += new System.EventHandler(this.buttonExportarExcel_Click);
+            // 
+            // button2
+            // 
+            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button2.Image = global::ConvetPdfToLayoutAlta.Properties.Resources.clear_filters_48_45590__1_;
+            this.button2.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.button2.Location = new System.Drawing.Point(1035, 19);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(49, 40);
+            this.button2.TabIndex = 2;
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // button1
+            // 
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button1.Font = new System.Drawing.Font("Arial Unicode MS", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.Image = global::ConvetPdfToLayoutAlta.Properties.Resources.xmag_search_find_export_locate_5984;
+            this.button1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.button1.Location = new System.Drawing.Point(894, 19);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(142, 40);
+            this.button1.TabIndex = 1;
+            this.button1.Text = "Pesquisar";
+            this.button1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // FrmParcelas
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -414,5 +428,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Proc_Emi_Pag;
         private System.Windows.Forms.DataGridViewTextBoxColumn Iof;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button buttonExportarExcel;
     }
 }

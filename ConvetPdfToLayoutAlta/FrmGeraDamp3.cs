@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -184,7 +185,7 @@ namespace ConvetPdfToLayoutAlta
                         linhaFormatada += g.MIECDAMP_CTA_TRAB.Trim().Substring(3) + g.MIECDAMP_VL_UTILZ.Trim().PadLeft(18, '0');
                         linhaFormatada += g.MIECDAMP_STATUS.Trim().PadRight(30, ' ') + g.MIECDAMP_TP_REQUS.Trim().PadRight(12, ' ');
                         linhaFormatada += g.MIECDAMP_FILLER.Trim();
-
+                        linhaFormatada = RemoverAcentuacao(linhaFormatada);
                         streamWriter.WriteLine(linhaFormatada);
                         linhaFormatada = string.Empty;
                     });
@@ -196,6 +197,15 @@ namespace ConvetPdfToLayoutAlta
                 MessageBox.Show("Ocorreu um erro ao tentar Atualizar o arquivo RELADAMP\n" + exDamp.Message, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Close();
             }
+        }
+
+
+        public  string RemoverAcentuacao(string text)
+        {
+            return new string(text
+                .Normalize(NormalizationForm.FormD)
+                .Where(ch => char.GetUnicodeCategory(ch) != UnicodeCategory.NonSpacingMark)
+                .ToArray());
         }
     }
 }

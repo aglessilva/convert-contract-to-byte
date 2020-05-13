@@ -99,7 +99,7 @@ namespace ConvetPdfToLayoutAlta.Models
                 {
                     fileInfoPdf = new FileInfo(itemTela);
                     if (fileInfoPdf.Exists)
-                        File.Move(fileInfoPdf.FullName, System.IO.Path.ChangeExtension(fileInfoPdf.FullName, ".err"));
+                        File.Move(fileInfoPdf.FullName, Path.ChangeExtension(fileInfoPdf.FullName, ".err"));
                 }
             }
         }

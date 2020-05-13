@@ -46,7 +46,7 @@ namespace ConvetPdfToLayoutAlta
                 }
 
                 progressBarReaderPdf.Maximum = total;
-                lblQtd.Text = $"Total de Parcelas: {total}";
+                lblQtd.Text = $"Total: {total}";
                 _thread = new Thread(() => RecreatingTable());
                 _thread.Start();
 
@@ -112,7 +112,7 @@ namespace ConvetPdfToLayoutAlta
                             dataRow["Juros"] = linha.Substring(89, 18).Trim();
                             dataRow["Mora"] = linha.Substring(107, 18).Trim();
                             dataRow["ValorAmortizado"] = linha.Substring(125, 17).Trim();
-                            dataRow["Sinal"] = linha.Substring(142, 1).Trim();
+                            dataRow["Sinal"] = linha.Substring(142, 1).Trim().PadLeft(1, '*'); ;
                             dataRow["SaldoDevedor"] = linha.Substring(143, 18).Trim();
                             dataRow["Alterado"] = linha.Substring(161, 30).Trim();
                             dataRow["Sit_Anterior"] = linha.Substring(191, 30).Trim();
@@ -121,6 +121,7 @@ namespace ConvetPdfToLayoutAlta
 
                             dataTable.Rows.Add(dataRow);
                         }
+                        
 
                         contador++;
                         countPercent++;
