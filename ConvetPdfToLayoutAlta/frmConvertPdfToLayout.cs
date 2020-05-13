@@ -142,10 +142,35 @@ namespace ConvetPdfToLayoutAlta
 
         }
 
+        private void UpdateApp()
+        {
+            Text += $" (V{Application.ProductVersion})";
+            try
+            {
+                var updateManager = NAppUpdate.Framework.UpdateManager.Instance;
+                updateManager.UpdateSource = new NAppUpdate.Framework.Sources.SimpleWebSource($@"\\bsbrsp1010\apps\MI\RELATORIOS\ClickOnceExtratorPdf\NAppUpdate.xml");
+                updateManager.ReinstateIfRestarted();
 
+                if (updateManager.State == NAppUpdate.Framework.UpdateManager.UpdateProcessState.NotChecked)
+                {
+                    updateManager.CheckForUpdates();
+                    if (updateManager.UpdatesAvailable > 0)
+                    {
+                        updateManager.PrepareUpdates();
+                        updateManager.ApplyUpdates(true);
+                    }
+                }
+
+            }
+            catch (Exception exc)
+            {
+                MessageBox.Show($"Ocorreu um erro ao tentar atualizar a ferramenta\nDescrição: {exc.Message}", "Erro de atualização", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
         private void FrmSelectFolder_Load(object sender, EventArgs e)
         {
+            //UpdateApp();
 
             Text +=  $" - (V{Application.ProductVersion})";
             ToolTip toolTip = new ToolTip();
