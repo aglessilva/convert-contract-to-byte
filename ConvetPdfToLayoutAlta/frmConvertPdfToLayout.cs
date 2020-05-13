@@ -142,8 +142,6 @@ namespace ConvetPdfToLayoutAlta
 
         }
 
-
-
         private void FrmSelectFolder_Load(object sender, EventArgs e)
         {
 
