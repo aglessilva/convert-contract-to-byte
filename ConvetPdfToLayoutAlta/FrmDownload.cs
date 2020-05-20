@@ -15,8 +15,15 @@ namespace ConvetPdfToLayoutAlta
         List<string> lstDiretoriosFoldes = null;
         string diretorioDestinoALTA = string.Empty, tmp = string.Empty;
         string diretorioOrigemPastas = @"\\mscluster40fs\plataformaPF2\TOMBAMENTO_PF\Processamento\";
+       
         int totalArquivos = 0;
+
         FileInfo FileInfo = null;
+        FileInfo ObjPdf, x2,x3,x4,x5,x6,x7;
+        List<FileInfo> lstVms = null;
+
+        static readonly object bloqueador = new object();
+
         Task<Task> nucleo1, nucleo2, nucleo3, nucleo4, nucleo5, nucleo6;
 
         public FrmDownload(List<string> _lstFoldes, string _diretorioDestino)
@@ -27,16 +34,38 @@ namespace ConvetPdfToLayoutAlta
             lstDiretoriosFoldes = _lstFoldes;
         }
 
+        FileInfo GetFileInfo()
+        {
+            try
+            {
+                lock (bloqueador)
+                {
+                    ObjPdf = null;
+                    if (lstVms.Count > 0)
+                    {
+                        ObjPdf = lstVms[0];
+                        lstVms.RemoveAt(0);
+                    }
+
+                    return ObjPdf;
+                }
+            }
+            catch (Exception exThread)
+            {
+                throw exThread;
+            }
+        }
+
         private void backgroundWorkerDownload_DoWork(object sender, DoWorkEventArgs e)
         {
             try
             {
+               
                 List<string> lstDiretorios = new List<string>();
 
                 lstDiretoriosFoldes.ForEach(l => { lstDiretorios.Add(diretorioOrigemPastas + l); Directory.CreateDirectory(diretorioDestinoALTA + l); });
 
                 int countProgress = 0;
-                int dividir = 0;
 
                 foreach (var item in lstDiretorios)
                 {
@@ -44,170 +73,239 @@ namespace ConvetPdfToLayoutAlta
                     totalArquivos += itemDiretorio.GetFiles("*.pdf", SearchOption.AllDirectories).Count();
                 }
 
+                stopwatch.Restart();
 
                 // GERENCIAMENTO DE MULTITHREAD DOS NUCLEOS DOS PROCESSADOR
                 foreach (string dataDiretorio in lstDiretorios)
                 {
                     DirectoryInfo itemDiretorio = new DirectoryInfo(dataDiretorio);
-                    List<FileInfo> lstVms = itemDiretorio.GetFiles("*.pdf", SearchOption.AllDirectories).ToList();
+                    lstVms = itemDiretorio.GetFiles("*.pdf", SearchOption.AllDirectories).ToList();
 
-                    dividir = lstVms.Count / 6;
-
-                    List<FileInfo> lstVms01 = lstVms.Take(dividir).ToList();
-                    lstVms.RemoveRange(0, dividir);
-
-                    List<FileInfo> lstVms02 = lstVms.Take(dividir).ToList();
-                    lstVms.RemoveRange(0, dividir);
-
-                    List<FileInfo> lstVms03 = lstVms.Take(dividir).ToList();
-                    lstVms.RemoveRange(0, dividir);
-
-                    List<FileInfo> lstVms04 = lstVms.Take(dividir).ToList();
-                    lstVms.RemoveRange(0, dividir);
-
-                    List<FileInfo> lstVms05 = lstVms.Take(dividir).ToList();
-                    lstVms.RemoveRange(0, dividir);
-
-                    // DISPARAR 1º NUCLEO DO PROCESSADOR 
+                    #region// DISPARAR 1º NUCLEO DO PROCESSADOR 
                     nucleo1 = new Task<Task>(async () =>
                     {
                         await Task.Run(() =>
                         {
-                            lstVms02.ForEach(x2 =>
+                            while (lstVms.Count > 0)
                             {
-                                DirectoryInfo directoryInfo = null;
-                                countProgress++;
-                                backgroundWorkerDownload.ReportProgress(countProgress, x2);
-                                directoryInfo = Directory.CreateDirectory(diretorioDestinoALTA + x2.Directory.Parent.Parent.ToString());
-                                directoryInfo = Directory.CreateDirectory(directoryInfo.FullName + @"\" + x2.Directory.Parent.ToString());
-                                directoryInfo = Directory.CreateDirectory(directoryInfo.FullName + @"\" + x2.Directory.Name.ToString());
+                                try
+                                {
+                                    DirectoryInfo directoryInfo = null;
+                                    countProgress++;
 
-                                byte[] arquivo = File.ReadAllBytes(x2.FullName);
-                                File.WriteAllBytes($@"{directoryInfo.FullName}\{x2.Name}", arquivo);
-                            });
+                                    x2 = GetFileInfo();
+                                    
+                                    if (x2 != null)
+                                    {
+                                        backgroundWorkerDownload.ReportProgress(countProgress, x2);
+                                        directoryInfo = Directory.CreateDirectory(diretorioDestinoALTA + x2.Directory.Parent.Parent.ToString());
+                                        directoryInfo = Directory.CreateDirectory(directoryInfo.FullName + @"\" + x2.Directory.Parent.ToString());
+                                        directoryInfo = Directory.CreateDirectory(directoryInfo.FullName + @"\" + x2.Directory.Name.ToString());
+
+                                        byte[] arquivo = File.ReadAllBytes(x2.FullName);
+                                        File.WriteAllBytes($@"{directoryInfo.FullName}\{x2.Name}", arquivo);
+                                        x2 = null;
+                                    }
+                                }
+                                catch (Exception exX2)
+                                {
+                                    throw exX2;
+                                }
+                            }
 
                         });
                     });
                     nucleo1.Start();
                     nucleo1.Wait();
+                    #endregion
 
-                    // DISPARAR 2º NUCLEO DO PROCESSADOR
+                    #region// DISPARAR 2º NUCLEO DO PROCESSADOR
                     nucleo2 = new Task<Task>(async () =>
                     {
                         await Task.Run(() =>
                         {
-                            lstVms01.ForEach(x3 =>
+                            while (lstVms.Count > 0)
                             {
-                                DirectoryInfo directoryInfo = null;
-                                countProgress++;
-                                backgroundWorkerDownload.ReportProgress(countProgress, x3);
-                                directoryInfo = Directory.CreateDirectory(diretorioDestinoALTA + x3.Directory.Parent.Parent.ToString());
-                                directoryInfo = Directory.CreateDirectory(directoryInfo.FullName + @"\" + x3.Directory.Parent.ToString());
-                                directoryInfo = Directory.CreateDirectory(directoryInfo.FullName + @"\" + x3.Directory.Name.ToString());
+                                try
+                                {
+                                    DirectoryInfo directoryInfo = null;
+                                    countProgress++;
 
-                                byte[] arquivo = File.ReadAllBytes(x3.FullName);
-                                File.WriteAllBytes($@"{directoryInfo.FullName}\{x3.Name}", arquivo);
-                            });
+                                    x3 = GetFileInfo();
 
+                                    if (x3 != null)
+                                    {
+                                        backgroundWorkerDownload.ReportProgress(countProgress, x3);
+                                        directoryInfo = Directory.CreateDirectory(diretorioDestinoALTA + x3.Directory.Parent.Parent.ToString());
+                                        directoryInfo = Directory.CreateDirectory(directoryInfo.FullName + @"\" + x3.Directory.Parent.ToString());
+                                        directoryInfo = Directory.CreateDirectory(directoryInfo.FullName + @"\" + x3.Directory.Name.ToString());
+
+                                        byte[] arquivo = File.ReadAllBytes(x3.FullName);
+                                        File.WriteAllBytes($@"{directoryInfo.FullName}\{x3.Name}", arquivo);
+                                        x3 = null;
+                                    }
+                                }
+                                catch (Exception exX3)
+                                {
+                                    throw exX3;
+                                }
+                            }
                         });
                     });
                     nucleo2.Start();
                     nucleo2.Wait();
+                    #endregion
 
-                    // DISPARAR 3º NUCLEO DO PROCESSADOR
+                    #region// DISPARAR 3º NUCLEO DO PROCESSADOR
                     nucleo3 = new Task<Task>(async () =>
                     {
                         await Task.Run(() =>
                         {
-                            lstVms03.ForEach(x4 =>
+                            while (lstVms.Count > 0)
                             {
-                                DirectoryInfo directoryInfo = null;
-                                countProgress++;
-                                backgroundWorkerDownload.ReportProgress(countProgress, x4);
-                                directoryInfo = Directory.CreateDirectory(diretorioDestinoALTA + x4.Directory.Parent.Parent.ToString());
-                                directoryInfo = Directory.CreateDirectory(directoryInfo.FullName + @"\" + x4.Directory.Parent.ToString());
-                                directoryInfo = Directory.CreateDirectory(directoryInfo.FullName + @"\" + x4.Directory.Name.ToString());
+                                try
+                                {
+                                    DirectoryInfo directoryInfo = null;
+                                    countProgress++;
 
-                                byte[] arquivo = File.ReadAllBytes(x4.FullName);
-                                File.WriteAllBytes($@"{directoryInfo.FullName}\{x4.Name}", arquivo);
-                            });
+                                    x4 = GetFileInfo();
 
+                                    if (x4 != null)
+                                    {
+                                        backgroundWorkerDownload.ReportProgress(countProgress, x4);
+                                        directoryInfo = Directory.CreateDirectory(diretorioDestinoALTA + x4.Directory.Parent.Parent.ToString());
+                                        directoryInfo = Directory.CreateDirectory(directoryInfo.FullName + @"\" + x4.Directory.Parent.ToString());
+                                        directoryInfo = Directory.CreateDirectory(directoryInfo.FullName + @"\" + x4.Directory.Name.ToString());
+
+                                        byte[] arquivo = File.ReadAllBytes(x4.FullName);
+                                        File.WriteAllBytes($@"{directoryInfo.FullName}\{x4.Name}", arquivo);
+                                        x4 = null;
+                                    }
+                                }
+                                catch (Exception ExcX4)
+                                {
+                                    throw ExcX4;
+                                }
+                            }
                         });
                     });
                     nucleo3.Start();
                     nucleo3.Wait();
+                    #endregion
 
-                    // DISPARAR 4º NUCLEO DO DO PROCESSADOR
+                    #region// DISPARAR 4º NUCLEO DO PROCESSADOR
                     nucleo4 = new Task<Task>(async () =>
                     {
                         await Task.Run(() =>
                         {
-                            lstVms.ForEach(x5 =>
+                            while (lstVms.Count > 0)
                             {
-                                DirectoryInfo directoryInfo = null;
-                                countProgress++;
-                                backgroundWorkerDownload.ReportProgress(countProgress, x5);
-                                directoryInfo = Directory.CreateDirectory(diretorioDestinoALTA + x5.Directory.Parent.Parent.ToString());
-                                directoryInfo = Directory.CreateDirectory(directoryInfo.FullName + @"\" + x5.Directory.Parent.ToString());
-                                directoryInfo = Directory.CreateDirectory(directoryInfo.FullName + @"\" + x5.Directory.Name.ToString());
+                                try
+                                {
+                                    DirectoryInfo directoryInfo = null;
+                                    countProgress++;
 
-                                byte[] arquivo = File.ReadAllBytes(x5.FullName);
-                                File.WriteAllBytes($@"{directoryInfo.FullName}\{x5.Name}", arquivo);
-                            });
+                                    x5 = GetFileInfo();
 
+                                    if (x5 != null)
+                                    {
+                                        backgroundWorkerDownload.ReportProgress(countProgress, x5);
+                                        directoryInfo = Directory.CreateDirectory(diretorioDestinoALTA + x5.Directory.Parent.Parent.ToString());
+                                        directoryInfo = Directory.CreateDirectory(directoryInfo.FullName + @"\" + x5.Directory.Parent.ToString());
+                                        directoryInfo = Directory.CreateDirectory(directoryInfo.FullName + @"\" + x5.Directory.Name.ToString());
+
+                                        byte[] arquivo = File.ReadAllBytes(x5.FullName);
+                                        File.WriteAllBytes($@"{directoryInfo.FullName}\{x5.Name}", arquivo);
+                                        x5 = null;
+                                    }
+                                }
+                                catch (Exception excX5)
+                                {
+                                    throw excX5;
+                                }
+                            }
                         });
                     });
                     nucleo4.Start();
                     nucleo4.Wait();
+                    #endregion
 
-                    // DISPARAR 5º NUCLEO DO DO PROCESSADOR
+                    #region// DISPARAR 5º NUCLEO DO PROCESSADOR
                     nucleo5 = new Task<Task>(async () =>
                     {
                         await Task.Run(() =>
                         {
-                            lstVms04.ForEach(x6 =>
+                            while (lstVms.Count > 0)
                             {
-                                DirectoryInfo directoryInfo = null;
-                                countProgress++;
-                                backgroundWorkerDownload.ReportProgress(countProgress, x6);
-                                directoryInfo = Directory.CreateDirectory(diretorioDestinoALTA + x6.Directory.Parent.Parent.ToString());
-                                directoryInfo = Directory.CreateDirectory(directoryInfo.FullName + @"\" + x6.Directory.Parent.ToString());
-                                directoryInfo = Directory.CreateDirectory(directoryInfo.FullName + @"\" + x6.Directory.Name.ToString());
+                                try
+                                {
+                                    DirectoryInfo directoryInfo = null;
+                                    countProgress++;
 
-                                byte[] arquivo = File.ReadAllBytes(x6.FullName);
-                                File.WriteAllBytes($@"{directoryInfo.FullName}\{x6.Name}", arquivo);
-                            });
+                                    x6 = GetFileInfo();
 
+                                    if (x6 != null)
+                                    {
+                                        backgroundWorkerDownload.ReportProgress(countProgress, x6);
+                                        directoryInfo = Directory.CreateDirectory(diretorioDestinoALTA + x6.Directory.Parent.Parent.ToString());
+                                        directoryInfo = Directory.CreateDirectory(directoryInfo.FullName + @"\" + x6.Directory.Parent.ToString());
+                                        directoryInfo = Directory.CreateDirectory(directoryInfo.FullName + @"\" + x6.Directory.Name.ToString());
+
+                                        byte[] arquivo = File.ReadAllBytes(x6.FullName);
+                                        File.WriteAllBytes($@"{directoryInfo.FullName}\{x6.Name}", arquivo);
+                                        x6 = null;
+                                    }
+                                }
+                                catch (Exception exX6)
+                                {
+                                    throw exX6;
+                                }
+                            }
                         });
                     });
                     nucleo5.Start();
                     nucleo5.Wait();
+                    #endregion
 
-
-                    // DISPARAR 6º NUCLEO DO DO PROCESSADOR
+                    #region// DISPARAR 6º NUCLEO DO PROCESSADOR
                     nucleo6 = new Task<Task>(async () =>
                     {
                         await Task.Run(() =>
                         {
-                            lstVms05.ForEach(x7 =>
+                            while (lstVms.Count > 0)
                             {
-                                DirectoryInfo directoryInfo = null;
-                                countProgress++;
-                                backgroundWorkerDownload.ReportProgress(countProgress, x7);
-                                directoryInfo = Directory.CreateDirectory(diretorioDestinoALTA + x7.Directory.Parent.Parent.ToString());
-                                directoryInfo = Directory.CreateDirectory(directoryInfo.FullName + @"\" + x7.Directory.Parent.ToString());
-                                directoryInfo = Directory.CreateDirectory(directoryInfo.FullName + @"\" + x7.Directory.Name.ToString());
+                                try
+                                {
+                                    DirectoryInfo directoryInfo = null;
+                                    countProgress++;
+                                    x7 = GetFileInfo();
 
-                                byte[] arquivo = File.ReadAllBytes(x7.FullName);
-                                File.WriteAllBytes($@"{directoryInfo.FullName}\{x7.Name}", arquivo);
-                            });
+                                    if (x7 != null)
+                                    {
+                                        backgroundWorkerDownload.ReportProgress(countProgress, x7);
+                                        directoryInfo = Directory.CreateDirectory(diretorioDestinoALTA + x7.Directory.Parent.Parent.ToString());
+                                        directoryInfo = Directory.CreateDirectory(directoryInfo.FullName + @"\" + x7.Directory.Parent.ToString());
+                                        directoryInfo = Directory.CreateDirectory(directoryInfo.FullName + @"\" + x7.Directory.Name.ToString());
 
+                                        byte[] arquivo = File.ReadAllBytes(x7.FullName);
+                                        File.WriteAllBytes($@"{directoryInfo.FullName}\{x7.Name}", arquivo);
+                                        x7 = null;
+                                    }
+                                }
+                                catch (Exception exX7)
+                                {
+                                    throw exX7;
+                                }
+                            }
                         });
                     });
                     nucleo6.Start();
                     nucleo6.Wait();
+                    #endregion
+
                     //ENQUANTO OS NUCLEOS DE CADA PROCESSADOR ESTIVER EXECUTANDO AS TASKS 
-                    //O METODO DE EXTENÇAO 'Wait' AGUARDA A FINALIZAÇÃO DA THREADING ANTES DO TERMINO DO EVENTO PAI ASSINCRONO FINALIZAR A EXECUÇÃO INVOCADA 
+                    #region//O METODO DE EXTENÇAO 'Wait' AGUARDA A FINALIZAÇÃO DA THREADING ANTES DO TERMINO DO EVENTO PAI ASSINCRONO FINALIZAR A EXECUÇÃO INVOCADA 
+
                     if (nucleo1.Status != TaskStatus.Running || !nucleo1.IsCompleted)
                         nucleo1.Result.Wait();// AGUARDA A FINALIZAÇÃO DA TASK
 
@@ -225,6 +323,7 @@ namespace ConvetPdfToLayoutAlta
 
                     if (nucleo6.Status != TaskStatus.Running || !nucleo6.IsCompleted)
                         nucleo6.Result.Wait();// AGUARDA A FINALIZAÇÃO DA TASK
+                    #endregion
                 }
             }
             catch (Exception exeDown)
@@ -240,7 +339,7 @@ namespace ConvetPdfToLayoutAlta
 
         private void FrmDownload_Load(object sender, EventArgs e)
         {
-            stopwatch.Restart();
+          
             backgroundWorkerDownload.RunWorkerAsync();
         }
 

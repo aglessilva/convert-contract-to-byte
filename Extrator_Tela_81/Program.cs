@@ -4,21 +4,19 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ConvetPdfToLayoutAlta
+namespace Extrator_Tela_81
 {
     static class Program
     {
         /// <summary>
-        /// The main entry point for the application.
+        /// Ponto de entrada principal para o aplicativo.
         /// </summary>
         [STAThread]
         static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FrmFoders());
-            //Application.Run(new FrmSelectFolder(""));
-            //Application.Run(new FrmDownload(null, @"C:\!ZONA\testeDownload\"));
+            Application.Run(new Form1());
         }
     }
 }

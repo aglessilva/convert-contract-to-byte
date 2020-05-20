@@ -1,4 +1,6 @@
 ﻿using ConvetPdfToLayoutAlta.Models;
+using iTextSharp.text.pdf;
+using iTextSharp.text.pdf.parser;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,7 +21,6 @@ namespace ConvetPdfToLayoutAlta
         int countpercent = 0, MaximumProgress = 0, _indiceSubstring = 0;
         List<string> lst16 = null, lst18 = null, lst20 = null, lst25 = null;
         
-        //List<string> lstDuplicado = null;
         List<string> lstArquiPoint = new List<string>();
         List<string> lstDamp3 = new List<string>();
 
@@ -94,40 +95,16 @@ namespace ConvetPdfToLayoutAlta
                         lstArquiPoint.Add(sw.ReadLine());
                 }
 
-               // string _tela = string.Format("*_{0}.pdf", Regex.Replace(tela, @"[^0-9$]", ""));
-               // _arrayDuplicado = Directory.GetFiles(diretorioOrigemPdf, _tela, SearchOption.AllDirectories).ToList();
-
-
-                // localiza todos os arquivos duplicados na lista de diretorios
-                //lstDuplicado = _arrayDuplicado
-                //    .GroupBy(c => new FileInfo(c).Name.Split('_')[0])
-                //    .Where(pdf => pdf.Count() > 1)
-                //    .Select(rej => rej.Key).ToList();
-
-               // lblQtd.Text = string.Format("Total: {0}", _arrayDuplicado.Count.ToString());
-               // lbltotalDuplicado.Text = string.Format("Duplicados: {0}", lstDuplicado.Count);
                 lblTempo.Text = "";
-
-                //if (lstDuplicado.Count > 0)
-                //{
                     BackgroundWorkerDuplicadoFiltro.RunWorkerAsync();
                     stopwatch.Restart();
-               // }
-               // else
-               // {
-                    //MessageBox.Show("Nenhum arquivo duplicado foi localizado para tela" + tela, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                //    Close();
-               // }
             }
             catch (Exception ex)
             {
                 Close();
                 MessageBox.Show("Erro ao tentar iniciar o processo de leitura de contrato,\n Descrição: " + ex.Message,"Erro", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
-
         }
-
-
 
         private void BackgroundWorkerDuplicadoFiltro_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
@@ -169,18 +146,6 @@ namespace ConvetPdfToLayoutAlta
 
         private void BackgroundWorkerDuplicadoFiltro_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            //lbltotalDuplicado.Text = "Concluído!";
-            //// TOTAL DE ARQUIVOS DUPLICADO
-            //int _totalDup = Directory.GetFiles(diretorioOrigemPdf, string.Format("*_{0}.dup", Regex.Replace(tela, @"[^0-9$]", "")), SearchOption.AllDirectories).Count();
-
-            //// TOTAL DE ARQUIVOS FILTRADOS , CONTRATOS QUE NAO ESTÃO NO ARQUIVO DE PONTEIRO
-            //int _totalFiltro = Directory.GetFiles(diretorioOrigemPdf, string.Format("*_{0}.fil", Regex.Replace(tela, @"[^0-9$]", "")), SearchOption.AllDirectories).Count();
-
-            //string result = string.Format("Resultado\n\n");
-            //result += string.Format("Total Filtrado: {0}{1}\n", _totalFiltro, " arquivo(s)");
-            //result += string.Format("Total Duplicado: {0}{1}", _totalDup, " arquivo(s)");
-
-            //MessageBox.Show(result, "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
             Close();
         }
 
@@ -193,10 +158,7 @@ namespace ConvetPdfToLayoutAlta
 
                 // VERIFICA SE OS CONTRATOS DO PONTEIRO TEM DAMP 
                 // SE HOUVER DAMP E NAO EXISTIR A TELA 18, ENTÃO RENOMEIA OS ARQUISO 16,20,25
-                //if (Regex.Replace(tela, @"[^0-9$]", "").Equals("18"))
-                //{
 
-                   /// List<string> result = lstArquiPoint.Join(lstDamp3, pont => pont, dmp => dmp, (pont, dmp) => pont).ToList();
                     List<string> result = lstArquiPoint.AsEnumerable().Intersect(lstDamp3.AsEnumerable()).ToList();
                     string strTela = string.Empty;
 
@@ -216,7 +178,7 @@ namespace ConvetPdfToLayoutAlta
                         if (!Ambiente.dicionario18.Any(t => t.Key.Equals(_numeroContrato)))
                             Ambiente.dicionario18.Add(_numeroContrato, t18);
                         else
-                            File.Move(f.FullName, Path.ChangeExtension(f.FullName, ".dup"));
+                            File.Move(f.FullName, System.IO.Path.ChangeExtension(f.FullName, ".dup"));
 
                         BackgroundWorkerDuplicadoFiltro.ReportProgress(countpercent, o);
                         Thread.Sleep(1);
@@ -230,23 +192,54 @@ namespace ConvetPdfToLayoutAlta
                     MaximumProgress = lst16.Count;
                     _numeroContrato = string.Empty;
 
-                    lst16.ForEach(t16 =>
+                string pagina = string.Empty;
+                string _contrato = string.Empty;
+                List<string> lstLinha = null;
+
+                lst16.ForEach(t16 =>
+                {
+                    ITextExtractionStrategy its;
+                    countpercent++;
+                    f = new FileInfo(t16);
+
+                    using (PdfReader reader = new PdfReader(f.FullName))
                     {
-                        countpercent++;
-                        f = new FileInfo(t16);
-                        _numeroContrato = f.Name.Split('_')[0].Trim();
+                        its = new LocationTextExtractionStrategy();
+                        pagina = PdfTextExtractor.GetTextFromPage(reader, 1, its).Trim();
+                        pagina = Encoding.UTF8.GetString(Encoding.Convert(Encoding.Default, Encoding.UTF8, Encoding.Default.GetBytes(pagina)));
 
-                        var o = new UserObject() { Contrato = _numeroContrato, PdfInfo = f, TotalArquivoPorPasta = MaximumProgress };
-                        if (!Ambiente.dicionario16.Any(t => t.Key.Equals(_numeroContrato)))
-                            Ambiente.dicionario16.Add(_numeroContrato, t16);
-                        else
-                            File.Move(f.FullName, Path.ChangeExtension(f.FullName, ".dup"));
+                        using (StringReader strReader = new StringReader(pagina))
+                        {
+                            string line;
+                            while ((line = strReader.ReadLine()) != null)
+                            {
+                                lstLinha = line.Split(' ').Where(l => !string.IsNullOrWhiteSpace(l)).ToList();
 
-                        BackgroundWorkerDuplicadoFiltro.ReportProgress(countpercent, o);
-                        Thread.Sleep(1);
-                    });
+                                if (lstLinha.Any(c => Regex.IsMatch(c, @"(^\d{4}.\d{5}.\d{3}-\d{1}$)")))
+                                {
+                                    pagina = lstLinha.Find(c => Regex.IsMatch(c, @"(^\d{4}.\d{5}.\d{3}-\d{1}$)"));
+                                    _contrato = $"{lstLinha.Find(c => Regex.IsMatch(c, @"(^\d{4}$)")).Substring(2)}{ Regex.Replace(pagina, @"[^0-9$]", "")}";
+                                    break;
+                                }
+                            }
+                        }
+                    }
 
-                    lst16 = null;
+                    pagina = string.Empty;
+                    _numeroContrato = _contrato;
+
+                    var o = new UserObject() { Contrato = _numeroContrato, PdfInfo = f, TotalArquivoPorPasta = MaximumProgress };
+                    if (!Ambiente.dicionario16.Any(t => t.Key.Equals(_numeroContrato)))
+                        Ambiente.dicionario16.Add(_numeroContrato, t16);
+                    else
+                        File.Move(f.FullName, System.IO.Path.ChangeExtension(f.FullName, ".dup"));
+
+                    BackgroundWorkerDuplicadoFiltro.ReportProgress(countpercent, o);
+                    Thread.Sleep(1);
+                    f = null;
+                });
+
+                lst16 = null;
 
                     _descricao = "Validando arquivo TELA 20...";
                     countpercent = 0;
@@ -263,7 +256,7 @@ namespace ConvetPdfToLayoutAlta
                         if (!Ambiente.dicionario20.Any(t => t.Key.Equals(_numeroContrato)))
                             Ambiente.dicionario20.Add(_numeroContrato, t20);
                         else
-                            File.Move(f.FullName, Path.ChangeExtension(f.FullName, ".dup"));
+                            File.Move(f.FullName, System.IO.Path.ChangeExtension(f.FullName, ".dup"));
 
                         BackgroundWorkerDuplicadoFiltro.ReportProgress(countpercent, o);
                         Thread.Sleep(1);
@@ -286,7 +279,7 @@ namespace ConvetPdfToLayoutAlta
                         if (!Ambiente.dicionario25.Any(t => t.Key.Equals(_numeroContrato)))
                             Ambiente.dicionario25.Add(_numeroContrato, t25);
                         else
-                            File.Move(f.FullName, Path.ChangeExtension(f.FullName, ".dup"));
+                            File.Move(f.FullName, System.IO.Path.ChangeExtension(f.FullName, ".dup"));
 
                         BackgroundWorkerDuplicadoFiltro.ReportProgress(countpercent, o);
                         Thread.Sleep(1);
@@ -313,90 +306,21 @@ namespace ConvetPdfToLayoutAlta
                             {
                                 f = new FileInfo(strTela);
                                 if (!string.IsNullOrWhiteSpace(strTela))
-                                    File.Move(strTela, Path.ChangeExtension(strTela, ".damp"));
+                                    File.Move(strTela, System.IO.Path.ChangeExtension(strTela, ".damp"));
 
                                 strTela = Ambiente.dicionario20.FirstOrDefault(c => c.Key.Equals(dmp)).Value;
                                 if (!string.IsNullOrWhiteSpace(strTela))
-                                    File.Move(strTela, Path.ChangeExtension(strTela, ".damp"));
+                                    File.Move(strTela, System.IO.Path.ChangeExtension(strTela, ".damp"));
 
                                 strTela = Ambiente.dicionario25.FirstOrDefault(c => c.Key.Equals(dmp)).Value;
                                 if (!string.IsNullOrWhiteSpace(strTela))
-                                    File.Move(strTela, Path.ChangeExtension(strTela, ".damp"));
+                                    File.Move(strTela, System.IO.Path.ChangeExtension(strTela, ".damp"));
 
                             }
                         }
                     });
 
                     strTela = string.Empty;
-                //}
-
-
-                // VERIFICA OS ARQUIVOS QUE ESTÃO DUPLICADOS E RENOMEIA COM A EXTENSÃO .dup
-                //if (_arrayDuplicado.Count > 0)
-                //{
-                //countpercent = 0;
-                //MaximumProgress = lstDuplicado.Count;
-                //var o = new UserObject() { Contrato = "", PdfInfo = f, TotalArquivoPorPasta = MaximumProgress };
-
-                //BackgroundWorkerDuplicadoFiltro.ReportProgress(0, o);
-
-                //_descricao = "Verificando duplicidade de contratos...";
-                //int countDuplicado = 0;
-                //lstDuplicado.ForEach(dup =>
-                //{
-                //    countpercent++;
-                //    // se houver mais de 2 arquivos duplicados, altera a extensão de todos os arquivos para '.dup' deixando apenas uma arquivo
-                //    countDuplicado = _arrayDuplicado.Count(k => k.Contains(dup));
-                //    f = new FileInfo(_arrayDuplicado.FirstOrDefault(k => k.Contains(dup)));
-
-                //    o = new UserObject() { Contrato = dup.Split('_')[0], PdfInfo = f , TotalArquivoPorPasta = MaximumProgress };
-                //    BackgroundWorkerDuplicadoFiltro.ReportProgress(countpercent, o);
-
-                //    if (countDuplicado > 1)
-                //    {
-                //        for (int i = 1; i < countDuplicado; i++)
-                //        {
-                //            File.Move(f.FullName, Path.ChangeExtension(f.FullName, ".dup"));
-                //            _arrayDuplicado.Remove(f.FullName);
-                //        }
-                //    }
-                //else
-                //{
-                //    f = new FileInfo(_arrayDuplicado.FirstOrDefault(k => k.Contains(dup)));
-                //    File.Move(f.FullName, Path.ChangeExtension(f.FullName, ".dup"));
-                //    _arrayDuplicado.Remove(f.FullName);
-                //}
-                // });
-
-                //countpercent = 0;
-                //MaximumProgress = _arrayDuplicado.Count;
-                //Thread.Sleep(10);
-                // o = new UserObject() { Contrato = "", PdfInfo = f, TotalArquivoPorPasta = MaximumProgress };
-                //BackgroundWorkerDuplicadoFiltro.ReportProgress(0, o);
-                //_descricao = "Aplicando Filtro nos contratos sem ponteiro";
-
-                // altera a extensão dos arquivos pdfs que não estão na relação do arquivo de ponteiro 'ARQUIPOINT.TXT'
-                // se não tiver no ponteiro então renomeia para extensão .fil
-                //_arrayDuplicado.ForEach(pdf =>
-                //{
-                //    try
-                //    {
-                //        countpercent++;
-                //        o = new UserObject() { Contrato = f.Name.Split('_')[0], PdfInfo = f, TotalArquivoPorPasta = MaximumProgress };
-                //        BackgroundWorkerDuplicadoFiltro.ReportProgress(countpercent, o);
-                //        f = new FileInfo(pdf);
-                //        if (!lstArquiPoint.Any(n => n.Contains(f.Name.Split('_')[0])))
-                //            File.Move(f.FullName, Path.ChangeExtension(f.FullName, ".fil"));
-
-                //    }
-                //    catch (Exception ex)
-                //    {
-                //        throw ex;
-                //    }
-                //});
-
-                //}
-
 
                 // Aplica filtro nos contratos que não estão nos ponteiros
                 var z = Ambiente.dicionario16.GroupJoin(lstArquiPoint,
@@ -409,7 +333,7 @@ namespace ConvetPdfToLayoutAlta
 
                 z.ForEach(l16 => {
                     Ambiente.dicionario16.Remove(l16.campoPrimary.Key);
-                    File.Move(l16.campoPrimary.Value, Path.ChangeExtension(l16.campoPrimary.Value, ".fil"));
+                    File.Move(l16.campoPrimary.Value, System.IO.Path.ChangeExtension(l16.campoPrimary.Value, ".fil"));
                 });
 
 
@@ -427,7 +351,7 @@ namespace ConvetPdfToLayoutAlta
                 q.ForEach(l18 =>
                 {
                     Ambiente.dicionario18.Remove(l18.campoPrimary.Key);
-                    File.Move(l18.campoPrimary.Value, Path.ChangeExtension(l18.campoPrimary.Value, ".rej"));
+                    File.Move(l18.campoPrimary.Value, System.IO.Path.ChangeExtension(l18.campoPrimary.Value, ".rej"));
                 });
 
                 var w = Ambiente.dicionario20.GroupJoin(Ambiente.dicionario16,
@@ -441,7 +365,7 @@ namespace ConvetPdfToLayoutAlta
                 w.ForEach(l20 =>
                 {
                     Ambiente.dicionario20.Remove(l20.campoPrimary.Key);
-                    File.Move(l20.campoPrimary.Value, Path.ChangeExtension(l20.campoPrimary.Value, ".rej"));
+                    File.Move(l20.campoPrimary.Value, System.IO.Path.ChangeExtension(l20.campoPrimary.Value, ".rej"));
                 });
 
                 var x = Ambiente.dicionario25.GroupJoin(Ambiente.dicionario16,
@@ -454,7 +378,7 @@ namespace ConvetPdfToLayoutAlta
 
                 x.ForEach(l25 => {
                     Ambiente.dicionario25.Remove(l25.campoPrimary.Key);
-                    File.Move(l25.campoPrimary.Value, Path.ChangeExtension(l25.campoPrimary.Value, ".rej"));
+                    File.Move(l25.campoPrimary.Value, System.IO.Path.ChangeExtension(l25.campoPrimary.Value, ".rej"));
                 });
 
                q = w = x =  null; z = null;

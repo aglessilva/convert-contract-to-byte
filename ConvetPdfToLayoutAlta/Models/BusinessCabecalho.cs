@@ -1172,17 +1172,28 @@ namespace ConvetPdfToLayoutAlta.Models
                                             strAlta += string.Format("{0}{1}{2}{3}", "0".PadLeft(54, '0'), "0".PadLeft(17, '0') + "+", o.SaldoDevedor.Trim().PadLeft(18, '0'), "TAXA JUROS".PadRight(30, ' '));                                                 
                                             strAlta += string.Format("{0}{1}", _cabecalho.TaxaJuros.Trim().PadRight(30, ' '), _cabecalhoAnterior.TaxaJuros.Trim().PadRight(30, ' '));
 
-                                            if (!_cabecalhoAnterior.Reajuste.Equals(_cabecalho.Reajuste))
-                                                strAlta += string.Format("{0}", _cabecalho.TaxaJuros.Trim().PadRight(30, ' '));
-                                            else
-                                                // Adicionado o valor '00010101' se houver uma ocorrencia de  TAXA DE JUROS sem parcelas
-                                                // Data: 30/07/2019 as 17:5
-                                                
-                                                // O Luis e a Camila pediu para pegar o REAJUSTE qunado for ocorrencia do tipo 10 e descrição 'TAXA DE JUTOS'e subistituir o campo 
-                                                //Data: 19/11/2019
-                                                //strAlta += string.Format("{0}", (o.NaoTemParcela ? "00010101" : Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd")).Trim().PadRight(30, ' '));
+                                            // SOLICITAÇÃO DA CAMILA na Dayli do dia  19/05/202 as 11:30 e tambem solicitado por e-mail na mesma data
+                                            // DATA: 19/05/202 
+                                            // TODO: Remover os 'if' do BLOCO 1 que definia os valores que vai na posição 252  do arquivo TL16OCO, a solicitação é para deixar somente o indexador REJUSTE 
 
-                                                strAlta += string.Format("{0}", (o.NaoTemParcela ? "00010101" : _cabecalhoAnterior.Reajuste.Trim().PadRight(30, ' ')));
+                                            //============================= BLOCO 1 ===========================================
+                                            //if (!_cabecalhoAnterior.Reajuste.Equals(_cabecalho.Reajuste))
+                                            //    strAlta += string.Format("{0}", _cabecalho.TaxaJuros.Trim().PadRight(30, ' '));
+                                            //else
+                                            //=================================================================================
+
+                                            // Adicionado o valor '00010101' se houver uma ocorrencia de  TAXA DE JUROS sem parcelas
+                                            // Data: 30/07/2019 as 17:5
+                                            //strAlta += string.Format("{0}", (o.NaoTemParcela ? "00010101" : Convert.ToDateTime(_parcela.Vencimento).ToString("yyyyMMdd")).Trim().PadRight(30, ' '));
+
+                                            //============================= BLOCO 1 ===========================================
+                                            // O Luis e a Camila pediu para pegar o REAJUSTE qunado for ocorrencia do tipo 10 e descrição 'TAXA DE JUTOS'e subistituir o campo 
+                                            //Data: 19/11/2019
+                                            // strAlta += string.Format("{0}", (o.NaoTemParcela ? "00010101" : _cabecalhoAnterior.Reajuste.Trim().PadRight(30, ' ')));
+                                            //=================================================================================
+
+                                            strAlta += string.Format("{0}", (_cabecalhoAnterior.Reajuste.Trim().PadRight(30, ' ')));
+
 
                                             strAlta = strAlta.PadRight(281, ' ');
                                             escreverOcorrencia.WriteLine(strAlta);

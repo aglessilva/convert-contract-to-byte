@@ -184,6 +184,9 @@ namespace ConvetPdfToLayoutAlta.Models
                         bc.DestinationTableName = "DampFgts";
                         bc.WriteToServer(dataTable);
                     }
+
+                    if (connEntity.Database.Connection.State == ConnectionState.Open)
+                        connEntity.Database.Connection.Close();
                 }
             }
             catch (Exception exEntity)

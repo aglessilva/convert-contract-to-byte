@@ -157,6 +157,7 @@ namespace ConvetPdfToLayoutAlta
             }
             catch (UnauthorizedAccessException ex)
             {
+                string msgErr = ex.Message;
                 isWriteAccess = false;
             }
             catch (Exception ex)

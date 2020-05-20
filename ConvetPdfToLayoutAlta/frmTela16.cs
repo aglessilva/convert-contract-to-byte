@@ -270,9 +270,6 @@ namespace ConvetPdfToLayoutAlta
                                     {
                                         if (string.IsNullOrWhiteSpace(line))
                                             continue;
-
-                                       
-
                                         numberLine++;
 
                                         string[] arrayCabecalho = businessCabecalho.TrataArray(line);

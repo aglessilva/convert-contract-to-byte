@@ -985,8 +985,12 @@ namespace ConvetPdfToLayoutAlta.Models
                         bc.DestinationTableName = _nameTable;
                         bc.WriteToServer(dataTable);
                     }
+
+                    if (connEntity.Database.Connection.State == ConnectionState.Open)
+                        connEntity.Database.Connection.Close();
                 }
 
+                
                 dataTable = null;
                
             }
@@ -1053,6 +1057,9 @@ namespace ConvetPdfToLayoutAlta.Models
                         bc.DestinationTableName = "Parcelas";
                         bc.WriteToServer(dataTable);
                     }
+
+                    if (connEntity.Database.Connection.State == ConnectionState.Open)
+                        connEntity.Database.Connection.Close();
                 }
             }
             catch (Exception exEntity)
@@ -1087,6 +1094,9 @@ namespace ConvetPdfToLayoutAlta.Models
                 using (DbConnEntity dbConn = new DbConnEntity())
                 {
                     listaParcelasFgts = dbConn.DampFgts.Where(z => z.SaldoFgtsJAM !="0" || z.SaldoFgtsQUO != "0" || z.QuotaNominal != "0" || z.SobraMes != "0").Select(p => new ItensDamp(){ Contrato = p.Contrato, DataVencimento = p.DataVencimento }).ToList();
+
+                    if (dbConn.Database.Connection.State == ConnectionState.Open)
+                        dbConn.Database.Connection.Close();
                 }
             }
             catch (Exception exefgts)

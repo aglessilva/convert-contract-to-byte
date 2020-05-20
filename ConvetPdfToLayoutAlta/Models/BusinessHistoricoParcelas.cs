@@ -29,6 +29,9 @@ namespace ConvetPdfToLayoutAlta.Models
                         bc.DestinationTableName = "HistoricoParcelas";
                         bc.WriteToServer(dataTable);
                     }
+
+                    if (connEntity.Database.Connection.State == ConnectionState.Open)
+                        connEntity.Database.Connection.Close();
                 }
 
                 dataTable = null;
