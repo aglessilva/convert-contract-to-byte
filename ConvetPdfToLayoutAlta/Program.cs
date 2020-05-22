@@ -19,6 +19,7 @@ namespace ConvetPdfToLayoutAlta
             Application.Run(new FrmFoders());
             //Application.Run(new FrmSelectFolder(""));
             //Application.Run(new FrmDownload(null, @"C:\!ZONA\testeDownload\"));
+            //Application.Run(new FrmDuplicadoFiltro(@"C:\@TombamentoV1_01\TOMBAMENTOS\TOMBAMENTO2020-05-15\", new List<string>()));
         }
     }
 }

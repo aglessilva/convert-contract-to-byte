@@ -9,33 +9,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Extrator_Tela_81", "Extrato
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
 		Desenvolvimento|Any CPU = Desenvolvimento|Any CPU
-		Homologação|Any CPU = Homologação|Any CPU
 		Produção|Any CPU = Produção|Any CPU
-		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{FE906407-531F-47B9-B4A2-39C52B438066}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FE906407-531F-47B9-B4A2-39C52B438066}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE906407-531F-47B9-B4A2-39C52B438066}.Desenvolvimento|Any CPU.ActiveCfg = Debug|Any CPU
 		{FE906407-531F-47B9-B4A2-39C52B438066}.Desenvolvimento|Any CPU.Build.0 = Debug|Any CPU
-		{FE906407-531F-47B9-B4A2-39C52B438066}.Homologação|Any CPU.ActiveCfg = Homolog|Any CPU
-		{FE906407-531F-47B9-B4A2-39C52B438066}.Homologação|Any CPU.Build.0 = Homolog|Any CPU
 		{FE906407-531F-47B9-B4A2-39C52B438066}.Produção|Any CPU.ActiveCfg = Release|Any CPU
 		{FE906407-531F-47B9-B4A2-39C52B438066}.Produção|Any CPU.Build.0 = Release|Any CPU
-		{FE906407-531F-47B9-B4A2-39C52B438066}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FE906407-531F-47B9-B4A2-39C52B438066}.Release|Any CPU.Build.0 = Release|Any CPU
-		{05231D04-BE52-414F-83A6-A1F72EC87156}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{05231D04-BE52-414F-83A6-A1F72EC87156}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05231D04-BE52-414F-83A6-A1F72EC87156}.Desenvolvimento|Any CPU.ActiveCfg = Debug|Any CPU
 		{05231D04-BE52-414F-83A6-A1F72EC87156}.Desenvolvimento|Any CPU.Build.0 = Debug|Any CPU
-		{05231D04-BE52-414F-83A6-A1F72EC87156}.Homologação|Any CPU.ActiveCfg = Release|Any CPU
-		{05231D04-BE52-414F-83A6-A1F72EC87156}.Homologação|Any CPU.Build.0 = Release|Any CPU
 		{05231D04-BE52-414F-83A6-A1F72EC87156}.Produção|Any CPU.ActiveCfg = Release|Any CPU
 		{05231D04-BE52-414F-83A6-A1F72EC87156}.Produção|Any CPU.Build.0 = Release|Any CPU
-		{05231D04-BE52-414F-83A6-A1F72EC87156}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{05231D04-BE52-414F-83A6-A1F72EC87156}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

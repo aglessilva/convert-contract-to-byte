@@ -23,7 +23,7 @@ namespace ConvetPdfToLayoutAlta
         UserObject obj = null;
         int countpercent = 0, MaximumProgress = 0;
         string _tela = string.Empty;
-        Task task = null;
+ 
 
         public FrmRenomearPdf(string _dretorioOrigemPdf)
         {
@@ -34,8 +34,8 @@ namespace ConvetPdfToLayoutAlta
         private void FrmRenomearPdf_Load(object sender, EventArgs e)
         {
             //listaRenomeada = Directory.EnumerateFiles(_diretorioPdf, _tela, SearchOption.AllDirectories);
-           // MaximumProgress = listaRenomeada.Count();
-           // lblQtd.Text = $"Total: {MaximumProgress}";
+            // MaximumProgress = listaRenomeada.Count();
+            // lblQtd.Text = $"Total: {MaximumProgress}";
             //progressBarReaderPdf.Maximum = MaximumProgress;
 
             stopwatch.Restart();
@@ -53,30 +53,24 @@ namespace ConvetPdfToLayoutAlta
             try
             {
                 FileInfo fileInfo = null;
-                task =  Task.Factory.StartNew(() =>
+                extencao.ForEach(ex =>
                 {
-                    extencao.ForEach(ex =>
+                    listaRenomeada = Directory.EnumerateFiles(_diretorioPdf, ex, SearchOption.AllDirectories);
+                    MaximumProgress = listaRenomeada.Count();
+                    countpercent = 0;
+
+                    if (MaximumProgress > 0)
                     {
-                        listaRenomeada = Directory.EnumerateFiles(_diretorioPdf, ex, SearchOption.AllDirectories);
-                        MaximumProgress = listaRenomeada.Count();
-                        countpercent = 0;
-
-                        if (MaximumProgress > 0)
+                        listaRenomeada.ToList().ForEach(arq =>
                         {
-                            listaRenomeada.ToList().ForEach(arq =>
-                            {
-                                fileInfo = new FileInfo(arq);
-                                File.Move(fileInfo.FullName, Path.ChangeExtension(fileInfo.FullName, ".pdf"));
-                                countpercent++;
-                                obj = new UserObject() { PdfInfo = fileInfo, DescricaoPercentural = ex };
-                                backgroundWorkerRenomearPdf.ReportProgress(countpercent, obj);
-                            });
-                        }
-                    });
+                            fileInfo = new FileInfo(arq);
+                            File.Move(fileInfo.FullName, Path.ChangeExtension(fileInfo.FullName, ".pdf"));
+                            countpercent++;
+                            obj = new UserObject() { PdfInfo = fileInfo, DescricaoPercentural = ex };
+                            backgroundWorkerRenomearPdf.ReportProgress(countpercent, obj);
+                        });
+                    }
                 });
-
-                if (task.Status == TaskStatus.Running)
-                    task.Wait();
             }
             catch (Exception exe)
             {

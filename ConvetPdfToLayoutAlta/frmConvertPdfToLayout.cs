@@ -107,7 +107,7 @@ namespace ConvetPdfToLayoutAlta
             panelSpinner.Visible = !panelSpinner.Visible;
             telas.ForEach(t =>
             {
-                Text += "-" + t + $" - (V{Application.ProductVersion})"; 
+                Text += " - " + t + $" - (V{Application.ProductVersion})"; 
                 Form f = null;
 
                 if (t.Equals("TELA 18"))
@@ -152,7 +152,7 @@ namespace ConvetPdfToLayoutAlta
             button1.Visible = button10.Visible = button9.Visible = button2.Visible =  button3.Visible  = button4.Visible = button5.Visible = button6.Visible = button7.Visible = button8.Visible = true;
 #endif
 
-            string _pathDamp = string.Format("{0}{1}", Directory.GetCurrentDirectory(), @"\config\DAMP03.TXT");
+            string _pathDamp = string.Format("{0}{1}", Directory.GetCurrentDirectory(), @"\config\DAMP03.txt");
             using (StreamReader sw = new StreamReader(_pathDamp, Encoding.Default))
             {
                 while (!sw.EndOfStream)
@@ -429,33 +429,35 @@ namespace ConvetPdfToLayoutAlta
         {
             try
             {
-                Cursor.Current = Cursors.WaitCursor;
+                List<string> lstNewPonteiro = new List<string>();
 
-                string _contrato = string.Empty;
-                List<string> lstPonteiro = new List<string>();
-                using (StreamReader sreader = new StreamReader(_arquivoPonteiro))
+                using (StreamReader streamReader = new StreamReader(_arquivoPonteiro))
                 {
-                    while (!sreader.EndOfStream)
+                    string _numeroContrato = string.Empty;
+                    while (!streamReader.EndOfStream)
                     {
-                        _contrato = sreader.ReadLine().Trim();
+                        _numeroContrato = streamReader.ReadLine().Trim();
 
-                        if (!string.IsNullOrWhiteSpace(_contrato))
-                            if (!lstPonteiro.Any(p => p.Equals(_contrato)))
-                                lstPonteiro.Add(_contrato);
+                        if (_numeroContrato.Length < 15)
+                            _numeroContrato = _numeroContrato.PadLeft(15, '0');
+
+                        lstNewPonteiro.Add(_numeroContrato);
                     }
                 }
 
-                lstPonteiro.OrderBy(pont => pont);
 
-                if (File.Exists($@"{Directory.GetCurrentDirectory()}\config\ARQUPONT.txt"))
-                    File.Delete($@"{Directory.GetCurrentDirectory()}\config\ARQUPONT.txt");
+                lstNewPonteiro.Sort();
 
-                using (StreamWriter streamWriter = new StreamWriter($@"{Directory.GetCurrentDirectory()}\config\ARQUPONT.txt", false, Encoding.Default))
+                if (File.Exists(Directory.GetCurrentDirectory() + @"\config\ARQUPONT.txt"))
+                    File.Delete(Directory.GetCurrentDirectory() + @"\config\ARQUPONT.txt");
+
+                using (StreamWriter streamWriter = new StreamWriter(Directory.GetCurrentDirectory() + @"\config\ARQUPONT.txt", true, Encoding.Default))
                 {
-                    lstPonteiro.ForEach(x => { streamWriter.WriteLine(x); });
+                    lstNewPonteiro.ForEach(p => streamWriter.WriteLine(p));
                 }
 
-                lstPonteiro = null;
+                lstNewPonteiro = null;
+
                 Cursor.Current = Cursors.Default;
             }
             catch (Exception exPonteito)

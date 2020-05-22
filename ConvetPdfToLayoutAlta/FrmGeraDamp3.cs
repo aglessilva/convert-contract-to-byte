@@ -46,19 +46,19 @@ namespace ConvetPdfToLayoutAlta
                 List<RelaDamp> lstNewsDamps = lstRelaDamp.Where(n => n.MIECDAMP_AMB_OPER.Equals("PGTO PARTE PRESTAÇÕES DE FINANCIAMENTO NO SFH") && n.MIECDAMP_TP_REQUS.Equals("ABERTURA")).ToList();
 
                
-                FileInfo f = new FileInfo(Directory.GetCurrentDirectory() + @"\config\DAMP03.TXT");
+                FileInfo f = new FileInfo(Directory.GetCurrentDirectory() + @"\config\DAMP03.txt");
 
                 if (f.Exists)
                     f.Delete();
 
                 lstNewsDamps.ForEach(n =>
                 {
-                    if (!listContratoDamp.Any(s => s.Equals(n.MIECDAMP_CONTRATO.Substring(1))))
-                        listContratoDamp.Add(n.MIECDAMP_CONTRATO.Substring(1));
+                    if (!listContratoDamp.Any(s => s.Equals(n.MIECDAMP_CONTRATO)))
+                        listContratoDamp.Add(n.MIECDAMP_CONTRATO);
 
                 });
 
-                using (StreamWriter sw = new StreamWriter(Directory.GetCurrentDirectory() + @"\config\DAMP03.TXT"))
+                using (StreamWriter sw = new StreamWriter(Directory.GetCurrentDirectory() + @"\config\DAMP03.txt"))
                 {
                     MaximumProgress = listContratoDamp.Count();
 
@@ -151,7 +151,7 @@ namespace ConvetPdfToLayoutAlta
                         objDamp = new RelaDamp()
                         {
                             MIECDAMP_CONTRATO = linha[3].Trim(),
-                            MIECDAMP_DT_ABERT = Convert.ToDateTime(linha[1].Trim()).ToString("yyyy -MM-dd"),
+                            MIECDAMP_DT_ABERT = Convert.ToDateTime(linha[1].Trim()).ToString("yyyy-MM-dd"),
                             MIECDAMP_TP_OPER = linha[2].Trim(),
                             MIECDAMP_TT_FGTS = Regex.Replace(linha[4].Trim(), @"[^0-9$]", ""),
                             MIECDAMP_AMB_OPER = linha[5].Trim(),
